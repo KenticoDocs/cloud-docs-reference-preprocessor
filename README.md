@@ -5,10 +5,10 @@ Backend service for Kentico Cloud documentation portal, which utilizes [Kentico 
 The service is responsible for composing a YAML file that will be used for generating Kentico Cloud API reference for its documentation portal.
 It responds to notifications from [Dispatcher](https://github.com/Kentico/kentico-cloud-docs-dispatcher) and creates the YAML file based on content stored in Kentico Cloud accordingly.
 
-## Service Overview
+## Overview
 TBD
 
-## Service Setup
+## Setup
 TBD
 
 ## Testing
