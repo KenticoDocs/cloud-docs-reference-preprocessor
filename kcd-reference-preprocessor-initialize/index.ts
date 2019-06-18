@@ -1,21 +1,23 @@
-import { AzureFunction, Context, HttpRequest } from "@azure/functions"
+import { AzureFunction, Context, HttpRequest } from '@azure/functions';
+import { deliveryClient } from '../shared/external/kenticoCloudClient';
+import { getProcessedData } from '../shared/getProcessedData';
+import { ZapiSpecification } from '../shared/models/zapi_specification';
 
-const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
-    context.log('HTTP trigger function processed a request.');
-    const name = (req.query.name || (req.body && req.body.name));
+const httpTrigger: AzureFunction = async (context: Context, req: HttpRequest): Promise<void> => {
+    const response = await deliveryClient
+        .items<ZapiSpecification>()
+        .type('zapi_specification')
+        .queryConfig({
+            usePreviewMode: true,
+        })
+        .depthParameter(5)
+        .getPromise();
 
-    if (name) {
-        context.res = {
-            // status: 200, /* Defaults to 200 */
-            body: "Hello " + (req.query.name || req.body.name)
-        };
-    }
-    else {
-        context.res = {
-            status: 400,
-            body: "Please pass a name on the query string or in the request body"
-        };
-    }
+    const data = getProcessedData(response.items, response.linkedItems);
+
+    context.res = {
+        body: data,
+    };
 };
 
 export default httpTrigger;
