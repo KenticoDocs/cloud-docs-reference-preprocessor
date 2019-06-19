@@ -7,6 +7,7 @@ import { ContentItem, Fields } from 'kentico-cloud-delivery';
  * and so its up to you to define relationship between models.
  */
 export class ZapiPathOperation extends ContentItem {
+    public path: Fields.TextField;
     public parameters: ContentItem[];
     public description: Fields.RichTextField;
     public summary: Fields.TextField;
