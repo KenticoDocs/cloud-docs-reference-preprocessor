@@ -1,6 +1,6 @@
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
 import { deliveryClient } from '../shared/external/kenticoCloudClient';
-import { getProcessedData } from '../shared/getProcessedData';
+import { getProcessedData } from '../shared/processing/getProcessedData';
 import { ZapiSpecification } from '../shared/models/zapi_specification';
 
 const httpTrigger: AzureFunction = async (context: Context, req: HttpRequest): Promise<void> => {

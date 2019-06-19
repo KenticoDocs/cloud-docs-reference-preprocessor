@@ -9,7 +9,6 @@ import { ZapiDiscriminator } from '../models/zapi_discriminator';
 import { ZapiDiscriminatorMapItem } from '../models/zapi_discriminator__map_item';
 import { ZapiLicense } from '../models/zapi_license';
 import { ZapiParameter } from '../models/zapi_parameter';
-import { ZapiPath } from '../models/zapi_path';
 import { ZapiPathOperation } from '../models/zapi_path_operation';
 import { ZapiPropertyReferencingASchema } from '../models/zapi_property_referencing_a_schema';
 import { ZapiRequestBody } from '../models/zapi_request_body';
@@ -42,7 +41,6 @@ export const deliveryClient = new DeliveryClient({
         new TypeResolver('zapi_discriminator_map_item', () => new ZapiDiscriminatorMapItem()),
         new TypeResolver('zapi_license', () => new ZapiLicense()),
         new TypeResolver('zapi_parameter', () => new ZapiParameter()),
-        new TypeResolver('zapi_path', () => new ZapiPath()),
         new TypeResolver('zapi_path_operation', () => new ZapiPathOperation()),
         new TypeResolver('zapi_property_referencing_a_schema', () => new ZapiPropertyReferencingASchema()),
         new TypeResolver('zapi_request_body', () => new ZapiRequestBody()),
