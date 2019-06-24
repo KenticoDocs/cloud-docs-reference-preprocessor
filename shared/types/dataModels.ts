@@ -1,10 +1,21 @@
+import { ZapiPropertyReferencingASchema } from '../models/zapi_property_referencing_a_schema';
+import { ZapiSchemaAllof } from '../models/zapi_schema__allof';
+import { ZapiSchemaAnyof } from '../models/zapi_schema__anyof';
+import { ZapiSchemaArray } from '../models/zapi_schema__array';
+import { ZapiSchemaBoolean } from '../models/zapi_schema__boolean';
+import { ZapiSchemaInteger } from '../models/zapi_schema__integer';
+import { ZapiSchemaNumber } from '../models/zapi_schema__number';
+import { ZapiSchemaObject } from '../models/zapi_schema__object';
+import { ZapiSchemaOneof } from '../models/zapi_schema__oneof';
+import { ZapiSchemaString } from '../models/zapi_schema__string';
+
 export interface IBlobObject {
     readonly webhook: string | any,
     readonly data: IDataObject,
 }
 
 export interface IDataObject {
-    api_specification: any,
+    api_specification: IZapiSpecification,
     readonly items: any,
 }
 
@@ -14,10 +25,9 @@ export interface IZapiSpecification {
     readonly codename: string,
     readonly contact: string[],
     readonly description: string,
-    readonly featureReleaseStatus: string[],
     readonly id: string,
     readonly license: string[],
-    readonly paths: string[],
+    readonly pathOperations: string[],
     readonly security: string[],
     readonly servers: string,
     readonly termsOfService: string,
@@ -36,16 +46,16 @@ export interface IWrappedData<T> {
     readonly data: T,
 }
 
-export type IDataToInsert<T> = IWrappedData<T> | Array<IWrappedData<T>>
+export type IDataToInsert<T> = IWrappedData<T> | Array<IWrappedData<T>>;
 
 export interface ISecurityScheme extends ISystemAttributes {
+    readonly apiKeyLocation: string,
+    readonly apiKeyName: string,
     readonly apiReference: string[],
     readonly bearerFormat: string,
     readonly description: string,
-    readonly in: string,
     readonly name: string,
     readonly scheme: string,
-    readonly schemeName: string,
     readonly type: string[],
 }
 
@@ -66,9 +76,10 @@ export interface ICategory extends ISystemAttributes {
     readonly apiReference: string[],
     readonly description: string,
     readonly name: string,
+    readonly url: string,
 }
 
-export interface IPath extends ISystemAttributes {
+export interface IPathOperation extends ISystemAttributes {
     readonly apiReference: string[],
     readonly category: string[],
     readonly codeSamples: string[],
@@ -79,7 +90,7 @@ export interface IPath extends ISystemAttributes {
     readonly pathOperation: string[],
     readonly requestBody: string,
     readonly responses: string,
-    readonly summary: string,
+    readonly name: string,
     readonly url: string,
 }
 
@@ -89,7 +100,7 @@ export interface IParameter extends ISystemAttributes {
     readonly description: string,
     readonly example: string,
     readonly explode: string[],
-    readonly in: string[],
+    readonly location: string[],
     readonly name: string,
     readonly required: string[],
     readonly schema: string[],
@@ -99,32 +110,33 @@ export interface IParameter extends ISystemAttributes {
 export interface IRequestBody extends ISystemAttributes {
     readonly description: string,
     readonly example: string,
-    readonly mediaType: string,
+    readonly mediaType: string[],
     readonly required: string[],
     readonly schema: string,
 }
 
-export interface IResponseContainer extends ISystemAttributes {
-    readonly httpStatus: string[],
-    readonly response: string,
-}
-
 export interface IResponse extends ISystemAttributes {
     readonly apiReference: string[],
-    readonly content: string,
     readonly description: string,
-    readonly headers: string[],
-}
-
-export interface IResponseContent extends ISystemAttributes {
     readonly example: string,
-    readonly mediaType: string,
+    readonly headers: string[],
+    readonly httpStatus: string[],
+    readonly mediaType: string[],
     readonly schema: string,
 }
 
 export interface IServer extends ISystemAttributes {
     readonly description: string,
     readonly url: string,
+}
+
+export interface IImage extends ISystemAttributes {
+    readonly border: string[],
+    readonly zoomable: string[],
+    readonly description: string,
+    readonly imageWidth: string[],
+    readonly url: string,
+    readonly image: string,
 }
 
 export interface ICallout extends ISystemAttributes {
@@ -142,57 +154,99 @@ export interface ICodeSamples extends ISystemAttributes {
     readonly codeSamples: string[],
 }
 
-interface ICommonSchemaElements {
+export type ZapiSchemas =
+    ZapiSchemaAllof
+    | ZapiSchemaAnyof
+    | ZapiSchemaArray
+    | ZapiSchemaBoolean
+    | ZapiSchemaInteger
+    | ZapiSchemaNumber
+    | ZapiSchemaObject
+    | ZapiSchemaOneof
+    | ZapiSchemaString
+    | ZapiPropertyReferencingASchema;
+
+export type ISchemas =
+    ISchemaAllOf
+    | ISchemaAnyOf
+    | ISchemaArray
+    | ISchemaBoolean
+    | ISchemaInteger
+    | ISchemaNumber
+    | ISchemaObject
+    | ISchemaOneOf
+    | ISchemaString
+    | IPropertyReferencingASchema;
+
+export interface ISchemaElements {
     readonly name: string,
     readonly description: string,
     readonly example: string,
 }
 
-interface ICommonSchemaPropertyElements {
+export interface ISchemaObjectPropertyElements {
     readonly nullable: string[],
     readonly readonly: string[],
     readonly writeonly: string[],
 }
 
-export interface ISchemaAllOf extends ISystemAttributes, ICommonSchemaElements {
+export interface ISchemaAllOf extends ISystemAttributes, ISchemaElements {
+    readonly apiReference: string[],
     readonly schemas: string,
 }
 
-export interface ISchemaArray extends ISystemAttributes, ICommonSchemaElements {
+export interface ISchemaAnyOf extends ISystemAttributes, ISchemaElements, ISchemaObjectPropertyElements {
+    readonly apiReference: string[],
+    readonly schemas: string[],
+}
+
+export interface ISchemaArray extends ISystemAttributes, ISchemaElements {
+    readonly apiReference: string[],
     readonly items: string,
     readonly uniqueItems: string[],
 }
 
-export interface ISchemaBoolean extends ISystemAttributes, ICommonSchemaElements, ICommonSchemaPropertyElements {
-}
-
-export interface ISchemaInteger extends ISystemAttributes, ICommonSchemaElements, ICommonSchemaPropertyElements {
-    readonly text: string,
-    readonly minimum: string,
-    readonly maximum: string,
-    readonly acceptedValues: string,
-    readonly default: string,
-}
-
-export interface ISchemaObject extends ISystemAttributes, ICommonSchemaElements {
+export interface ISchemaBoolean extends ISystemAttributes, ISchemaElements, ISchemaObjectPropertyElements {
     readonly apiReference: string[],
-    readonly text: string,
+}
+
+export interface ISchemaInteger extends ISystemAttributes, ISchemaElements, ISchemaObjectPropertyElements {
+    readonly acceptedValues: string,
+    readonly apiReference: string[],
+    readonly defaultValue: number,
+    readonly format: string[],
+    readonly minimum: number,
+    readonly maximum: number,
+}
+
+export interface ISchemaObject extends ISystemAttributes, ISchemaElements {
+    readonly apiReference: string[],
+    readonly required: string,
     readonly properties: string,
     readonly additionalProperties: string[],
 }
 
-export interface ISchemaOneOf extends ISystemAttributes, ICommonSchemaElements {
+export interface ISchemaOneOf extends ISystemAttributes, ISchemaElements {
     readonly apiReference: string[],
     readonly schemas: string[],
-    readonly discriminator: string[],
+    readonly discriminator: string,
 }
 
-export interface ISchemaString extends ISystemAttributes, ICommonSchemaElements, ICommonSchemaPropertyElements {
-    readonly default: string,
-    readonly format: string,
+export interface ISchemaString extends ISystemAttributes, ISchemaElements, ISchemaObjectPropertyElements {
     readonly acceptedValues: string,
-    readonly maxLength: string,
-    readonly minLength: string,
+    readonly apiReference: string[],
+    readonly defaultValue: string,
+    readonly format: string,
+    readonly maxLength: number,
+    readonly minLength: number,
+}
+
+export interface ISchemaNumber extends ISystemAttributes, ISchemaElements, ISchemaObjectPropertyElements {
+    readonly acceptedValues: string,
+    readonly apiReference: string[],
+    readonly format: string[],
+    readonly maximum: number,
+    readonly minimum: number,
 }
 
 export interface IDiscriminator extends ISystemAttributes {
@@ -202,5 +256,10 @@ export interface IDiscriminator extends ISystemAttributes {
 
 export interface IDiscriminatorMapItem extends ISystemAttributes {
     readonly discriminatorValue: string,
+    readonly schema: string[],
+}
+
+export interface IPropertyReferencingASchema extends ISystemAttributes {
+    readonly name: string,
     readonly schema: string[],
 }

@@ -6,9 +6,10 @@ import { ContentItem, Fields } from 'kentico-cloud-delivery';
  * Note: You can substitute 'ContentItem' type with another generated class.
  * Generator doesn't have this information available and so its up to you to define relationship between models.
  */
-export class ZapiSchemaBoolean extends ContentItem {
-    public commonSchemaObjectPropertyElementsWriteonly: Fields.MultipleChoiceField;
+export class ZapiSchemaAnyof extends ContentItem {
     public apiReference: Fields.TaxonomyField;
+    public commonSchemaObjectPropertyElementsWriteonly: Fields.MultipleChoiceField;
+    public schemas: ContentItem[];
     public commonSchemaObjectPropertyElementsReadonly: Fields.MultipleChoiceField;
     public commonSchemaElementsExample: Fields.TextField;
     public commonSchemaElementsDescription: Fields.RichTextField;
@@ -18,11 +19,11 @@ export class ZapiSchemaBoolean extends ContentItem {
     constructor() {
         super({
             propertyResolver: ((fieldName: string) => {
-                if (fieldName === 'common_schema_object_property_elements__writeonly') {
-                    return 'commonSchemaObjectPropertyElementsWriteonly';
-                }
                 if (fieldName === 'api_reference') {
                     return 'apiReference';
+                }
+                if (fieldName === 'common_schema_object_property_elements__writeonly') {
+                    return 'commonSchemaObjectPropertyElementsWriteonly';
                 }
                 if (fieldName === 'common_schema_object_property_elements__readonly') {
                     return 'commonSchemaObjectPropertyElementsReadonly';

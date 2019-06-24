@@ -6,7 +6,7 @@ import { ContentItem, Fields } from 'kentico-cloud-delivery';
  * Note: You can substitute 'ContentItem' type with another generated class.
  * Generator doesn't have this information available and so its up to you to define relationship between models.
  */
-export class ZapiPropertyReferencingASchema extends ContentItem {
-    public schema: ContentItem[];
-    public name: Fields.TextField;
+export class ContentChunk extends ContentItem {
+    public content: Fields.RichTextField;
+    public platform: Fields.TaxonomyField;
 }
