@@ -1,10 +1,4 @@
 import { ContentItem, Fields } from 'kentico-cloud-delivery';
-import { ZapiCategory } from '../models/zapi__category';
-import { ZapiParameter } from '../models/zapi_parameter';
-import { ZapiPathOperation } from '../models/zapi_path_operation';
-import { ZapiRequestBody } from '../models/zapi_request_body';
-import { ZapiResponse } from '../models/zapi_response';
-import { ZapiSecurityScheme } from '../models/zapi_security_scheme';
 import { ZapiSpecification } from '../models/zapi_specification';
 import {
     IBlobObject,
@@ -15,6 +9,7 @@ import {
     IContact,
     IDataObject,
     IDataToInsert,
+    IImage,
     ILicense,
     IPathOperation,
     ISecurityScheme,
@@ -26,6 +21,7 @@ import {
     getCalloutsData,
     getCategoriesData,
     getContactData,
+    getImagesData,
     getLicenseData,
     getPathOperationsData,
     getSampleItemsData,
@@ -56,45 +52,34 @@ export const getProcessedData = (specifications: ZapiSpecification[], linkedItem
         processItemsOfType<ICategory>(
             getCategoriesData,
             insertDataArrayIntoBlob)
-        (
-            item.categories, processedData, linkedItems,
-        );
+        (item.categories, processedData, linkedItems);
+
         processItemsOfType<IContact>(
             getContactData,
             insertDataIntoBlob)
-        (
-            item.contact, processedData, linkedItems,
-        );
+        (item.contact, processedData, linkedItems);
+
         processItemsOfType<ILicense>(
             getLicenseData,
             insertDataIntoBlob)
-        (
-            item.license, processedData, linkedItems,
-        );
+        (item.license, processedData, linkedItems);
 
         processItemsOfType<IPathOperation>(
             getPathOperationsData,
             insertDataArrayIntoBlob)
-        (
-            item.pathOperations, processedData, linkedItems,
-        );
+        (item.pathOperations, processedData, linkedItems);
 
         processItemsOfType<ISecurityScheme>(
             getSecuritySchemeData,
             insertDataIntoBlob)
-        (
-            item.security, processedData,
-        );
+        (item.security, processedData);
 
         processItemsOfType<IServer>(
             getServersData,
-            insertDataArrayIntoBlob,
-        )(
-            item.servers as RichTextField, processedData, linkedItems,
-        );
+            insertDataArrayIntoBlob)
+        (item.servers as RichTextField, processedData, linkedItems);
 
-        // Rich Text components/items
-        processSharedRichTextComponents(item, processedData, linkedItems);
+        processSharedRichTextComponents(item.description, processedData, linkedItems);
     });
 
     return preprocessedData;
@@ -121,37 +106,27 @@ export const processItemsOfType = <DataModelResult>(
         insertData(data, dataBlob);
     };
 
-type ItemWithRichTextDescription =
-    ZapiSpecification
-    | ZapiSecurityScheme // Not going to have components?
-    | ZapiCategory
-    | ZapiPathOperation
-    | ZapiParameter
-    | ZapiRequestBody // Not going to have components?
-    | ZapiResponse
-
 export const processSharedRichTextComponents = (
-    item: ItemWithRichTextDescription,
+    field: RichTextField,
     processedData,
     linkedItems: ContentItem[]) => {
     processItemsOfType<ICallout>(
         getCalloutsData,
-        insertDataArrayIntoBlob,
-    )(
-        item.description, processedData, linkedItems,
-    );
+        insertDataArrayIntoBlob)
+    (field, processedData, linkedItems);
 
     processItemsOfType<ICodeSample>(
         getSampleItemsData,
-        insertDataArrayIntoBlob,
-    )(
-        item.description, processedData, linkedItems,
-    );
+        insertDataArrayIntoBlob)
+    (field, processedData, linkedItems);
 
     processItemsOfType<ICodeSamples>(
         getSamplesItemsData,
-        insertDataArrayIntoBlob,
-    )(
-        item.description, processedData, linkedItems,
-    );
+        insertDataArrayIntoBlob)
+    (field, processedData, linkedItems);
+
+    processItemsOfType<IImage>(
+        getImagesData,
+        insertDataArrayIntoBlob)
+    (field, processedData, linkedItems);
 };

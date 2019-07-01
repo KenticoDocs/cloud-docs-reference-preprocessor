@@ -1,8 +1,8 @@
 import { ContentItem, Fields } from 'kentico-cloud-delivery';
-import RichTextField = Fields.RichTextField;
 import { Callout } from '../models/callout';
 import { CodeSample } from '../models/code_sample';
 import { CodeSamples } from '../models/code_samples';
+import { Image } from '../models/image';
 import { ZapiCategory } from '../models/zapi__category';
 import { ZapiContact } from '../models/zapi_contact';
 import { ZapiLicense } from '../models/zapi_license';
@@ -20,11 +20,13 @@ import {
     ICodeSamples,
     IContact,
     IDataObject,
+    IImage,
     ILicense,
     IParameter,
     IPathOperation,
     IRequestBody,
     IResponse,
+    ISchemas,
     ISecurityScheme,
     IServer,
     ISystemAttributes,
@@ -39,6 +41,8 @@ import {
     processTaxonomyElement,
 } from '../utils/helpers';
 import { processItemsOfType, processSharedRichTextComponents } from './getProcessedData';
+import { getSchemaDataFromLinkedItemElement, getSchemaDataFromRichTextElement } from './schemaGetters';
+import RichTextField = Fields.RichTextField;
 
 export const getApiSpecificationData = (item: ZapiSpecification): IZapiSpecification => ({
     apiReference: processTaxonomyElement(item.apiReference),
@@ -57,12 +61,12 @@ export const getApiSpecificationData = (item: ZapiSpecification): IZapiSpecifica
     version: item.version.value,
 });
 
-const getWrappedData = <T extends ISystemAttributes>(dataObject: T, item: ContentItem): IWrappedData<T> => ({
+export const getWrappedData = <T extends ISystemAttributes>(dataObject: T, item: ContentItem): IWrappedData<T> => ({
     codename: item.system.codename,
     data: dataObject,
 });
 
-const getSystemProperties = (item: ContentItem): ISystemAttributes => ({
+export const getSystemProperties = (item: ContentItem): ISystemAttributes => ({
     contentType: item.system.type,
     id: item.system.id,
 });
@@ -120,7 +124,7 @@ export const getContactData = (items: ZapiContact[]): IWrappedData<IContact> => 
 export const getCategoriesData = (items: ZapiCategory[], dataBlob: IDataObject, linkedItems: ContentItem[]): Array<IWrappedData<ICategory>> => {
     const categories = [];
     items.map((category: ZapiCategory) => {
-        processSharedRichTextComponents(category, dataBlob, linkedItems);
+        processSharedRichTextComponents(category.description, dataBlob, linkedItems);
         const dataObject: ICategory = {
             ...getSystemProperties(category),
             apiReference: processTaxonomyElement(category.apiReference),
@@ -143,15 +147,17 @@ export const getPathOperationsData = (items: ZapiPathOperation[], dataBlob: IDat
         processItemsOfType<IParameter>(
             getParametersData,
             insertDataArrayIntoBlob)
-        (
-            pathOperation.parameters, dataBlob, linkedItems,
-        );
+        (pathOperation.parameters, dataBlob, linkedItems);
         processItemsOfType<IRequestBody>(
-            getRequestBodiesData, insertDataArrayIntoBlob)(pathOperation.requestBody, dataBlob, linkedItems);
+            getRequestBodiesData,
+            insertDataArrayIntoBlob)
+        (pathOperation.requestBody, dataBlob, linkedItems);
         processItemsOfType<IResponse>(
-            getResponsesData, insertDataArrayIntoBlob)(pathOperation.responses, dataBlob, linkedItems);
+            getResponsesData,
+            insertDataArrayIntoBlob)
+        (pathOperation.responses, dataBlob, linkedItems);
 
-        processSharedRichTextComponents(pathOperation, dataBlob, linkedItems);
+        processSharedRichTextComponents(pathOperation.description, dataBlob, linkedItems);
 
         const dataObject: IPathOperation = {
             ...getSystemProperties(pathOperation),
@@ -196,19 +202,22 @@ export const getParametersData = (items: ZapiParameter[], dataBlob: IDataObject,
     const parameters = [];
 
     items.map((parameter: ZapiParameter) => {
-        processSharedRichTextComponents(parameter, dataBlob, linkedItems);
+        processItemsOfType<ISchemas>(
+            getSchemaDataFromLinkedItemElement,
+            insertDataArrayIntoBlob)
+        (parameter.schema, dataBlob, linkedItems);
+        processSharedRichTextComponents(parameter.description, dataBlob, linkedItems);
 
         const dataObject: IParameter = {
             ...getSystemProperties(parameter),
             apiReference: processTaxonomyElement(parameter.apiReference),
             deprecated: processMultipleChoiceElement(parameter.deprecated),
             description: parameter.description.getHtml(),
-            example: parameter.example.text,
+            example: parameter.example.value,
             explode: processMultipleChoiceElement(parameter.explode),
             location: processMultipleChoiceElement(parameter.location),
             name: parameter.name.value,
             required: processMultipleChoiceElement(parameter.required),
-            // TODO process schemas
             schema: processLinkedItemsElement(parameter.schema),
             style: processMultipleChoiceElement(parameter.style),
         };
@@ -224,15 +233,20 @@ export const getRequestBodiesData = (field: RichTextField, dataBlob: IDataObject
 
     field.linkedItemCodenames.map((codename: string) => {
         const requestBody = getFromLinkedItems<ZapiRequestBody>(codename, linkedItems);
-        processSharedRichTextComponents(requestBody, dataBlob, linkedItems);
+
+        processItemsOfType<ISchemas>(
+            getSchemaDataFromRichTextElement,
+            insertDataArrayIntoBlob)
+        (requestBody.schema, dataBlob, linkedItems);
+
+        processSharedRichTextComponents(requestBody.description, dataBlob, linkedItems);
 
         const dataObject: IRequestBody = {
             ...getSystemProperties(requestBody),
             description: requestBody.description.getHtml(),
-            example: requestBody.example.text,
+            example: requestBody.example.value,
             mediaType: processMultipleChoiceElement(requestBody.mediaType),
             required: processMultipleChoiceElement(requestBody.required),
-            // TODO process schemas
             schema: requestBody.schema.getHtml(),
         };
 
@@ -249,10 +263,15 @@ export const getResponsesData = (field: RichTextField, dataBlob: IDataObject, li
         const response = getFromLinkedItems<ZapiResponse>(codename, linkedItems);
 
         processItemsOfType<IParameter>(
-            getParametersData, insertDataArrayIntoBlob)(response.headers, dataBlob, linkedItems);
+            getParametersData,
+            insertDataArrayIntoBlob)
+        (response.headers, dataBlob, linkedItems);
+        processItemsOfType<ISchemas>(
+            getSchemaDataFromRichTextElement,
+            insertDataArrayIntoBlob)
+        (response.schema, dataBlob, linkedItems);
 
-        // TODO PROCESS NESTED schemas
-        processSharedRichTextComponents(response, dataBlob, linkedItems);
+        processSharedRichTextComponents(response.description, dataBlob, linkedItems);
 
         const dataObject: IResponse = {
             ...getSystemProperties(response),
@@ -269,6 +288,28 @@ export const getResponsesData = (field: RichTextField, dataBlob: IDataObject, li
     });
 
     return responses;
+};
+
+export const getImagesData = (field: RichTextField, dataBlob: IDataObject, linkedItems: ContentItem[]): Array<IWrappedData<IImage>> => {
+    const images: Array<IWrappedData<IImage>> = [];
+    field.linkedItemCodenames.map((codename: string) => {
+        const linkedItem = getFromLinkedItems<Image>(codename, linkedItems);
+        if (linkedItem && linkedItem.image && linkedItem.description) {
+            const dataObject: IImage = {
+                ...getSystemProperties(linkedItem),
+                border: processMultipleChoiceElement(linkedItem.border),
+                description: linkedItem.description.getHtml(),
+                image: linkedItem.image.value,
+                imageWidth: processMultipleChoiceElement(linkedItem.imageWidth),
+                url: linkedItem.url.value,
+                zoomable: processMultipleChoiceElement(linkedItem.zoomable),
+            };
+
+            images.push(getWrappedData<IImage>(dataObject, linkedItem));
+        }
+    });
+
+    return images;
 };
 
 export const getCalloutsData = (field: RichTextField, dataBlob: IDataObject, linkedItems: ContentItem[]): Array<IWrappedData<ICallout>> => {
