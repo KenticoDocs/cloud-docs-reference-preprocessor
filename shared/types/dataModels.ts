@@ -1,3 +1,4 @@
+import { Operation } from '../external/models';
 import { ZapiPropertyReferencingASchema } from '../models/zapi_property_referencing_a_schema';
 import { ZapiSchemaAllof } from '../models/zapi_schema__allof';
 import { ZapiSchemaAnyof } from '../models/zapi_schema__anyof';
@@ -9,31 +10,10 @@ import { ZapiSchemaObject } from '../models/zapi_schema__object';
 import { ZapiSchemaOneof } from '../models/zapi_schema__oneof';
 import { ZapiSchemaString } from '../models/zapi_schema__string';
 
-export interface IBlobObject {
-    readonly webhook: string | any,
-    readonly data: IDataObject,
-}
-
-export interface IDataObject {
-    api_specification: IZapiSpecification,
+export interface IPreprocessedData {
+    readonly zapiSpecificationCodename: string,
     readonly items: any,
-}
-
-export interface IZapiSpecification {
-    readonly apiReference: string[],
-    readonly categories: string[],
-    readonly codename: string,
-    readonly contact: string[],
-    readonly description: string,
-    readonly id: string,
-    readonly license: string[],
-    readonly pathOperations: string[],
-    readonly security: string[],
-    readonly servers: string,
-    readonly termsOfService: string,
-    readonly title: string,
-    readonly url: string,
-    readonly version: string,
+    readonly operation: Operation,
 }
 
 export interface ISystemAttributes {
@@ -47,6 +27,21 @@ export interface IWrappedData<T> {
 }
 
 export type IDataToInsert<T> = IWrappedData<T> | Array<IWrappedData<T>>;
+
+export interface IZapiSpecification extends ISystemAttributes {
+    readonly apiReference: string[],
+    readonly categories: string[],
+    readonly contact: string[],
+    readonly description: string,
+    readonly license: string[],
+    readonly pathOperations: string[],
+    readonly security: string[],
+    readonly servers: string,
+    readonly termsOfService: string,
+    readonly title: string,
+    readonly url: string,
+    readonly version: string,
+}
 
 export interface ISecurityScheme extends ISystemAttributes {
     readonly apiKeyLocation: string,

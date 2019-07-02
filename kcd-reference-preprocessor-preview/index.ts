@@ -1,24 +1,25 @@
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
 import { storeReferenceDataToBlobStorage } from '../shared/external/blobManager';
 import { Configuration } from '../shared/external/configuration';
-import { getDeliveryClient } from '../shared/external/kenticoCloudClient';
+import { getPreviewDeliveryClient } from '../shared/external/kenticoCloudClient';
 import { Operation } from '../shared/external/models';
 import { resolveItemInRichText } from '../shared/external/richTextResolver';
 import { ZapiSpecification } from '../shared/models/zapi_specification';
 import { getProcessedData } from '../shared/processing/getProcessedData';
 import { IPreprocessedData } from '../shared/types/dataModels';
 
-const operation = Operation.Initialize;
+const operation = Operation.Preview;
 
 const httpTrigger: AzureFunction = async (context: Context, req: HttpRequest): Promise<void> => {
     try {
         Configuration.set(req.query.isTest === 'enabled');
 
-        const response = await getDeliveryClient()
+        const response = await getPreviewDeliveryClient()
             .items<ZapiSpecification>()
             .type('zapi_specification')
             .queryConfig({
                 richTextResolver: resolveItemInRichText,
+                usePreviewMode: true,
             })
             .depthParameter(9)
             .getPromise();

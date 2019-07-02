@@ -19,11 +19,11 @@ import {
     ICodeSample,
     ICodeSamples,
     IContact,
-    IDataObject,
     IImage,
     ILicense,
     IParameter,
     IPathOperation,
+    IPreprocessedData,
     IRequestBody,
     IResponse,
     ISchemas,
@@ -36,6 +36,7 @@ import {
 import {
     getFromLinkedItems,
     insertDataArrayIntoBlob,
+    insertDataIntoBlob,
     processLinkedItemsElement,
     processMultipleChoiceElement,
     processTaxonomyElement,
@@ -43,23 +44,6 @@ import {
 import { processItemsOfType, processSharedRichTextComponents } from './getProcessedData';
 import { getSchemaDataFromLinkedItemElement, getSchemaDataFromRichTextElement } from './schemaGetters';
 import RichTextField = Fields.RichTextField;
-
-export const getApiSpecificationData = (item: ZapiSpecification): IZapiSpecification => ({
-    apiReference: processTaxonomyElement(item.apiReference),
-    categories: processLinkedItemsElement(item.categories),
-    codename: item.system.codename,
-    contact: processLinkedItemsElement(item.contact),
-    description: item.description.getHtml(),
-    id: item.system.id,
-    license: processLinkedItemsElement(item.license),
-    pathOperations: processLinkedItemsElement(item.pathOperations),
-    security: processLinkedItemsElement(item.security),
-    servers: item.servers.getHtml(),
-    termsOfService: item.termsOfService.value,
-    title: item.title.value,
-    url: item.url.value,
-    version: item.version.value,
-});
 
 export const getWrappedData = <T extends ISystemAttributes>(dataObject: T, item: ContentItem): IWrappedData<T> => ({
     codename: item.system.codename,
@@ -70,6 +54,58 @@ export const getSystemProperties = (item: ContentItem): ISystemAttributes => ({
     contentType: item.system.type,
     id: item.system.id,
 });
+
+export const getApiSpecificationData = (item: ZapiSpecification, dataBlob: IPreprocessedData, linkedItems: ContentItem[]): IWrappedData<IZapiSpecification> => {
+    processItemsOfType<ICategory>(
+        getCategoriesData,
+        insertDataArrayIntoBlob)
+    (item.categories, dataBlob, linkedItems);
+
+    processItemsOfType<IContact>(
+        getContactData,
+        insertDataIntoBlob)
+    (item.contact, dataBlob, linkedItems);
+
+    processItemsOfType<ILicense>(
+        getLicenseData,
+        insertDataIntoBlob)
+    (item.license, dataBlob, linkedItems);
+
+    processItemsOfType<IPathOperation>(
+        getPathOperationsData,
+        insertDataArrayIntoBlob)
+    (item.pathOperations, dataBlob, linkedItems);
+
+    processItemsOfType<ISecurityScheme>(
+        getSecuritySchemeData,
+        insertDataIntoBlob)
+    (item.security, dataBlob);
+
+    processItemsOfType<IServer>(
+        getServersData,
+        insertDataArrayIntoBlob)
+    (item.servers as RichTextField, dataBlob, linkedItems);
+
+    processSharedRichTextComponents(item.description, dataBlob, linkedItems);
+
+    const dataObject: IZapiSpecification = {
+        ...getSystemProperties(item),
+        apiReference: processTaxonomyElement(item.apiReference),
+        categories: processLinkedItemsElement(item.categories),
+        contact: processLinkedItemsElement(item.contact),
+        description: item.description.getHtml(),
+        license: processLinkedItemsElement(item.license),
+        pathOperations: processLinkedItemsElement(item.pathOperations),
+        security: processLinkedItemsElement(item.security),
+        servers: item.servers.getHtml(),
+        termsOfService: item.termsOfService.value,
+        title: item.title.value,
+        url: item.url.value,
+        version: item.version.value,
+    };
+
+    return getWrappedData<IZapiSpecification>(dataObject, item);
+};
 
 export const getSecuritySchemeData = (items: ZapiSecurityScheme[]): IWrappedData<ISecurityScheme> => {
     if (items.length === 0) {
@@ -121,7 +157,7 @@ export const getContactData = (items: ZapiContact[]): IWrappedData<IContact> => 
     }
 };
 
-export const getCategoriesData = (items: ZapiCategory[], dataBlob: IDataObject, linkedItems: ContentItem[]): Array<IWrappedData<ICategory>> => {
+export const getCategoriesData = (items: ZapiCategory[], dataBlob: IPreprocessedData, linkedItems: ContentItem[]): Array<IWrappedData<ICategory>> => {
     const categories = [];
     items.map((category: ZapiCategory) => {
         processSharedRichTextComponents(category.description, dataBlob, linkedItems);
@@ -139,7 +175,7 @@ export const getCategoriesData = (items: ZapiCategory[], dataBlob: IDataObject, 
     return categories;
 };
 
-export const getPathOperationsData = (items: ZapiPathOperation[], dataBlob: IDataObject, linkedItems: ContentItem[]): Array<IWrappedData<IPathOperation>> => {
+export const getPathOperationsData = (items: ZapiPathOperation[], dataBlob: IPreprocessedData, linkedItems: ContentItem[]): Array<IWrappedData<IPathOperation>> => {
     const paths = [];
 
     items.map((pathOperation: ZapiPathOperation) => {
@@ -181,7 +217,7 @@ export const getPathOperationsData = (items: ZapiPathOperation[], dataBlob: IDat
     return paths;
 };
 
-export const getServersData = (field: RichTextField, dataBlob: IDataObject, linkedItems: ContentItem[]): Array<IWrappedData<IServer>> => {
+export const getServersData = (field: RichTextField, dataBlob: IPreprocessedData, linkedItems: ContentItem[]): Array<IWrappedData<IServer>> => {
     const servers = [];
 
     field.linkedItemCodenames.map((codename: string) => {
@@ -198,7 +234,7 @@ export const getServersData = (field: RichTextField, dataBlob: IDataObject, link
     return servers;
 };
 
-export const getParametersData = (items: ZapiParameter[], dataBlob: IDataObject, linkedItems: ContentItem[]): Array<IWrappedData<IParameter>> => {
+export const getParametersData = (items: ZapiParameter[], dataBlob: IPreprocessedData, linkedItems: ContentItem[]): Array<IWrappedData<IParameter>> => {
     const parameters = [];
 
     items.map((parameter: ZapiParameter) => {
@@ -228,7 +264,7 @@ export const getParametersData = (items: ZapiParameter[], dataBlob: IDataObject,
     return parameters;
 };
 
-export const getRequestBodiesData = (field: RichTextField, dataBlob: IDataObject, linkedItems: ContentItem[]): Array<IWrappedData<IRequestBody>> => {
+export const getRequestBodiesData = (field: RichTextField, dataBlob: IPreprocessedData, linkedItems: ContentItem[]): Array<IWrappedData<IRequestBody>> => {
     const requestBodies = [];
 
     field.linkedItemCodenames.map((codename: string) => {
@@ -256,7 +292,7 @@ export const getRequestBodiesData = (field: RichTextField, dataBlob: IDataObject
     return requestBodies;
 };
 
-export const getResponsesData = (field: RichTextField, dataBlob: IDataObject, linkedItems: ContentItem[]): Array<IWrappedData<IResponse>> => {
+export const getResponsesData = (field: RichTextField, dataBlob: IPreprocessedData, linkedItems: ContentItem[]): Array<IWrappedData<IResponse>> => {
     const responses = [];
 
     field.linkedItemCodenames.map((codename: string) => {
@@ -290,7 +326,7 @@ export const getResponsesData = (field: RichTextField, dataBlob: IDataObject, li
     return responses;
 };
 
-export const getImagesData = (field: RichTextField, dataBlob: IDataObject, linkedItems: ContentItem[]): Array<IWrappedData<IImage>> => {
+export const getImagesData = (field: RichTextField, dataBlob: IPreprocessedData, linkedItems: ContentItem[]): Array<IWrappedData<IImage>> => {
     const images: Array<IWrappedData<IImage>> = [];
     field.linkedItemCodenames.map((codename: string) => {
         const linkedItem = getFromLinkedItems<Image>(codename, linkedItems);
@@ -312,7 +348,7 @@ export const getImagesData = (field: RichTextField, dataBlob: IDataObject, linke
     return images;
 };
 
-export const getCalloutsData = (field: RichTextField, dataBlob: IDataObject, linkedItems: ContentItem[]): Array<IWrappedData<ICallout>> => {
+export const getCalloutsData = (field: RichTextField, dataBlob: IPreprocessedData, linkedItems: ContentItem[]): Array<IWrappedData<ICallout>> => {
     const callouts: Array<IWrappedData<ICallout>> = [];
     field.linkedItemCodenames.map((codename: string) => {
         const linkedItem = getFromLinkedItems<Callout>(codename, linkedItems);
@@ -330,7 +366,7 @@ export const getCalloutsData = (field: RichTextField, dataBlob: IDataObject, lin
     return callouts;
 };
 
-export const getSampleItemsData = (field: RichTextField, dataBlob: IDataObject, linkedItems: ContentItem[]): Array<IWrappedData<ICodeSample>> => {
+export const getSampleItemsData = (field: RichTextField, dataBlob: IPreprocessedData, linkedItems: ContentItem[]): Array<IWrappedData<ICodeSample>> => {
     const codeSampleItems = [];
 
     field.linkedItemCodenames.map((codename: string) => {
@@ -350,7 +386,7 @@ export const getSampleItemsData = (field: RichTextField, dataBlob: IDataObject, 
     return codeSampleItems;
 };
 
-export const getSamplesItemsData = (field: RichTextField, dataBlob: IDataObject, linkedItems: ContentItem[]): Array<IWrappedData<ICodeSamples>> => {
+export const getSamplesItemsData = (field: RichTextField, dataBlob: IPreprocessedData, linkedItems: ContentItem[]): Array<IWrappedData<ICodeSamples>> => {
     const codeSamplesItems = [];
 
     field.linkedItemCodenames.map((codename: string) => {
