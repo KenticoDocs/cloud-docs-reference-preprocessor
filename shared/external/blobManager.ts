@@ -1,9 +1,10 @@
-import { IBlobObject } from '../types/dataModels';
+import { IPreprocessedData } from '../types/dataModels';
 import { Configuration } from './configuration';
+import { Operation } from './models';
 
 const BlobStorage = require('@azure/storage-blob');
 
-export const storeReferenceDataToBlobStorage = async (blobContent: IBlobObject, isPreview: boolean): Promise<void> => {
+export const storeReferenceDataToBlobStorage = async (dataBlob: IPreprocessedData, operation: Operation): Promise<void> => {
     const sharedKeyCredential = new BlobStorage.SharedKeyCredential(
         Configuration.keys.azureStorageAccountName,
         Configuration.keys.azureStorageKey,
@@ -14,18 +15,30 @@ export const storeReferenceDataToBlobStorage = async (blobContent: IBlobObject, 
         pipeline,
     );
     const containerUrl = BlobStorage.ContainerURL.fromServiceURL(serviceUrl, Configuration.keys.azureContainerName);
-    const blobId = blobContent.data.api_specification.id +
-        (isPreview
-            ? '-preview'
-            : '');
+    const blobId = getBlobId(dataBlob.zapiSpecificationCodename, operation);
     const blobURL = BlobStorage.BlobURL.fromContainerURL(containerUrl, blobId);
     const blockBlobURL = BlobStorage.BlockBlobURL.fromBlobURL(blobURL);
 
-    const blob = JSON.stringify(blobContent);
+    const blob = JSON.stringify(dataBlob);
 
     await blockBlobURL.upload(
         BlobStorage.Aborter.none,
         blob,
         blob.length,
     );
+};
+
+const getBlobId = (codename: string, operation: Operation) => {
+    switch (operation) {
+        case Operation.Update:
+        case Operation.Initialize: {
+            return codename;
+        }
+        case Operation.Preview: {
+            return `${codename}-preview`;
+        }
+        default: {
+            return '';
+        }
+    }
 };

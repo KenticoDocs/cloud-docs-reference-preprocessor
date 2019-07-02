@@ -1,6 +1,7 @@
 import { ContentItem, Fields } from 'kentico-cloud-delivery';
 import { ZapiDiscriminator } from '../models/zapi_discriminator';
 import { ZapiDiscriminatorMapItem } from '../models/zapi_discriminator__map_item';
+import { ZapiPropertyReferencingASchema } from '../models/zapi_property_referencing_a_schema';
 import { ZapiSchemaAllof } from '../models/zapi_schema__allof';
 import { ZapiSchemaAnyof } from '../models/zapi_schema__anyof';
 import { ZapiSchemaArray } from '../models/zapi_schema__array';
@@ -11,9 +12,9 @@ import { ZapiSchemaObject } from '../models/zapi_schema__object';
 import { ZapiSchemaOneof } from '../models/zapi_schema__oneof';
 import { ZapiSchemaString } from '../models/zapi_schema__string';
 import {
-    IDataObject,
     IDiscriminator,
     IDiscriminatorMapItem,
+    IPreprocessedData,
     IPropertyReferencingASchema,
     ISchemaAllOf,
     ISchemaAnyOf,
@@ -39,10 +40,9 @@ import {
 } from '../utils/helpers';
 import { getSystemProperties, getWrappedData } from './dataGetters';
 import { processItemsOfType } from './getProcessedData';
-import { ZapiPropertyReferencingASchema } from '../models/zapi_property_referencing_a_schema';
 import RichTextField = Fields.RichTextField;
 
-export const getSchemaDataFromLinkedItemElement = (items: ZapiSchemas[], dataBlob: IDataObject, linkedItems: ContentItem[]): Array<IWrappedData<ISchemas>> => {
+export const getSchemaDataFromLinkedItemElement = (items: ZapiSchemas[], dataBlob: IPreprocessedData, linkedItems: ContentItem[]): Array<IWrappedData<ISchemas>> => {
     const schemas = [];
 
     items.map((schema: ZapiSchemas) => {
@@ -52,7 +52,7 @@ export const getSchemaDataFromLinkedItemElement = (items: ZapiSchemas[], dataBlo
     return schemas;
 };
 
-export const getSchemaDataFromRichTextElement = (field: RichTextField, dataBlob: IDataObject, linkedItems: ContentItem[]): Array<IWrappedData<ISchemaArray>> => {
+export const getSchemaDataFromRichTextElement = (field: RichTextField, dataBlob: IPreprocessedData, linkedItems: ContentItem[]): Array<IWrappedData<ISchemaArray>> => {
     const schemas = [];
 
     field.linkedItemCodenames.map((codename: string) => {
@@ -64,7 +64,7 @@ export const getSchemaDataFromRichTextElement = (field: RichTextField, dataBlob:
     return schemas;
 };
 
-const getSchemaData = (schema: ZapiSchemas, dataBlob: IDataObject, linkedItems: ContentItem[]): IWrappedData<ISchemas> | undefined => {
+const getSchemaData = (schema: ZapiSchemas, dataBlob: IPreprocessedData, linkedItems: ContentItem[]): IWrappedData<ISchemas> | undefined => {
     switch (schema.system.type) {
         case 'zapi_schema__array': {
             processItemsOfType<ISchemas>(
@@ -268,7 +268,7 @@ const getSchemaObjectPropertyElements = (item: ContentItem): ISchemaObjectProper
     writeonly: processMultipleChoiceElement(item.commonSchemaObjectPropertyElementsWriteonly),
 });
 
-export const getDiscriminatorsData = (field: RichTextField, dataBlob: IDataObject, linkedItems: ContentItem[]): Array<IWrappedData<IDiscriminator>> => {
+export const getDiscriminatorsData = (field: RichTextField, dataBlob: IPreprocessedData, linkedItems: ContentItem[]): Array<IWrappedData<IDiscriminator>> => {
     const discriminators = [];
 
     field.linkedItemCodenames.map((codename: string) => {
@@ -293,7 +293,7 @@ export const getDiscriminatorsData = (field: RichTextField, dataBlob: IDataObjec
     return discriminators;
 };
 
-export const getDiscriminatorMapItemsData = (field: RichTextField, dataBlob: IDataObject, linkedItems: ContentItem[]): Array<IWrappedData<IDiscriminatorMapItem>> => {
+export const getDiscriminatorMapItemsData = (field: RichTextField, dataBlob: IPreprocessedData, linkedItems: ContentItem[]): Array<IWrappedData<IDiscriminatorMapItem>> => {
     const discriminators = [];
 
     field.linkedItemCodenames.map((codename: string) => {
@@ -318,7 +318,7 @@ export const getDiscriminatorMapItemsData = (field: RichTextField, dataBlob: IDa
     return discriminators;
 };
 
-export const getPropertyReferencingASchemaData = (field: RichTextField, dataBlob: IDataObject, linkedItems: ContentItem[]): Array<IWrappedData<IPropertyReferencingASchema>> => {
+export const getPropertyReferencingASchemaData = (field: RichTextField, dataBlob: IPreprocessedData, linkedItems: ContentItem[]): Array<IWrappedData<IPropertyReferencingASchema>> => {
     const discriminators = [];
 
     field.linkedItemCodenames.map((codename: string) => {

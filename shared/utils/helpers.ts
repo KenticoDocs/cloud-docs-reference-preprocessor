@@ -1,5 +1,5 @@
 import { ContentItem, FieldModels, Fields } from 'kentico-cloud-delivery';
-import { IDataObject, IWrappedData } from '../types/dataModels';
+import { IPreprocessedData, IWrappedData } from '../types/dataModels';
 
 export const processLinkedItemsElement = (linkedItemsElement: ContentItem[]): string[] =>
     linkedItemsElement.map((contentItem: ContentItem) => contentItem.system.codename);
@@ -20,13 +20,13 @@ export const getFromLinkedItems = <T extends ContentItem>(codename: string, link
     }
 };
 
-export const insertDataIntoBlob = (item: IWrappedData<any>, dataBlob: IDataObject): void => {
+export const insertDataIntoBlob = (item: IWrappedData<any>, dataBlob: IPreprocessedData): void => {
     if (item && item.codename && item.data) {
         dataBlob.items[item.codename] = item.data;
     }
 };
 
-export const insertDataArrayIntoBlob = (item: Array<IWrappedData<any>>, dataBlob: IDataObject): void => {
+export const insertDataArrayIntoBlob = (item: Array<IWrappedData<any>>, dataBlob: IPreprocessedData): void => {
     for (const dataObject of item) {
         insertDataIntoBlob(dataObject, dataBlob);
     }
