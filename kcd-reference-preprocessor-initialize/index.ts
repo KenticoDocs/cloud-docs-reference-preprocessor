@@ -1,11 +1,15 @@
-import { AzureFunction, Context, HttpRequest } from '@azure/functions';
+import {
+    AzureFunction,
+    Context,
+    HttpRequest,
+} from '@azure/functions';
 import { storeReferenceDataToBlobStorage } from '../shared/external/blobManager';
 import { Configuration } from '../shared/external/configuration';
 import { getDeliveryClient } from '../shared/external/kenticoCloudClient';
 import { Operation } from '../shared/external/models';
 import { resolveItemInRichText } from '../shared/external/richTextResolver';
 import { ZapiSpecification } from '../shared/models/zapi_specification';
-import { getProcessedData } from '../shared/processing/getProcessedData';
+import { DataProcessor } from '../shared/processing/getProcessedData';
 import { IPreprocessedData } from '../shared/types/dataModels';
 
 const operation = Operation.Initialize;
@@ -23,7 +27,8 @@ const httpTrigger: AzureFunction = async (context: Context, req: HttpRequest): P
             .depthParameter(9)
             .getPromise();
 
-        const data = getProcessedData(
+        const dataProcessor = new DataProcessor();
+        const data = dataProcessor.getProcessedData(
             response.items,
             response.linkedItems,
             operation);

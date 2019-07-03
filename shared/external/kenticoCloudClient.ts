@@ -1,4 +1,8 @@
-import { DeliveryClient, TypeResolver } from 'kentico-cloud-delivery';
+import {
+    DeliveryClient,
+    IDeliveryClient,
+    TypeResolver,
+} from 'kentico-cloud-delivery';
 import { Callout } from '../models/callout';
 import { CodeSample } from '../models/code_sample';
 import { CodeSamples } from '../models/code_samples';
@@ -28,10 +32,24 @@ import { ZapiServer } from '../models/zapi_server';
 import { ZapiSpecification } from '../models/zapi_specification';
 import { Configuration } from './configuration';
 
+export const getDeliveryClient = (): IDeliveryClient => new DeliveryClient({
+    globalHeaders,
+    projectId: Configuration.keys.kenticoProjectId,
+    securedApiKey: Configuration.keys.securedApiKey,
+    typeResolvers,
+});
+
+export const getPreviewDeliveryClient = (): IDeliveryClient => new DeliveryClient({
+    globalHeaders,
+    previewApiKey: Configuration.keys.previewApiKey,
+    projectId: Configuration.keys.kenticoProjectId,
+    typeResolvers,
+});
+
 const typeResolvers = [
-    new TypeResolver('callout', () => new CodeSample()),
-    new TypeResolver('code_sample', () => new CodeSamples()),
-    new TypeResolver('code_samples', () => new Callout()),
+    new TypeResolver('callout', () => new Callout()),
+    new TypeResolver('code_sample', () => new CodeSample()),
+    new TypeResolver('code_samples', () => new CodeSamples()),
     new TypeResolver('content_chunk', () => new ContentChunk()),
     new TypeResolver('image', () => new Image()),
     new TypeResolver('zapi__category', () => new ZapiCategory()),
@@ -64,17 +82,3 @@ const globalHeaders = [
         value: 'true',
     },
 ];
-
-export const getDeliveryClient = () => new DeliveryClient({
-    globalHeaders,
-    projectId: Configuration.keys.kenticoProjectId,
-    securedApiKey: Configuration.keys.securedApiKey,
-    typeResolvers,
-});
-
-export const getPreviewDeliveryClient = () => new DeliveryClient({
-    globalHeaders,
-    previewApiKey: Configuration.keys.previewApiKey,
-    projectId: Configuration.keys.kenticoProjectId,
-    typeResolvers,
-});

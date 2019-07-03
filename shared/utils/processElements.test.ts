@@ -4,7 +4,7 @@ import {
     processLinkedItemsElement,
     processMultipleChoiceElement,
     processTaxonomyElement,
-} from './helpers';
+} from './processElements';
 
 const date = new Date();
 

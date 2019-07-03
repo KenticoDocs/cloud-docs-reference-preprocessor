@@ -1,5 +1,8 @@
-import { ContentItem, FieldModels, Fields } from 'kentico-cloud-delivery';
-import { IPreprocessedData, IWrappedData } from '../types/dataModels';
+import {
+    ContentItem,
+    FieldModels,
+    Fields,
+} from 'kentico-cloud-delivery';
 
 export const processLinkedItemsElement = (linkedItemsElement: ContentItem[]): string[] =>
     linkedItemsElement.map((contentItem: ContentItem) => contentItem.system.codename);
@@ -17,17 +20,5 @@ export const getFromLinkedItems = <T extends ContentItem>(codename: string, link
         return foundItem;
     } else {
         throw new Error(`Item with codename ${codename} not found in linked items.`);
-    }
-};
-
-export const insertDataIntoBlob = (item: IWrappedData<any>, dataBlob: IPreprocessedData): void => {
-    if (item && item.codename && item.data) {
-        dataBlob.items[item.codename] = item.data;
-    }
-};
-
-export const insertDataArrayIntoBlob = (item: Array<IWrappedData<any>>, dataBlob: IPreprocessedData): void => {
-    for (const dataObject of item) {
-        insertDataIntoBlob(dataObject, dataBlob);
     }
 };
