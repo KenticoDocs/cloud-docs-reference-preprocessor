@@ -1,12 +1,19 @@
-import { AzureFunction, Context } from '@azure/functions';
+import {
+    AzureFunction,
+    Context,
+} from '@azure/functions';
 import { ContentItem } from 'kentico-cloud-delivery';
 import { storeReferenceDataToBlobStorage } from '../shared/external/blobManager';
 import { Configuration } from '../shared/external/configuration';
 import { getDeliveryClient } from '../shared/external/kenticoCloudClient';
-import { IEventGridEvent, IWebhookContentItem, Operation } from '../shared/external/models';
+import {
+    IEventGridEvent,
+    IWebhookContentItem,
+    Operation,
+} from '../shared/external/models';
 import { resolveItemInRichText } from '../shared/external/richTextResolver';
 import { ZapiSpecification } from '../shared/models/zapi_specification';
-import { getProcessedData } from '../shared/processing/getProcessedData';
+import { DataProcessor } from '../shared/processing/getProcessedData';
 import { IPreprocessedData } from '../shared/types/dataModels';
 import { getRootCodenamesOfSingleItem } from '../shared/utils/rootItemsGetter';
 
@@ -26,7 +33,8 @@ const eventGridTrigger: AzureFunction = async (context: Context, eventGridEvent:
                 })
                 .getPromise()
                 .then(async (response) => {
-                    const data = getProcessedData(
+                    const dataProcessor = new DataProcessor();
+                    const data = dataProcessor.getProcessedData(
                         [response.item],
                         response.linkedItems,
                         operation);

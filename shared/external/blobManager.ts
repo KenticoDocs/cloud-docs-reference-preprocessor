@@ -4,7 +4,10 @@ import { Operation } from './models';
 
 const BlobStorage = require('@azure/storage-blob');
 
-export const storeReferenceDataToBlobStorage = async (dataBlob: IPreprocessedData, operation: Operation): Promise<void> => {
+export const storeReferenceDataToBlobStorage = async (
+    dataBlob: IPreprocessedData,
+    operation: Operation,
+): Promise<void> => {
     const sharedKeyCredential = new BlobStorage.SharedKeyCredential(
         Configuration.keys.azureStorageAccountName,
         Configuration.keys.azureStorageKey,
@@ -28,7 +31,7 @@ export const storeReferenceDataToBlobStorage = async (dataBlob: IPreprocessedDat
     );
 };
 
-const getBlobId = (codename: string, operation: Operation) => {
+const getBlobId = (codename: string, operation: Operation): string => {
     switch (operation) {
         case Operation.Update:
         case Operation.Initialize: {

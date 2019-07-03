@@ -10,7 +10,7 @@ interface IKeys {
 export class Configuration {
     public static keys = {} as IKeys;
 
-    public static set = (isTest: boolean) => {
+    public static set = (isTest: boolean): void => {
         Configuration.keys = {
             azureContainerName: Configuration.getEnvironmentVariable('Azure.ContainerName', isTest),
             azureStorageAccountName: Configuration.getEnvironmentVariable('Azure.StorageAccountName', isTest),

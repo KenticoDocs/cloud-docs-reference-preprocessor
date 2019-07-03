@@ -21,12 +21,10 @@ export interface ISystemAttributes {
     readonly contentType: string,
 }
 
-export interface IWrappedData<T> {
+export interface IWrappedItem<T> {
     readonly codename: string,
     readonly data: T,
 }
-
-export type IDataToInsert<T> = IWrappedData<T> | Array<IWrappedData<T>>;
 
 export interface IZapiSpecification extends ISystemAttributes {
     readonly apiReference: string[],
