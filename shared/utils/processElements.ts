@@ -13,8 +13,11 @@ export const processTaxonomyElement = (taxonomyElement: Fields.TaxonomyField): s
 export const processMultipleChoiceElement = (multipleChoiceElement: Fields.MultipleChoiceField): string[] =>
     multipleChoiceElement.options.map((option: FieldModels.MultipleChoiceOption) => option.name);
 
-export const getFromLinkedItems = <T extends ContentItem>(codename: string, linkedItems: ContentItem[]): T => {
-    const foundItem = linkedItems.find((item: T) => item.system.codename === codename) as T;
+export const getFromLinkedItems = <ItemToFind extends ContentItem>(
+    codename: string,
+    linkedItems: ContentItem[],
+): ItemToFind => {
+    const foundItem = linkedItems.find((item) => item.system.codename === codename) as ItemToFind;
 
     if (foundItem) {
         return foundItem;

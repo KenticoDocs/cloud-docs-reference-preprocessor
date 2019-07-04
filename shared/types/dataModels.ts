@@ -12,7 +12,7 @@ import { ZapiSchemaString } from '../models/zapi_schema__string';
 
 export interface IPreprocessedData {
     readonly zapiSpecificationCodename: string,
-    readonly items: any,
+    readonly items: unknown,
     readonly operation: Operation,
 }
 
@@ -21,9 +21,9 @@ export interface ISystemAttributes {
     readonly contentType: string,
 }
 
-export interface IWrappedItem<T> {
+export interface IWrappedItem<Data extends ISystemAttributes> {
     readonly codename: string,
-    readonly data: T,
+    readonly data: Data,
 }
 
 export interface IZapiSpecification extends ISystemAttributes {

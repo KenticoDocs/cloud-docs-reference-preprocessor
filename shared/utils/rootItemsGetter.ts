@@ -1,4 +1,7 @@
-import { ContentItem } from 'kentico-cloud-delivery';
+import {
+    ContentItem,
+    FieldType,
+} from 'kentico-cloud-delivery';
 import { IWebhookContentItem } from '../external/models';
 
 interface IContext {
@@ -8,15 +11,19 @@ interface IContext {
     readonly allItems: ContentItem[],
 }
 
-export const getRootCodenamesOfSingleItem = (item: IWebhookContentItem, allItems: ContentItem[]): string[] => {
-    if (item.type === 'zapi_specification') {
+export const getRootCodenamesOfSingleItem = (
+    item: IWebhookContentItem,
+    allItems: ContentItem[],
+    rootItemTypes: string[],
+): string[] => {
+    if (rootItemTypes.includes(item.type)) {
         return [item.codename];
     }
 
-    return getRootParents(item.codename, allItems);
+    return getRootParents(item.codename, allItems, rootItemTypes);
 };
 
-const getRootParents = (codename: string, allItems: ContentItem[]): string[] => {
+const getRootParents = (codename: string, allItems: ContentItem[], rootItemTypes: string[]): string[] => {
     let itemsToVisit = getDirectParents(codename, allItems);
     const visitedItems = [];
     const rootItemCodenames = [];
@@ -25,7 +32,15 @@ const getRootParents = (codename: string, allItems: ContentItem[]): string[] => 
         const newItemsToVisit = [];
 
         itemsToVisit.forEach((item) =>
-            processItem(item, { visitedItems, rootItemCodenames, newItemsToVisit, allItems }));
+            processItem(
+                item,
+                rootItemTypes,
+                {
+                    allItems,
+                    newItemsToVisit,
+                    rootItemCodenames,
+                    visitedItems,
+                }));
 
         itemsToVisit = newItemsToVisit;
     }
@@ -33,7 +48,7 @@ const getRootParents = (codename: string, allItems: ContentItem[]): string[] => 
     return rootItemCodenames;
 };
 
-const processItem = (itemToProcess: ContentItem, context: IContext): void => {
+const processItem = (itemToProcess: ContentItem, rootItemTypes: string[], context: IContext): void => {
     const itemCodename = itemToProcess.system.codename;
 
     if (context.visitedItems.includes(itemCodename)) {
@@ -41,7 +56,7 @@ const processItem = (itemToProcess: ContentItem, context: IContext): void => {
     }
     context.visitedItems.push(itemCodename);
 
-    if (itemToProcess.system.type === 'zapi_specification') {
+    if (rootItemTypes.includes(itemToProcess.system.type)) {
         context.rootItemCodenames.push(itemCodename);
     } else {
         const parents = getDirectParents(itemCodename, context.allItems);
@@ -50,37 +65,29 @@ const processItem = (itemToProcess: ContentItem, context: IContext): void => {
 };
 
 const getDirectParents = (codename: string, allItems: ContentItem[]): ContentItem[] =>
-    allItems.filter((item) =>
-        checkAllItemsInRichTextFields(item, codename) ||
-        checkAllItemsInLinkedItemsFields(item, codename));
+    allItems.filter((item) => checkAllItemsInElements(item, codename));
 
-const checkAllItemsInRichTextFields = (item: ContentItem, codename: string): boolean => {
-    let isParent = false;
+const checkAllItemsInElements = (parentItem: ContentItem, codename: string): boolean => {
+    const itemElements = parentItem.elements;
 
-    for (const key in item) {
-        if (item.hasOwnProperty(key)) {
-            const element = item[key];
-            if (element.type && element.type === 'rich_text') {
-                isParent = isParent || element.linkedItemCodenames.includes(codename);
-            }
-        }
-    }
+    const isInRichTextElement = isInElement(parentItem, codename, FieldType.RichText);
+    const isInLinkedItemsElement =
+        itemElements
+            ? isInElement(itemElements as ContentItem, codename, FieldType.ModularContent)
+            : false;
 
-    return isParent;
+    return isInLinkedItemsElement || isInRichTextElement;
 };
 
-const checkAllItemsInLinkedItemsFields = (item: ContentItem, codename: string): boolean => {
-    const itemElements = item.elements;
-    let isParent = false;
+const isInElement = (parentItem: ContentItem, codename: string, fieldType: FieldType): boolean =>
+    Object
+        .keys(parentItem)
+        .map((key) => {
+            const element = parentItem[key];
+            const itemsInElement = element.linkedItemCodenames
+                ? element.linkedItemCodenames
+                : element.value;
 
-    for (const key in itemElements) {
-        if (itemElements.hasOwnProperty(key)) {
-            const element = itemElements[key];
-            if (element.type && element.type === 'modular_content') {
-                isParent = isParent || element.value.includes(codename);
-            }
-        }
-    }
-
-    return isParent;
-};
+            return (element.type && element.type === fieldType) && itemsInElement.includes(codename);
+        })
+        .reduce((accumulator, current) => accumulator || current, false);

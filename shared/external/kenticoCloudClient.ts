@@ -31,8 +31,23 @@ import { ZapiSecurityScheme } from '../models/zapi_security_scheme';
 import { ZapiServer } from '../models/zapi_server';
 import { ZapiSpecification } from '../models/zapi_specification';
 import { Configuration } from './configuration';
+import { resolveItemInRichText } from './richTextResolver';
+
+export const RootItemType = 'zapi_specification';
+export const DepthParameter = 20;
+
+export const getApiItems = async (deliveryClientGetter: () => IDeliveryClient): Promise<any> =>
+    deliveryClientGetter()
+        .items<ZapiSpecification>()
+        .type(RootItemType)
+        .queryConfig({
+            richTextResolver: resolveItemInRichText,
+        })
+        .depthParameter(DepthParameter)
+        .getPromise();
 
 export const getDeliveryClient = (): IDeliveryClient => new DeliveryClient({
+    enableSecuredMode: true,
     globalHeaders,
     projectId: Configuration.keys.kenticoProjectId,
     securedApiKey: Configuration.keys.securedApiKey,
@@ -40,11 +55,19 @@ export const getDeliveryClient = (): IDeliveryClient => new DeliveryClient({
 });
 
 export const getPreviewDeliveryClient = (): IDeliveryClient => new DeliveryClient({
+    enablePreviewMode: true,
     globalHeaders,
     previewApiKey: Configuration.keys.previewApiKey,
     projectId: Configuration.keys.kenticoProjectId,
     typeResolvers,
 });
+
+const globalHeaders = [
+    {
+        header: 'X-KC-Wait-For-Loading-New-Content',
+        value: 'true',
+    },
+];
 
 const typeResolvers = [
     new TypeResolver('callout', () => new Callout()),
@@ -74,11 +97,4 @@ const typeResolvers = [
     new TypeResolver('zapi_security_scheme', () => new ZapiSecurityScheme()),
     new TypeResolver('zapi_server', () => new ZapiServer()),
     new TypeResolver('zapi_specification', () => new ZapiSpecification()),
-];
-
-const globalHeaders = [
-    {
-        header: 'X-KC-Wait-For-Loading-New-Content',
-        value: 'true',
-    },
 ];
