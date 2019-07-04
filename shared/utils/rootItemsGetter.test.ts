@@ -1,5 +1,6 @@
 import { getRootCodenamesOfSingleItem } from './rootItemsGetter';
 
+const rootItemType = 'root_item_codename';
 const allItems = [{
     content: {
         linkedItemCodenames: [],
@@ -26,7 +27,7 @@ const allItems = [{
     },
     system: {
         codename: 'content_management_api',
-        type: 'zapi_specification',
+        type: rootItemType,
     },
 }, {
     description: {
@@ -35,7 +36,7 @@ const allItems = [{
     },
     system: {
         codename: 'delivery_api',
-        type: 'zapi_specification',
+        type: rootItemType,
     },
 }];
 
@@ -66,7 +67,7 @@ const allItemsWithCodeSamples = [{
     },
     system: {
         codename: 'delivery_api',
-        type: 'zapi_specification',
+        type: rootItemType,
     },
 }];
 
@@ -79,7 +80,7 @@ describe('getRootCodenamesOfSingleItem', () => {
         };
         const expectedResult = ['delivery_api', 'content_management_api'];
 
-        const actualResult = getRootCodenamesOfSingleItem(item, allItems as any);
+        const actualResult = getRootCodenamesOfSingleItem(item, allItems as any, [rootItemType]);
 
         expect(actualResult).toEqual(expectedResult);
     });
@@ -92,7 +93,7 @@ describe('getRootCodenamesOfSingleItem', () => {
         };
         const expectedResult = ['delivery_api'];
 
-        const actualResult = getRootCodenamesOfSingleItem(item, allItemsWithCodeSamples as any);
+        const actualResult = getRootCodenamesOfSingleItem(item, allItemsWithCodeSamples as any, [rootItemType]);
 
         expect(actualResult).toEqual(expectedResult);
     });
@@ -105,7 +106,7 @@ describe('getRootCodenamesOfSingleItem', () => {
         };
         const expectedResult = [];
 
-        const actualResult = getRootCodenamesOfSingleItem(item, allItemsWithCodeSamples as any);
+        const actualResult = getRootCodenamesOfSingleItem(item, allItemsWithCodeSamples as any, [rootItemType]);
 
         expect(actualResult).toEqual(expectedResult);
     });

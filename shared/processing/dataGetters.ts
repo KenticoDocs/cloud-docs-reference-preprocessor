@@ -21,47 +21,50 @@ import {
     IPreprocessedData,
     IRequestBody,
     IResponse,
-    ISchemas,
     ISecurityScheme,
     IServer,
-    IWrappedItem,
     IZapiSpecification,
 } from '../types/dataModels';
 import {
-    getFromLinkedItems,
     processLinkedItemsElement,
     processMultipleChoiceElement,
     processTaxonomyElement,
 } from '../utils/processElements';
 import {
+    getItemsDataFromLinkedItems,
+    getItemsDataFromRichText,
     getSystemProperties,
-    getWrappedData,
     processItemsInto,
 } from './common';
+import { processDescriptionComponents } from './descriptionItemGetters';
 import {
-    getDescriptionItemsData,
-    IDescriptionComponents,
-} from './descriptionItemGetters';
-import {
-    getSchemaDataFromLinkedItemElement,
-    getSchemaDataFromRichTextElement,
+    processSchemasFromLinkedItemsElement,
+    processSchemasFromRichTextElement,
 } from './schemaGetters';
 import RichTextField = Fields.RichTextField;
 
-export const getApiSpecificationData = (
+export const processApiSpecification = (
+    items: ContentItem[],
+    dataBlob: IPreprocessedData,
+    linkedItems: ContentItem[],
+): void => processItemsInto<IZapiSpecification>
+(getItemsDataFromLinkedItems<ZapiSpecification, IZapiSpecification>(getApiSpecificationData))
+(items, dataBlob, linkedItems);
+
+const getApiSpecificationData = (
     item: ZapiSpecification,
     dataBlob: IPreprocessedData,
     linkedItems: ContentItem[],
-): Array<IWrappedItem<IZapiSpecification>> => {
-    processItemsInto<ICategory>(getCategoriesData)(item.categories, dataBlob, linkedItems);
-    processItemsInto<IContact>(getContactData)(item.contact, dataBlob, linkedItems);
-    processItemsInto<ILicense>(getLicenseData)(item.license, dataBlob, linkedItems);
-    processItemsInto<IPathOperation>(getPathOperationsData)(item.pathOperations, dataBlob, linkedItems);
-    processItemsInto<ISecurityScheme>(getSecuritySchemeData)(item.security, dataBlob);
-    processItemsInto<IServer>(getServersData)(item.servers, dataBlob, linkedItems);
-    processItemsInto<IDescriptionComponents>(getDescriptionItemsData)(item.description, dataBlob, linkedItems);
+): IZapiSpecification => {
+    processCategories(item.categories, dataBlob, linkedItems);
+    processContacts(item.contact, dataBlob, linkedItems);
+    processLicenses(item.license, dataBlob, linkedItems);
+    processPathOperations(item.pathOperations, dataBlob, linkedItems);
+    processSecuritySchemes(item.security, dataBlob, linkedItems);
+    processServers(item.servers, dataBlob, linkedItems);
+    processDescriptionComponents(item.description, dataBlob, linkedItems);
 
-    const dataObject: IZapiSpecification = {
+    return {
         ...getSystemProperties(item),
         apiReference: processTaxonomyElement(item.apiReference),
         categories: processLinkedItemsElement(item.categories),
@@ -76,244 +79,215 @@ export const getApiSpecificationData = (
         url: item.url.value,
         version: item.version.value,
     };
-
-    return [
-        getWrappedData<IZapiSpecification>(dataObject, item),
-    ];
 };
 
-export const getSecuritySchemeData = (items: ZapiSecurityScheme[]): Array<IWrappedItem<ISecurityScheme>> => {
-    if (items.length === 1) {
-        const securityScheme = items[0];
-        const dataObject: ISecurityScheme = {
-            ...getSystemProperties(securityScheme),
-            apiKeyLocation: securityScheme.apiKeyLocation.value,
-            apiKeyName: securityScheme.apiKeyName.value,
-            apiReference: processTaxonomyElement(securityScheme.apiReference),
-            bearerFormat: securityScheme.bearerFormat.value,
-            description: securityScheme.description.getHtml(),
-            name: securityScheme.name.value,
-            scheme: securityScheme.scheme.value,
-            type: processMultipleChoiceElement(securityScheme.type),
-        };
-
-        return [
-            getWrappedData<ISecurityScheme>(dataObject, securityScheme),
-        ];
-    } else {
-        return [];
-    }
-};
-
-export const getLicenseData = (items: ZapiLicense[]): Array<IWrappedItem<ILicense>> => {
-    if (items.length === 1) {
-        const licenseItem = items[0];
-        const dataObject: ILicense = {
-            ...getSystemProperties(licenseItem),
-            apiReference: processTaxonomyElement(licenseItem.apiReference),
-            name: licenseItem.name.value,
-            url: licenseItem.url.value,
-        };
-
-        return [
-            getWrappedData<ILicense>(dataObject, licenseItem),
-        ];
-    } else {
-        return [];
-    }
-};
-
-export const getContactData = (items: ZapiContact[]): Array<IWrappedItem<IContact>> => {
-    if (items.length === 1) {
-        const contactItem = items[0];
-        const dataObject: IContact = {
-            ...getSystemProperties(contactItem),
-            apiReference: processTaxonomyElement(contactItem.apiReference),
-            email: contactItem.email.value,
-            name: contactItem.name.value,
-            url: contactItem.url.value,
-        };
-
-        return [
-            getWrappedData<IContact>(dataObject, contactItem),
-        ];
-    } else {
-        return [];
-    }
-};
-
-export const getCategoriesData = (
-    items: ZapiCategory[],
+const processSecuritySchemes = (
+    items: ContentItem[],
     dataBlob: IPreprocessedData,
     linkedItems: ContentItem[],
-): Array<IWrappedItem<ICategory>> => {
-    const categories = [];
-    items.map((category: ZapiCategory) => {
-        processItemsInto<IDescriptionComponents>(getDescriptionItemsData)(category.description, dataBlob, linkedItems);
+): void => processItemsInto<ISecurityScheme>
+(getItemsDataFromLinkedItems<ZapiSecurityScheme, ISecurityScheme>(getSecuritySchemeData))
+(items, dataBlob, linkedItems);
 
-        const dataObject: ICategory = {
-            ...getSystemProperties(category),
-            apiReference: processTaxonomyElement(category.apiReference),
-            description: category.description.getHtml(),
-            name: category.name.value,
-            url: category.url.value,
-        };
+const getSecuritySchemeData = (securityScheme: ZapiSecurityScheme): ISecurityScheme => ({
+    ...getSystemProperties(securityScheme),
+    apiKeyLocation: securityScheme.apiKeyLocation.value,
+    apiKeyName: securityScheme.apiKeyName.value,
+    apiReference: processTaxonomyElement(securityScheme.apiReference),
+    bearerFormat: securityScheme.bearerFormat.value,
+    description: securityScheme.description.getHtml(),
+    name: securityScheme.name.value,
+    scheme: securityScheme.scheme.value,
+    type: processMultipleChoiceElement(securityScheme.type),
+});
 
-        categories.push(getWrappedData<ICategory>(dataObject, category));
-    });
-
-    return categories;
-};
-
-export const getPathOperationsData = (
-    items: ZapiPathOperation[],
+const processLicenses = (
+    items: ContentItem[],
     dataBlob: IPreprocessedData,
     linkedItems: ContentItem[],
-): Array<IWrappedItem<IPathOperation>> => {
-    const paths = [];
+): void => processItemsInto<ILicense>
+(getItemsDataFromLinkedItems<ZapiLicense, ILicense>(getLicenseData))
+(items, dataBlob, linkedItems);
 
-    items.map((pathOperation: ZapiPathOperation) => {
-        // Category items already processed within the zAPI Specification object
-        processItemsInto<IParameter>(getParametersData)(pathOperation.parameters, dataBlob, linkedItems);
-        processItemsInto<IRequestBody>(getRequestBodiesData)(pathOperation.requestBody, dataBlob, linkedItems);
-        processItemsInto<IResponse>(getResponsesData)(pathOperation.responses, dataBlob, linkedItems);
-        processItemsInto<IDescriptionComponents>(getDescriptionItemsData)(
-            pathOperation.description,
-            dataBlob,
-            linkedItems,
-        );
+const getLicenseData = (license: ZapiLicense): ILicense => ({
+    ...getSystemProperties(license),
+    apiReference: processTaxonomyElement(license.apiReference),
+    name: license.name.value,
+    url: license.url.value,
+});
 
-        const dataObject: IPathOperation = {
-            ...getSystemProperties(pathOperation),
-            apiReference: processTaxonomyElement(pathOperation.apiReference),
-            category: processLinkedItemsElement(pathOperation.category),
-            codeSamples: processLinkedItemsElement(pathOperation.codeSamples),
-            deprecated: processMultipleChoiceElement(pathOperation.deprecated),
-            description: pathOperation.description.getHtml(),
-            name: pathOperation.name.value,
-            parameters: processLinkedItemsElement(pathOperation.parameters),
-            path: pathOperation.path.value,
-            pathOperation: processTaxonomyElement(pathOperation.pathOperation),
-            requestBody: pathOperation.requestBody.getHtml(),
-            responses: pathOperation.responses.getHtml(),
-            url: pathOperation.url.value,
-        };
+const processContacts = (
+    items: ContentItem[],
+    dataBlob: IPreprocessedData,
+    linkedItems: ContentItem[],
+): void => processItemsInto<IContact>
+(getItemsDataFromLinkedItems<ZapiContact, IContact>(getContactData))
+(items, dataBlob, linkedItems);
 
-        paths.push(getWrappedData(dataObject, pathOperation));
-    });
+const getContactData = (contact: ZapiContact): IContact => ({
+    ...getSystemProperties(contact),
+    apiReference: processTaxonomyElement(contact.apiReference),
+    email: contact.email.value,
+    name: contact.name.value,
+    url: contact.url.value,
+});
 
-    return paths;
+const processCategories = (
+    items: ContentItem[],
+    dataBlob: IPreprocessedData,
+    linkedItems: ContentItem[],
+): void => processItemsInto<ICategory>
+(getItemsDataFromLinkedItems<ZapiCategory, ICategory>(getCategoryData))
+(items, dataBlob, linkedItems);
+
+const getCategoryData = (
+    category: ZapiCategory,
+    dataBlob: IPreprocessedData,
+    linkedItems: ContentItem[],
+): ICategory => {
+    processDescriptionComponents(category.description, dataBlob, linkedItems);
+
+    return {
+        ...getSystemProperties(category),
+        apiReference: processTaxonomyElement(category.apiReference),
+        description: category.description.getHtml(),
+        name: category.name.value,
+        url: category.url.value,
+    };
 };
 
-export const getServersData = (
+const processPathOperations = (
+    items: ContentItem[],
+    dataBlob: IPreprocessedData,
+    linkedItems: ContentItem[],
+): void => processItemsInto<IPathOperation>
+(getItemsDataFromLinkedItems<ZapiPathOperation, IPathOperation>(getPathOperationData))
+(items, dataBlob, linkedItems);
+
+const getPathOperationData = (
+    pathOperation: ZapiPathOperation,
+    dataBlob: IPreprocessedData,
+    linkedItems: ContentItem[],
+): IPathOperation => {
+    // Category items already processed within the zAPI Specification object
+    processParameters(pathOperation.parameters, dataBlob, linkedItems);
+    processRequestBodies(pathOperation.requestBody, dataBlob, linkedItems);
+    processResponses(pathOperation.responses, dataBlob, linkedItems);
+    processDescriptionComponents(pathOperation.description, dataBlob, linkedItems);
+
+    return {
+        ...getSystemProperties(pathOperation),
+        apiReference: processTaxonomyElement(pathOperation.apiReference),
+        category: processLinkedItemsElement(pathOperation.category),
+        codeSamples: processLinkedItemsElement(pathOperation.codeSamples),
+        deprecated: processMultipleChoiceElement(pathOperation.deprecated),
+        description: pathOperation.description.getHtml(),
+        name: pathOperation.name.value,
+        parameters: processLinkedItemsElement(pathOperation.parameters),
+        path: pathOperation.path.value,
+        pathOperation: processTaxonomyElement(pathOperation.pathOperation),
+        requestBody: pathOperation.requestBody.getHtml(),
+        responses: pathOperation.responses.getHtml(),
+        url: pathOperation.url.value,
+    };
+};
+
+const processServers = (
     field: RichTextField,
     dataBlob: IPreprocessedData,
     linkedItems: ContentItem[],
-): Array<IWrappedItem<IServer>> => {
-    const servers = [];
+): void => processItemsInto<IServer>
+(getItemsDataFromRichText<ZapiServer, IServer>(getServersData))
+(field, dataBlob, linkedItems);
 
-    field.linkedItemCodenames.map((codename: string) => {
-        const server = getFromLinkedItems<ZapiServer>(codename, linkedItems);
-        const dataObject: IServer = {
-            ...getSystemProperties(server),
-            description: server.description.value,
-            url: server.url.value,
-        };
+const getServersData = (server: ZapiServer): IServer => ({
+    ...getSystemProperties(server),
+    description: server.description.value,
+    url: server.url.value,
+});
 
-        servers.push(getWrappedData<IServer>(dataObject, server));
-    });
-
-    return servers;
-};
-
-export const getParametersData = (
-    items: ZapiParameter[],
+const processParameters = (
+    items: ContentItem[],
     dataBlob: IPreprocessedData,
     linkedItems: ContentItem[],
-): Array<IWrappedItem<IParameter>> => {
-    const parameters = [];
+): void => processItemsInto<IParameter>
+(getItemsDataFromLinkedItems<ZapiParameter, IParameter>(getParametersData))
+(items, dataBlob, linkedItems);
 
-    items.map((parameter: ZapiParameter) => {
-        processItemsInto<ISchemas>(getSchemaDataFromLinkedItemElement)(parameter.schema, dataBlob, linkedItems);
-        processItemsInto<IDescriptionComponents>(getDescriptionItemsData)(parameter.description, dataBlob, linkedItems);
+const getParametersData = (
+    parameter: ZapiParameter,
+    dataBlob: IPreprocessedData,
+    linkedItems: ContentItem[],
+): IParameter => {
+    processSchemasFromLinkedItemsElement(parameter.schema, dataBlob, linkedItems);
+    processDescriptionComponents(parameter.description, dataBlob, linkedItems);
 
-        const dataObject: IParameter = {
-            ...getSystemProperties(parameter),
-            apiReference: processTaxonomyElement(parameter.apiReference),
-            deprecated: processMultipleChoiceElement(parameter.deprecated),
-            description: parameter.description.getHtml(),
-            example: parameter.example.value,
-            explode: processMultipleChoiceElement(parameter.explode),
-            location: processMultipleChoiceElement(parameter.location),
-            name: parameter.name.value,
-            required: processMultipleChoiceElement(parameter.required),
-            schema: processLinkedItemsElement(parameter.schema),
-            style: processMultipleChoiceElement(parameter.style),
-        };
-
-        parameters.push(getWrappedData<IParameter>(dataObject, parameter));
-    });
-
-    return parameters;
+    return {
+        ...getSystemProperties(parameter),
+        apiReference: processTaxonomyElement(parameter.apiReference),
+        deprecated: processMultipleChoiceElement(parameter.deprecated),
+        description: parameter.description.getHtml(),
+        example: parameter.example.value,
+        explode: processMultipleChoiceElement(parameter.explode),
+        location: processMultipleChoiceElement(parameter.location),
+        name: parameter.name.value,
+        required: processMultipleChoiceElement(parameter.required),
+        schema: processLinkedItemsElement(parameter.schema),
+        style: processMultipleChoiceElement(parameter.style),
+    };
 };
 
-export const getRequestBodiesData = (
+const processRequestBodies = (
     field: RichTextField,
     dataBlob: IPreprocessedData,
     linkedItems: ContentItem[],
-): Array<IWrappedItem<IRequestBody>> => {
-    const requestBodies = [];
+): void => processItemsInto<IRequestBody>
+(getItemsDataFromRichText<ZapiRequestBody, IRequestBody>(getRequestBodiesData))
+(field, dataBlob, linkedItems);
 
-    field.linkedItemCodenames.map((codename: string) => {
-        const requestBody = getFromLinkedItems<ZapiRequestBody>(codename, linkedItems);
-        processItemsInto<ISchemas>(getSchemaDataFromRichTextElement)(requestBody.schema, dataBlob, linkedItems);
-        processItemsInto<IDescriptionComponents>(getDescriptionItemsData)(
-            requestBody.description,
-            dataBlob,
-            linkedItems,
-        );
+const getRequestBodiesData = (
+    requestBody: ZapiRequestBody,
+    dataBlob: IPreprocessedData,
+    linkedItems: ContentItem[],
+): IRequestBody => {
+    processSchemasFromRichTextElement(requestBody.schema, dataBlob, linkedItems);
+    processDescriptionComponents(requestBody.description, dataBlob, linkedItems);
 
-        const dataObject: IRequestBody = {
-            ...getSystemProperties(requestBody),
-            description: requestBody.description.getHtml(),
-            example: requestBody.example.value,
-            mediaType: processMultipleChoiceElement(requestBody.mediaType),
-            required: processMultipleChoiceElement(requestBody.required),
-            schema: requestBody.schema.getHtml(),
-        };
-
-        requestBodies.push(getWrappedData<IRequestBody>(dataObject, requestBody));
-    });
-
-    return requestBodies;
+    return {
+        ...getSystemProperties(requestBody),
+        description: requestBody.description.getHtml(),
+        example: requestBody.example.value,
+        mediaType: processMultipleChoiceElement(requestBody.mediaType),
+        required: processMultipleChoiceElement(requestBody.required),
+        schema: requestBody.schema.getHtml(),
+    };
 };
 
-export const getResponsesData = (
+const processResponses = (
     field: RichTextField,
     dataBlob: IPreprocessedData,
     linkedItems: ContentItem[],
-): Array<IWrappedItem<IResponse>> => {
-    const responses = [];
+): void => processItemsInto<IResponse>
+(getItemsDataFromRichText<ZapiResponse, IResponse>(getResponseData))
+(field, dataBlob, linkedItems);
 
-    field.linkedItemCodenames.map((codename: string) => {
-        const response = getFromLinkedItems<ZapiResponse>(codename, linkedItems);
-        processItemsInto<IParameter>(getParametersData)(response.headers, dataBlob, linkedItems);
-        processItemsInto<ISchemas>(getSchemaDataFromRichTextElement)(response.schema, dataBlob, linkedItems);
-        processItemsInto<IDescriptionComponents>(getDescriptionItemsData)(response.description, dataBlob, linkedItems);
+const getResponseData = (
+    response: ZapiResponse,
+    dataBlob: IPreprocessedData,
+    linkedItems: ContentItem[],
+): IResponse => {
+    processParameters(response.headers, dataBlob, linkedItems);
+    processSchemasFromRichTextElement(response.schema, dataBlob, linkedItems);
+    processDescriptionComponents(response.description, dataBlob, linkedItems);
 
-        const dataObject: IResponse = {
-            ...getSystemProperties(response),
-            apiReference: processTaxonomyElement(response.apiReference),
-            description: response.description.getHtml(),
-            example: response.example.value,
-            headers: processLinkedItemsElement(response.headers),
-            httpStatus: processMultipleChoiceElement(response.httpStatus),
-            mediaType: processMultipleChoiceElement(response.mediaType),
-            schema: response.schema.getHtml(),
-        };
-
-        responses.push(getWrappedData<IResponse>(dataObject, response));
-    });
-
-    return responses;
+    return {
+        ...getSystemProperties(response),
+        apiReference: processTaxonomyElement(response.apiReference),
+        description: response.description.getHtml(),
+        example: response.example.value,
+        headers: processLinkedItemsElement(response.headers),
+        httpStatus: processMultipleChoiceElement(response.httpStatus),
+        mediaType: processMultipleChoiceElement(response.mediaType),
+        schema: response.schema.getHtml(),
+    };
 };

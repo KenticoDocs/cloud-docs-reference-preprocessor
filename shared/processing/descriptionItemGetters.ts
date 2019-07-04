@@ -12,42 +12,31 @@ import {
     ICodeSamples,
     IImage,
     IPreprocessedData,
-    IWrappedItem,
 } from '../types/dataModels';
 import {
-    getFromLinkedItems,
     processLinkedItemsElement,
     processMultipleChoiceElement,
     processTaxonomyElement,
 } from '../utils/processElements';
 import {
+    getItemsDataFromRichText,
     getSystemProperties,
-    getWrappedData,
+    processItemsInto,
 } from './common';
 import RichTextField = Fields.RichTextField;
 
-export type ZapiDescriptionComponents = Image | Callout | CodeSample | CodeSamples;
-export type IDescriptionComponents = IImage | ICallout | ICodeSample | ICodeSamples;
+type ZapiDescriptionComponents = Image | Callout | CodeSample | CodeSamples;
+type IDescriptionComponents = IImage | ICallout | ICodeSample | ICodeSamples;
 
-export const getDescriptionItemsData = (
+export const processDescriptionComponents = (
     field: RichTextField,
     dataBlob: IPreprocessedData,
     linkedItems: ContentItem[],
-): Array<IWrappedItem<IDescriptionComponents>> => {
-    const schemas = [];
+): void => processItemsInto<IDescriptionComponents>
+(getItemsDataFromRichText<ZapiDescriptionComponents, IDescriptionComponents>(getDescriptionComponentData))
+(field, dataBlob, linkedItems);
 
-    field.linkedItemCodenames.map((codename: string) => {
-        const schema = getFromLinkedItems<ZapiDescriptionComponents>(codename, linkedItems);
-
-        schemas.push(getDescriptionComponentData(schema));
-    });
-
-    return schemas;
-};
-
-const getDescriptionComponentData = (
-    component: ZapiDescriptionComponents,
-): IWrappedItem<IDescriptionComponents> | undefined => {
+const getDescriptionComponentData = (component: ZapiDescriptionComponents): IDescriptionComponents => {
     switch (component.system.type) {
         case 'image': {
             return getImageData(component as Image);
@@ -56,56 +45,40 @@ const getDescriptionComponentData = (
             return getCalloutData(component as Callout);
         }
         case 'code_sample': {
-            return getCodeSampleData(component as Callout);
+            return getCodeSampleData(component as CodeSample);
         }
         case 'code_samples': {
             return getCodeSamplesData(component as CodeSamples);
         }
         default:
-            return undefined;
+            throw Error(`Unsupported content type (${component.system.type}) in a description element`);
     }
 };
 
-const getImageData = (image: Image): IWrappedItem<IImage> => {
-    const dataObject: IImage = {
-        ...getSystemProperties(image),
-        border: processMultipleChoiceElement(image.border),
-        description: image.description.getHtml(),
-        image: image.image.value,
-        imageWidth: processMultipleChoiceElement(image.imageWidth),
-        url: image.url.value,
-        zoomable: processMultipleChoiceElement(image.zoomable),
-    };
+const getImageData = (image: Image): IImage => ({
+    ...getSystemProperties(image),
+    border: processMultipleChoiceElement(image.border),
+    description: image.description.getHtml(),
+    image: image.image.value,
+    imageWidth: processMultipleChoiceElement(image.imageWidth),
+    url: image.url.value,
+    zoomable: processMultipleChoiceElement(image.zoomable),
+});
 
-    return getWrappedData<IImage>(dataObject, image);
-};
+const getCalloutData = (callout: Callout): ICallout => ({
+    ...getSystemProperties(callout),
+    content: callout.content.getHtml(),
+    type: processMultipleChoiceElement(callout.type),
+});
 
-const getCalloutData = (callout: Callout): IWrappedItem<ICallout> => {
-    const dataObject: ICallout = {
-        ...getSystemProperties(callout),
-        content: callout.content.getHtml(),
-        type: processMultipleChoiceElement(callout.type),
-    };
+const getCodeSampleData = (codeSample: CodeSample): ICodeSample => ({
+    ...getSystemProperties(codeSample),
+    code: codeSample.code.value,
+    platform: processTaxonomyElement(codeSample.platform),
+    programmingLanguage: processTaxonomyElement(codeSample.programmingLanguage),
+});
 
-    return getWrappedData<ICallout>(dataObject, callout);
-};
-
-const getCodeSampleData = (codeSample: Callout): IWrappedItem<ICodeSample> => {
-    const dataObject: ICodeSample = {
-        ...getSystemProperties(codeSample),
-        code: codeSample.code.value,
-        platform: processTaxonomyElement(codeSample.platform),
-        programmingLanguage: processTaxonomyElement(codeSample.programmingLanguage),
-    };
-
-    return getWrappedData<ICodeSample>(dataObject, codeSample);
-};
-
-const getCodeSamplesData = (codeSamples: CodeSamples): IWrappedItem<ICodeSamples> => {
-    const dataObject: ICodeSamples = {
-        ...getSystemProperties(codeSamples),
-        codeSamples: processLinkedItemsElement(codeSamples.codeSamples),
-    };
-
-    return getWrappedData<ICodeSamples>(dataObject, codeSamples);
-};
+const getCodeSamplesData = (codeSamples: CodeSamples): ICodeSamples => ({
+    ...getSystemProperties(codeSamples),
+    codeSamples: processLinkedItemsElement(codeSamples.codeSamples),
+});

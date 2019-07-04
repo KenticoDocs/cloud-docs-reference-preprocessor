@@ -1,3 +1,7 @@
+export interface IKenticoCloudError extends Error {
+    readonly errorCode: number,
+}
+
 export interface IEventGridEvent {
     readonly id: string;
     readonly topic?: string;
