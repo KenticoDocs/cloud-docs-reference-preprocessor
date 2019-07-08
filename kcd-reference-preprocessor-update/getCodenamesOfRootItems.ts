@@ -4,14 +4,14 @@ import {
     RootItemType,
 } from '../shared/external/kenticoCloudClient';
 import { IWebhookContentItem } from '../shared/external/models';
-import { getRootCodenamesOfSingleItem } from '../shared/utils/rootItemsGetter';
+import { getRootCodenamesOfItem } from '../shared/utils/getRootCodenamesOfItem';
 
 export const getCodenamesOfRootItems = async (items: IWebhookContentItem[]): Promise<Set<string>> => {
     const allItems = await getAllItems();
     const rootCodenames = new Set<string>();
 
     items.forEach((item) => {
-        const roots = getRootCodenamesOfSingleItem(item, allItems, [RootItemType]);
+        const roots = getRootCodenamesOfItem(item, allItems, [RootItemType]);
         roots.forEach((codename) => rootCodenames.add(codename));
     });
 

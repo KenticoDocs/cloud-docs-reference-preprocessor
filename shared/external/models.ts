@@ -17,7 +17,7 @@ export interface IEventGridEventData {
     readonly test: string,
     readonly webhook: {
         readonly items: IWebhookContentItem[],
-        readonly taxonomies: any,
+        readonly taxonomies: unknown,
     }
 }
 

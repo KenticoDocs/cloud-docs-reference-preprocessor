@@ -1,8 +1,8 @@
 import { ContentItem } from 'kentico-cloud-delivery';
 import { Operation } from '../external/models';
 import { ZapiSpecification } from '../models/zapi_specification';
-import { IPreprocessedData } from '../types/dataModels';
-import { processApiSpecification } from './dataGetters';
+import { processApiSpecification } from './apiSpecification';
+import { IPreprocessedData } from './processedDataModels';
 
 export const getProcessedData = (
     specifications: ZapiSpecification[],

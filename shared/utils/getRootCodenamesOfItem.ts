@@ -11,7 +11,7 @@ interface IContext {
     readonly allItems: ContentItem[],
 }
 
-export const getRootCodenamesOfSingleItem = (
+export const getRootCodenamesOfItem = (
     item: IWebhookContentItem,
     allItems: ContentItem[],
     rootItemTypes: string[],

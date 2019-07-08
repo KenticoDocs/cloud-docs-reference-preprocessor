@@ -15,6 +15,17 @@ import { ZapiSchemaObject } from '../models/zapi_schema__object';
 import { ZapiSchemaOneof } from '../models/zapi_schema__oneof';
 import { ZapiSchemaString } from '../models/zapi_schema__string';
 import {
+    processLinkedItemsElement,
+    processMultipleChoiceElement,
+    processTaxonomyElement,
+} from '../utils/processElements';
+import {
+    getItemsDataFromLinkedItems,
+    getItemsDataFromRichText,
+    getSystemProperties,
+    processItemsInto,
+} from './common';
+import {
     IDiscriminator,
     IDiscriminatorMapItem,
     IPreprocessedData,
@@ -32,18 +43,7 @@ import {
     ISchemas,
     ISchemaString,
     ZapiSchemas,
-} from '../types/dataModels';
-import {
-    processLinkedItemsElement,
-    processMultipleChoiceElement,
-    processTaxonomyElement,
-} from '../utils/processElements';
-import {
-    getItemsDataFromLinkedItems,
-    getItemsDataFromRichText,
-    getSystemProperties,
-    processItemsInto,
-} from './common';
+} from './processedDataModels';
 import RichTextField = Fields.RichTextField;
 
 export const processSchemasFromLinkedItemsElement = (
