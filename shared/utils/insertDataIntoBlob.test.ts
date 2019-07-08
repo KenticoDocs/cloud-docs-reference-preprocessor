@@ -1,16 +1,15 @@
 import { Operation } from '../external/models';
-import { IPreprocessedData } from '../types/dataModels';
-import { insertDataIntoBlob } from './insertData';
+import { insertDataIntoBlob } from './insertDataIntoBlob';
 
-const getBlob = (): IPreprocessedData => ({
+const defaultBlob = {
     items: {},
     operation: Operation.Initialize,
     zapiSpecificationCodename: 'some_api',
-});
+};
 
 describe('insertDataIntoBlob', () => {
     it('inserts an array of items correctly into blob', () => {
-        const blob = getBlob();
+        const blob = defaultBlob;
         const data = [{
             codename: 'item_codename',
             data: {
@@ -49,7 +48,7 @@ describe('insertDataIntoBlob', () => {
     });
 
     it('handles an empty items array', () => {
-        const blob = getBlob();
+        const blob = defaultBlob;
         const data = [];
         const expectedResult = blob;
 

@@ -1,2 +1,2 @@
-shared/processing/schemaGetters.ts
+shared/processing/schemas.ts
 shared/models/*

@@ -1,5 +1,5 @@
 import { ContainerURL } from '@azure/storage-blob';
-import { IPreprocessedData } from '../types/dataModels';
+import { IPreprocessedData } from '../processing/processedDataModels';
 import { Configuration } from './configuration';
 import { Operation } from './models';
 

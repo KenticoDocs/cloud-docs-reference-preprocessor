@@ -2,7 +2,7 @@ import {
     IPreprocessedData,
     ISystemAttributes,
     IWrappedItem,
-} from '../types/dataModels';
+} from '../processing/processedDataModels';
 
 export const insertDataIntoBlob = <Data extends ISystemAttributes>(
     item: Array<IWrappedItem<Data>>,

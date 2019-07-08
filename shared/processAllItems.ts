@@ -3,7 +3,7 @@ import { storeReferenceDataToBlobStorage } from './external/blobManager';
 import { getApiItems } from './external/kenticoCloudClient';
 import { Operation } from './external/models';
 import { getProcessedData } from './processing/getProcessedData';
-import { IPreprocessedData } from './types/dataModels';
+import { IPreprocessedData } from './processing/processedDataModels';
 
 export const processAllItems = async (
     deliveryClientGetter: () => IDeliveryClient,

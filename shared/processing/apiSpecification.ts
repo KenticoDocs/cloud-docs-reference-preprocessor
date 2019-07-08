@@ -13,6 +13,18 @@ import { ZapiSecurityScheme } from '../models/zapi_security_scheme';
 import { ZapiServer } from '../models/zapi_server';
 import { ZapiSpecification } from '../models/zapi_specification';
 import {
+    processLinkedItemsElement,
+    processMultipleChoiceElement,
+    processTaxonomyElement,
+} from '../utils/processElements';
+import {
+    getItemsDataFromLinkedItems,
+    getItemsDataFromRichText,
+    getSystemProperties,
+    processItemsInto,
+} from './common';
+import { processDescriptionComponents } from './descriptionComponents';
+import {
     ICategory,
     IContact,
     ILicense,
@@ -24,23 +36,11 @@ import {
     ISecurityScheme,
     IServer,
     IZapiSpecification,
-} from '../types/dataModels';
-import {
-    processLinkedItemsElement,
-    processMultipleChoiceElement,
-    processTaxonomyElement,
-} from '../utils/processElements';
-import {
-    getItemsDataFromLinkedItems,
-    getItemsDataFromRichText,
-    getSystemProperties,
-    processItemsInto,
-} from './common';
-import { processDescriptionComponents } from './descriptionItemGetters';
+} from './processedDataModels';
 import {
     processSchemasFromLinkedItemsElement,
     processSchemasFromRichTextElement,
-} from './schemaGetters';
+} from './schemas';
 import RichTextField = Fields.RichTextField;
 
 export const processApiSpecification = (

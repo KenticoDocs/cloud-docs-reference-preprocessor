@@ -2,13 +2,13 @@ import {
     ContentItem,
     Fields,
 } from 'kentico-cloud-delivery';
+import { insertDataIntoBlob } from '../utils/insertDataIntoBlob';
+import { getFromLinkedItems } from '../utils/processElements';
 import {
     IPreprocessedData,
     ISystemAttributes,
     IWrappedItem,
-} from '../types/dataModels';
-import { insertDataIntoBlob } from '../utils/insertData';
-import { getFromLinkedItems } from '../utils/processElements';
+} from './processedDataModels';
 import RichTextField = Fields.RichTextField;
 
 type ProcessableObject = ContentItem | ContentItem[] | RichTextField;

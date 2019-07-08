@@ -7,13 +7,6 @@ import { CodeSample } from '../models/code_sample';
 import { CodeSamples } from '../models/code_samples';
 import { Image } from '../models/image';
 import {
-    ICallout,
-    ICodeSample,
-    ICodeSamples,
-    IImage,
-    IPreprocessedData,
-} from '../types/dataModels';
-import {
     processLinkedItemsElement,
     processMultipleChoiceElement,
     processTaxonomyElement,
@@ -23,6 +16,13 @@ import {
     getSystemProperties,
     processItemsInto,
 } from './common';
+import {
+    ICallout,
+    ICodeSample,
+    ICodeSamples,
+    IImage,
+    IPreprocessedData,
+} from './processedDataModels';
 import RichTextField = Fields.RichTextField;
 
 type ZapiDescriptionComponents = Image | Callout | CodeSample | CodeSamples;

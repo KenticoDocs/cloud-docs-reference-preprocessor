@@ -10,7 +10,7 @@ import {
 import { resolveItemInRichText } from './external/richTextResolver';
 import { ZapiSpecification } from './models/zapi_specification';
 import { getProcessedData } from './processing/getProcessedData';
-import { IPreprocessedData } from './types/dataModels';
+import { IPreprocessedData } from './processing/processedDataModels';
 
 export const processRootItem = async (codename: string, operation: Operation): Promise<void> => {
     const response = await getDeliveryClient()
