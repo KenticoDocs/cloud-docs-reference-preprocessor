@@ -23,7 +23,7 @@ import {
     getItemsDataFromLinkedItems,
     getItemsDataFromRichText,
     getSystemProperties,
-    processItemsInto,
+    processItems,
 } from './common';
 import {
     IDiscriminator,
@@ -50,17 +50,17 @@ export const processSchemasFromLinkedItemsElement = (
     items: ContentItem[],
     dataBlob: IPreprocessedData,
     linkedItems: ContentItem[],
-): void => processItemsInto<ISchemas>
-(getItemsDataFromLinkedItems<ZapiSchemas, ISchemas>(getSchemaData))
-(items, dataBlob, linkedItems);
+): void => processItems(
+    getItemsDataFromLinkedItems<ZapiSchemas, ISchemas>(getSchemaData),
+)(items, dataBlob, linkedItems);
 
 export const processSchemasFromRichTextElement = (
     field: RichTextField,
     dataBlob: IPreprocessedData,
     linkedItems: ContentItem[],
-): void => processItemsInto<ISchemas>
-(getItemsDataFromRichText<ZapiSchemas, ISchemas>(getSchemaData))
-(field, dataBlob, linkedItems);
+): void => processItems(
+    getItemsDataFromRichText<ZapiSchemas, ISchemas>(getSchemaData),
+)(field, dataBlob, linkedItems);
 
 const getSchemaData = (
     schema: ZapiSchemas,
@@ -222,9 +222,9 @@ const processDiscriminators = (
     field: RichTextField,
     dataBlob: IPreprocessedData,
     linkedItems: ContentItem[],
-): void => processItemsInto<IDiscriminator>
-(getItemsDataFromRichText<ZapiDiscriminator, IDiscriminator>(getDiscriminatorData))
-(field, dataBlob, linkedItems);
+): void => processItems(
+    getItemsDataFromRichText<ZapiDiscriminator, IDiscriminator>(getDiscriminatorData),
+)(field, dataBlob, linkedItems);
 
 const getDiscriminatorData = (
     item: ZapiDiscriminator,
@@ -246,9 +246,9 @@ const processDiscriminatorMapItems = (
     field: RichTextField,
     dataBlob: IPreprocessedData,
     linkedItems: ContentItem[],
-): void => processItemsInto<IDiscriminatorMapItem>
-(getItemsDataFromRichText<ZapiDiscriminatorMapItem, IDiscriminatorMapItem>(getDiscriminatorMapItemData))
-(field, dataBlob, linkedItems);
+): void => processItems(
+    getItemsDataFromRichText<ZapiDiscriminatorMapItem, IDiscriminatorMapItem>(getDiscriminatorMapItemData),
+)(field, dataBlob, linkedItems);
 
 const getDiscriminatorMapItemData = (
     item: ZapiDiscriminatorMapItem,

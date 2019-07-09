@@ -26,7 +26,8 @@ export const processRootItem = async (codename: string, operation: Operation): P
         const data = getProcessedData(
             [response.item],
             response.linkedItems,
-            operation);
+            operation,
+        );
         data.forEach((blob: IPreprocessedData) => storeReferenceDataToBlobStorage(blob, operation));
     }
 };

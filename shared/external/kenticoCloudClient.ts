@@ -1,4 +1,5 @@
 import {
+    ContentItem,
     DeliveryClient,
     IDeliveryClient,
     TypeResolver,
@@ -36,8 +37,13 @@ import { resolveItemInRichText } from './richTextResolver';
 export const RootItemType = 'zapi_specification';
 export const DepthParameter = 20;
 
-export const getApiItems = async (deliveryClientGetter: () => IDeliveryClient): Promise<any> =>
-    deliveryClientGetter()
+interface IResponseItems {
+    readonly items: ZapiSpecification[];
+    readonly linkedItems: ContentItem[];
+}
+
+export const getApiItems = async (deliveryClientGetter: () => IDeliveryClient): Promise<IResponseItems> => {
+    const response = await deliveryClientGetter()
         .items<ZapiSpecification>()
         .type(RootItemType)
         .queryConfig({
@@ -45,6 +51,12 @@ export const getApiItems = async (deliveryClientGetter: () => IDeliveryClient): 
         })
         .depthParameter(DepthParameter)
         .getPromise();
+
+    return {
+        items: response.items,
+        linkedItems: response.linkedItems,
+    };
+};
 
 export const getDeliveryClient = (): IDeliveryClient => new DeliveryClient({
     enableSecuredMode: true,

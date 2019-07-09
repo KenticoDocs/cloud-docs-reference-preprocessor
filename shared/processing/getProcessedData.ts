@@ -8,18 +8,13 @@ export const getProcessedData = (
     specifications: ZapiSpecification[],
     linkedItems: ContentItem[],
     operation: Operation,
-): IPreprocessedData[] => {
-    const allPreprocessedData = [];
-
+): IPreprocessedData[] =>
     specifications.map((item: ZapiSpecification) => {
-        allPreprocessedData.push(getDataObject(item, operation));
-        const dataBlob = allPreprocessedData[allPreprocessedData.length - 1];
-
+        const dataBlob = getDataObject(item, operation);
         processApiSpecification([item], dataBlob, linkedItems);
-    });
 
-    return allPreprocessedData;
-};
+        return dataBlob;
+    });
 
 const getDataObject = (item: ZapiSpecification, operation: Operation): IPreprocessedData => ({
     items: {},
