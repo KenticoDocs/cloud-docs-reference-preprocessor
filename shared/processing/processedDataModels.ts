@@ -147,6 +147,11 @@ export interface ICodeSamples extends ISystemAttributes {
     readonly codeSamples: string[],
 }
 
+export interface IContentChunk extends ISystemAttributes {
+    readonly content: string,
+    readonly platform: string[],
+}
+
 export type ZapiSchemas =
     ZapiSchemaAllof
     | ZapiSchemaAnyof

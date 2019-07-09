@@ -5,6 +5,7 @@ import {
 import { Callout } from '../models/callout';
 import { CodeSample } from '../models/code_sample';
 import { CodeSamples } from '../models/code_samples';
+import { ContentChunk } from '../models/content_chunk';
 import { Image } from '../models/image';
 import {
     processLinkedItemsElement,
@@ -20,13 +21,14 @@ import {
     ICallout,
     ICodeSample,
     ICodeSamples,
+    IContentChunk,
     IImage,
     IPreprocessedData,
 } from './processedDataModels';
 import RichTextField = Fields.RichTextField;
 
-type ZapiDescriptionComponents = Image | Callout | CodeSample | CodeSamples;
-type IDescriptionComponents = IImage | ICallout | ICodeSample | ICodeSamples;
+type ZapiDescriptionComponents = Image | Callout | CodeSample | CodeSamples | ContentChunk;
+type IDescriptionComponents = IImage | ICallout | ICodeSample | ICodeSamples | IContentChunk;
 
 export const processDescriptionComponents = (
     field: RichTextField,
@@ -49,6 +51,9 @@ const getDescriptionComponentData = (component: ZapiDescriptionComponents): IDes
         }
         case 'code_samples': {
             return getCodeSamplesData(component as CodeSamples);
+        }
+        case 'content_chunk': {
+            return getContentChunkData(component as ContentChunk);
         }
         default:
             throw Error(`Unsupported content type (${component.system.type}) in a description element`);
@@ -81,4 +86,10 @@ const getCodeSampleData = (codeSample: CodeSample): ICodeSample => ({
 const getCodeSamplesData = (codeSamples: CodeSamples): ICodeSamples => ({
     ...getSystemProperties(codeSamples),
     codeSamples: processLinkedItemsElement(codeSamples.codeSamples),
+});
+
+const getContentChunkData = (contentChunk: ContentChunk): IContentChunk => ({
+    ...getSystemProperties(contentChunk),
+    content: contentChunk.content.getHtml(),
+    platform: processTaxonomyElement(contentChunk.platform),
 });

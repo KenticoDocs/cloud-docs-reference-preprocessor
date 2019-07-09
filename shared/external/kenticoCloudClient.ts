@@ -32,7 +32,6 @@ import { ZapiSecurityScheme } from '../models/zapi_security_scheme';
 import { ZapiServer } from '../models/zapi_server';
 import { ZapiSpecification } from '../models/zapi_specification';
 import { Configuration } from './configuration';
-import { resolveItemInRichText } from './richTextResolver';
 
 export const RootItemType = 'zapi_specification';
 export const DepthParameter = 20;
@@ -46,9 +45,6 @@ export const getApiItems = async (deliveryClientGetter: () => IDeliveryClient): 
     const response = await deliveryClientGetter()
         .items<ZapiSpecification>()
         .type(RootItemType)
-        .queryConfig({
-            richTextResolver: resolveItemInRichText,
-        })
         .depthParameter(DepthParameter)
         .getPromise();
 
