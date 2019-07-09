@@ -25,7 +25,7 @@ type GetDataObject<ProcessedDataModel> = (
     linkedItems: ContentItem[],
 ) => ProcessedDataModel;
 
-export const processItemsInto = <DataModelResult extends ISystemAttributes>(getData: GetData<DataModelResult>) =>
+export const processItems = <DataModelResult extends ISystemAttributes>(getData: GetData<DataModelResult>) =>
     (item: ProcessableObject, dataBlob: IPreprocessedData, linkedItems: ContentItem[]): void => {
         const data = getData(item, dataBlob, linkedItems);
         insertDataIntoBlob(data, dataBlob);
@@ -40,7 +40,7 @@ export const getItemsDataFromRichText = <KCItem extends ContentItem, Preprocesse
     field.linkedItemCodenames.map((codename) => {
         const item = getFromLinkedItems<KCItem>(codename, linkedItems);
 
-        return getWrappedData<PreprocessedItem>(getDataObject(item, dataBlob, linkedItems), item);
+        return getWrappedData(getDataObject(item, dataBlob, linkedItems), item);
     });
 
 export const getItemsDataFromLinkedItems = <KCItem extends ContentItem, PreprocessedItem extends ISystemAttributes>
@@ -49,10 +49,9 @@ export const getItemsDataFromLinkedItems = <KCItem extends ContentItem, Preproce
     dataBlob: IPreprocessedData,
     linkedItems: ContentItem[],
 ): Array<IWrappedItem<PreprocessedItem>> =>
-    items.map((item) =>
-        getWrappedData<PreprocessedItem>(getDataObject(item, dataBlob, linkedItems), item));
+    items.map((item) => getWrappedData(getDataObject(item, dataBlob, linkedItems), item));
 
-export const getWrappedData = <Data extends ISystemAttributes>(
+const getWrappedData = <Data extends ISystemAttributes>(
     dataObject: Data,
     item: ContentItem,
 ): IWrappedItem<Data> => ({
@@ -60,7 +59,7 @@ export const getWrappedData = <Data extends ISystemAttributes>(
     data: dataObject,
 });
 
-export const getSystemProperties = (item: ContentItem): ISystemAttributes => ({
-    contentType: item.system.type,
-    id: item.system.id,
+export const getSystemProperties = ({ system: { type, id } }: ContentItem): ISystemAttributes => ({
+    contentType: type,
+    id,
 });

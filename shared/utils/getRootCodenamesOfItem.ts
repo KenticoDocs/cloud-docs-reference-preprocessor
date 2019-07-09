@@ -15,13 +15,10 @@ export const getRootCodenamesOfItem = (
     item: IWebhookContentItem,
     allItems: ContentItem[],
     rootItemTypes: string[],
-): string[] => {
-    if (rootItemTypes.includes(item.type)) {
-        return [item.codename];
-    }
-
-    return getRootParents(item.codename, allItems, rootItemTypes);
-};
+): string[] =>
+    rootItemTypes.includes(item.type)
+        ? [item.codename]
+        : getRootParents(item.codename, allItems, rootItemTypes);
 
 const getRootParents = (codename: string, allItems: ContentItem[], rootItemTypes: string[]): string[] => {
     let itemsToVisit = getDirectParents(codename, allItems);

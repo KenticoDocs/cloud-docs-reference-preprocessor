@@ -21,7 +21,7 @@ import {
     getItemsDataFromLinkedItems,
     getItemsDataFromRichText,
     getSystemProperties,
-    processItemsInto,
+    processItems,
 } from './common';
 import { processDescriptionComponents } from './descriptionComponents';
 import {
@@ -44,12 +44,12 @@ import {
 import RichTextField = Fields.RichTextField;
 
 export const processApiSpecification = (
-    items: ContentItem[],
+    items: ZapiSpecification[],
     dataBlob: IPreprocessedData,
     linkedItems: ContentItem[],
-): void => processItemsInto<IZapiSpecification>
-(getItemsDataFromLinkedItems<ZapiSpecification, IZapiSpecification>(getApiSpecificationData))
-(items, dataBlob, linkedItems);
+): void => processItems(
+    getItemsDataFromLinkedItems<ZapiSpecification, IZapiSpecification>(getApiSpecificationData),
+)(items, dataBlob, linkedItems);
 
 const getApiSpecificationData = (
     item: ZapiSpecification,
@@ -85,9 +85,9 @@ const processSecuritySchemes = (
     items: ContentItem[],
     dataBlob: IPreprocessedData,
     linkedItems: ContentItem[],
-): void => processItemsInto<ISecurityScheme>
-(getItemsDataFromLinkedItems<ZapiSecurityScheme, ISecurityScheme>(getSecuritySchemeData))
-(items, dataBlob, linkedItems);
+): void => processItems(
+    getItemsDataFromLinkedItems<ZapiSecurityScheme, ISecurityScheme>(getSecuritySchemeData),
+)(items, dataBlob, linkedItems);
 
 const getSecuritySchemeData = (securityScheme: ZapiSecurityScheme): ISecurityScheme => ({
     ...getSystemProperties(securityScheme),
@@ -105,9 +105,9 @@ const processLicenses = (
     items: ContentItem[],
     dataBlob: IPreprocessedData,
     linkedItems: ContentItem[],
-): void => processItemsInto<ILicense>
-(getItemsDataFromLinkedItems<ZapiLicense, ILicense>(getLicenseData))
-(items, dataBlob, linkedItems);
+): void => processItems(
+    getItemsDataFromLinkedItems<ZapiLicense, ILicense>(getLicenseData),
+)(items, dataBlob, linkedItems);
 
 const getLicenseData = (license: ZapiLicense): ILicense => ({
     ...getSystemProperties(license),
@@ -120,9 +120,9 @@ const processContacts = (
     items: ContentItem[],
     dataBlob: IPreprocessedData,
     linkedItems: ContentItem[],
-): void => processItemsInto<IContact>
-(getItemsDataFromLinkedItems<ZapiContact, IContact>(getContactData))
-(items, dataBlob, linkedItems);
+): void => processItems(
+    getItemsDataFromLinkedItems<ZapiContact, IContact>(getContactData),
+)(items, dataBlob, linkedItems);
 
 const getContactData = (contact: ZapiContact): IContact => ({
     ...getSystemProperties(contact),
@@ -136,9 +136,9 @@ const processCategories = (
     items: ContentItem[],
     dataBlob: IPreprocessedData,
     linkedItems: ContentItem[],
-): void => processItemsInto<ICategory>
-(getItemsDataFromLinkedItems<ZapiCategory, ICategory>(getCategoryData))
-(items, dataBlob, linkedItems);
+): void => processItems(
+    getItemsDataFromLinkedItems<ZapiCategory, ICategory>(getCategoryData),
+)(items, dataBlob, linkedItems);
 
 const getCategoryData = (
     category: ZapiCategory,
@@ -160,9 +160,9 @@ const processPathOperations = (
     items: ContentItem[],
     dataBlob: IPreprocessedData,
     linkedItems: ContentItem[],
-): void => processItemsInto<IPathOperation>
-(getItemsDataFromLinkedItems<ZapiPathOperation, IPathOperation>(getPathOperationData))
-(items, dataBlob, linkedItems);
+): void => processItems(
+    getItemsDataFromLinkedItems<ZapiPathOperation, IPathOperation>(getPathOperationData),
+)(items, dataBlob, linkedItems);
 
 const getPathOperationData = (
     pathOperation: ZapiPathOperation,
@@ -196,9 +196,9 @@ const processServers = (
     field: RichTextField,
     dataBlob: IPreprocessedData,
     linkedItems: ContentItem[],
-): void => processItemsInto<IServer>
-(getItemsDataFromRichText<ZapiServer, IServer>(getServersData))
-(field, dataBlob, linkedItems);
+): void => processItems(
+    getItemsDataFromRichText<ZapiServer, IServer>(getServersData),
+)(field, dataBlob, linkedItems);
 
 const getServersData = (server: ZapiServer): IServer => ({
     ...getSystemProperties(server),
@@ -210,9 +210,9 @@ const processParameters = (
     items: ContentItem[],
     dataBlob: IPreprocessedData,
     linkedItems: ContentItem[],
-): void => processItemsInto<IParameter>
-(getItemsDataFromLinkedItems<ZapiParameter, IParameter>(getParametersData))
-(items, dataBlob, linkedItems);
+): void => processItems(
+    getItemsDataFromLinkedItems<ZapiParameter, IParameter>(getParametersData),
+)(items, dataBlob, linkedItems);
 
 const getParametersData = (
     parameter: ZapiParameter,
@@ -241,9 +241,9 @@ const processRequestBodies = (
     field: RichTextField,
     dataBlob: IPreprocessedData,
     linkedItems: ContentItem[],
-): void => processItemsInto<IRequestBody>
-(getItemsDataFromRichText<ZapiRequestBody, IRequestBody>(getRequestBodiesData))
-(field, dataBlob, linkedItems);
+): void => processItems(
+    getItemsDataFromRichText<ZapiRequestBody, IRequestBody>(getRequestBodiesData),
+)(field, dataBlob, linkedItems);
 
 const getRequestBodiesData = (
     requestBody: ZapiRequestBody,
@@ -267,9 +267,9 @@ const processResponses = (
     field: RichTextField,
     dataBlob: IPreprocessedData,
     linkedItems: ContentItem[],
-): void => processItemsInto<IResponse>
-(getItemsDataFromRichText<ZapiResponse, IResponse>(getResponseData))
-(field, dataBlob, linkedItems);
+): void => processItems(
+    getItemsDataFromRichText<ZapiResponse, IResponse>(getResponseData),
+)(field, dataBlob, linkedItems);
 
 const getResponseData = (
     response: ZapiResponse,

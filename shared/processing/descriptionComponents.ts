@@ -14,7 +14,7 @@ import {
 import {
     getItemsDataFromRichText,
     getSystemProperties,
-    processItemsInto,
+    processItems,
 } from './common';
 import {
     ICallout,
@@ -32,9 +32,9 @@ export const processDescriptionComponents = (
     field: RichTextField,
     dataBlob: IPreprocessedData,
     linkedItems: ContentItem[],
-): void => processItemsInto<IDescriptionComponents>
-(getItemsDataFromRichText<ZapiDescriptionComponents, IDescriptionComponents>(getDescriptionComponentData))
-(field, dataBlob, linkedItems);
+): void => processItems(
+    getItemsDataFromRichText<ZapiDescriptionComponents, IDescriptionComponents>(getDescriptionComponentData),
+)(field, dataBlob, linkedItems);
 
 const getDescriptionComponentData = (component: ZapiDescriptionComponents): IDescriptionComponents => {
     switch (component.system.type) {
