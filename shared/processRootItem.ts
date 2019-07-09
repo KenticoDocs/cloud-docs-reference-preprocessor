@@ -7,7 +7,6 @@ import {
     IKenticoCloudError,
     Operation,
 } from './external/models';
-import { resolveItemInRichText } from './external/richTextResolver';
 import { ZapiSpecification } from './models/zapi_specification';
 import { getProcessedData } from './processing/getProcessedData';
 import { IPreprocessedData } from './processing/processedDataModels';
@@ -16,9 +15,6 @@ export const processRootItem = async (codename: string, operation: Operation): P
     const response = await getDeliveryClient()
         .item<ZapiSpecification>(codename)
         .depthParameter(DepthParameter)
-        .queryConfig({
-            richTextResolver: resolveItemInRichText,
-        })
         .getPromise()
         .catch((error) => handleNotFoundItem(error, codename));
 
