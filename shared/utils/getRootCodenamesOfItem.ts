@@ -62,29 +62,27 @@ const processItem = (itemToProcess: ContentItem, rootItemTypes: string[], contex
 };
 
 const getDirectParents = (codename: string, allItems: ContentItem[]): ContentItem[] =>
-    allItems.filter((item) => checkAllItemsInElements(item, codename));
+    allItems.filter((item) =>
+        isInAnyRichTextElement(item, codename) ||
+        isInAnyLinkedItemsElement(item.elements as ContentItem, codename));
 
-const checkAllItemsInElements = (parentItem: ContentItem, codename: string): boolean => {
-    const itemElements = parentItem.elements;
+const isInAnyRichTextElement = (parentItem: ContentItem, codename: string): boolean =>
+    isInElements(parentItem, codename, FieldType.RichText);
 
-    const isInRichTextElement = isInElement(parentItem, codename, FieldType.RichText);
-    const isInLinkedItemsElement =
-        itemElements
-            ? isInElement(itemElements as ContentItem, codename, FieldType.ModularContent)
-            : false;
+const isInAnyLinkedItemsElement = (itemElements: ContentItem, codename: string): boolean =>
+    itemElements && isInElements(itemElements as ContentItem, codename, FieldType.ModularContent);
 
-    return isInLinkedItemsElement || isInRichTextElement;
-};
-
-const isInElement = (parentItem: ContentItem, codename: string, fieldType: FieldType): boolean =>
+const isInElements = (parentItem: ContentItem, codename: string, fieldType: FieldType): boolean =>
     Object
         .keys(parentItem)
         .map((key) => {
             const element = parentItem[key];
-            const itemsInElement = element.linkedItemCodenames
-                ? element.linkedItemCodenames
-                : element.value;
+            if (element.type && element.type === fieldType) {
+                const itemsInElement = element.linkedItemCodenames
+                    ? element.linkedItemCodenames
+                    : element.value;
 
-            return (element.type && element.type === fieldType) && itemsInElement.includes(codename);
+                return itemsInElement.includes(codename);
+            }
         })
         .reduce((accumulator, current) => accumulator || current, false);
