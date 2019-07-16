@@ -2,7 +2,7 @@ import {
     IPreprocessedData,
     ISystemAttributes,
     IWrappedItem,
-} from '../processing/processedDataModels';
+} from 'cloud-docs-shared-code/reference/preprocessedModels';
 
 export const insertDataIntoBlob = <Data extends ISystemAttributes>(
     item: Array<IWrappedItem<Data>>,

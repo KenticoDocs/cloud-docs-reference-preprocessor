@@ -1,4 +1,12 @@
 import {
+    ICallout,
+    ICodeSample,
+    ICodeSamples,
+    IContentChunk,
+    IImage,
+    IPreprocessedData,
+} from 'cloud-docs-shared-code/reference/preprocessedModels';
+import {
     ContentItem,
     Fields,
 } from 'kentico-cloud-delivery';
@@ -17,14 +25,6 @@ import {
     getSystemProperties,
     processItems,
 } from './common';
-import {
-    ICallout,
-    ICodeSample,
-    ICodeSamples,
-    IContentChunk,
-    IImage,
-    IPreprocessedData,
-} from './processedDataModels';
 import RichTextField = Fields.RichTextField;
 
 type ZapiDescriptionComponents = Image | Callout | CodeSample | CodeSamples | ContentChunk;
@@ -70,7 +70,7 @@ const getImageData = (image: Image): IImage => ({
     zoomable: processMultipleChoiceElement(image.zoomable),
 });
 
-const getCalloutData = (callout: Callout): ICallout => ({
+export const getCalloutData = (callout: Callout): ICallout => ({
     ...getSystemProperties(callout),
     content: callout.content.getHtml(),
     type: processMultipleChoiceElement(callout.type),

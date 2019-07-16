@@ -19,7 +19,7 @@
     uuid "^3.2.1"
     xml2js "^0.4.19"
 
-"@azure/storage-blob@^10.3.0":
+"@azure/storage-blob@10.3.0", "@azure/storage-blob@^10.3.0":
   version "10.3.0"
   resolved "https://registry.yarnpkg.com/@azure/storage-blob/-/storage-blob-10.3.0.tgz#a93043dce9a2b136b306ef00d1ef14bea49dde73"
   integrity sha512-KZbJ3q8RpAdeIB5Em1lgXkiq7Mll9bSHHbHavOFMepkkF7HQa3Sez9FdkAVIkVVWK5YoBlshBGZ+mtiSQiS9Fw==
@@ -778,6 +778,15 @@ cliui@^4.0.0:
     string-width "^2.1.1"
     strip-ansi "^4.0.0"
     wrap-ansi "^2.0.0"
+
+cloud-docs-shared-code@^1.3.4:
+  version "1.3.4"
+  resolved "https://registry.yarnpkg.com/cloud-docs-shared-code/-/cloud-docs-shared-code-1.3.4.tgz#707f0947f3452fcdd5ac6faa44343840586f8f88"
+  integrity sha512-jB4IyQJAI44yWCuChDS7CjjLjQkPR9QLc2JJg4yfdIwH3BYezAoVxXBXCya8hxTYP4fJ8Zq0B+Fvsugm1Q8RQg==
+  dependencies:
+    "@azure/storage-blob" "10.3.0"
+    kentico-cloud-delivery "5.7.2"
+    rxjs "6.5.2"
 
 co@^4.6.0:
   version "4.6.0"
@@ -3067,7 +3076,7 @@ rsvp@^4.8.4:
   resolved "https://registry.yarnpkg.com/rsvp/-/rsvp-4.8.5.tgz#c8f155311d167f68f21e168df71ec5b083113734"
   integrity sha512-nfMOlASu9OnRJo1mbEk2cz0D56a1MBNrJ7orjRZQG10XDyuvwksKbuXNp6qa+kbn839HwjwhBzhFmdsaEAfauA==
 
-rxjs@^6.5.2:
+rxjs@6.5.2, rxjs@^6.5.2:
   version "6.5.2"
   resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-6.5.2.tgz#2e35ce815cd46d84d02a209fb4e5921e051dbec7"
   integrity sha512-HUb7j3kvb7p7eCUHE3FqjoDsC1xfZQ4AHFWfTKSpZ+sAhhz5X1WX0ZuUqWbzB2QhSLp3DoLUG+hMdEDKqWo2Zg==

@@ -1,13 +1,15 @@
 import { ContainerURL } from '@azure/storage-blob';
-import { IPreprocessedData } from '../processing/processedDataModels';
+import {
+    IPreprocessedData,
+    ReferenceOperation,
+} from 'cloud-docs-shared-code/reference/preprocessedModels';
 import { Configuration } from './configuration';
-import { Operation } from './models';
 
 const BlobStorage = require('@azure/storage-blob');
 
 export const storeReferenceDataToBlobStorage = async (
     dataBlob: IPreprocessedData,
-    operation: Operation,
+    operation: ReferenceOperation,
 ): Promise<void> => {
     const containerUrl = getContainerUrl();
     const blobId = getBlobId(dataBlob.zapiSpecificationCodename, operation);
@@ -37,13 +39,13 @@ const getContainerUrl = (): ContainerURL => {
     return BlobStorage.ContainerURL.fromServiceURL(serviceUrl, Configuration.keys.azureContainerName);
 };
 
-export const getBlobId = (codename: string, operation: Operation): string => {
+export const getBlobId = (codename: string, operation: ReferenceOperation): string => {
     switch (operation) {
-        case Operation.Update:
-        case Operation.Initialize: {
+        case ReferenceOperation.Update:
+        case ReferenceOperation.Initialize: {
             return codename;
         }
-        case Operation.Preview: {
+        case ReferenceOperation.Preview: {
             return `${codename}-preview`;
         }
         default: {

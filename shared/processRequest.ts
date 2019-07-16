@@ -2,19 +2,22 @@ import {
     Context,
     HttpRequest,
 } from '@azure/functions';
+import { ReferenceOperation } from 'cloud-docs-shared-code/reference/preprocessedModels';
 import { Configuration } from './external/configuration';
 import {
     getDeliveryClient,
     getPreviewDeliveryClient,
 } from './external/kenticoCloudClient';
-import { Operation } from './external/models';
 import { processAllItems } from './processAllItems';
 
-export const processRequest = async (context: Context, req: HttpRequest, operation: Operation): Promise<void> => {
+export const processRequest = async (
+    context: Context, req: HttpRequest,
+    operation: ReferenceOperation,
+): Promise<void> => {
     try {
         Configuration.set(req.query.isTest === 'enabled');
 
-        const getClient = operation === Operation.Preview
+        const getClient = operation === ReferenceOperation.Preview
             ? getPreviewDeliveryClient
             : getDeliveryClient;
         const previewData = await processAllItems(getClient, operation);
