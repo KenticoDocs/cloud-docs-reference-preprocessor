@@ -1,13 +1,15 @@
+import {
+    IPreprocessedData,
+    ReferenceOperation,
+} from 'cloud-docs-shared-code/reference/preprocessedModels';
 import { ContentItem } from 'kentico-cloud-delivery';
-import { Operation } from '../external/models';
 import { ZapiSpecification } from '../models/zapi_specification';
 import { processApiSpecification } from './apiSpecification';
-import { IPreprocessedData } from './processedDataModels';
 
 export const getProcessedData = (
     specifications: ZapiSpecification[],
     linkedItems: ContentItem[],
-    operation: Operation,
+    operation: ReferenceOperation,
 ): IPreprocessedData[] =>
     specifications.map((item: ZapiSpecification) => {
         const dataBlob = getDataObject(item, operation);
@@ -16,7 +18,7 @@ export const getProcessedData = (
         return dataBlob;
     });
 
-const getDataObject = (item: ZapiSpecification, operation: Operation): IPreprocessedData => ({
+const getDataObject = (item: ZapiSpecification, operation: ReferenceOperation): IPreprocessedData => ({
     items: {},
     operation,
     zapiSpecificationCodename: item.system.codename,

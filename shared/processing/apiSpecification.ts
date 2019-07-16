@@ -1,4 +1,17 @@
 import {
+    ICategory,
+    IContact,
+    ILicense,
+    IParameter,
+    IPathOperation,
+    IPreprocessedData,
+    IRequestBody,
+    IResponse,
+    ISecurityScheme,
+    IServer,
+    IZapiSpecification,
+} from 'cloud-docs-shared-code/reference/preprocessedModels';
+import {
     ContentItem,
     Fields,
 } from 'kentico-cloud-delivery';
@@ -25,19 +38,6 @@ import {
 } from './common';
 import { processDescriptionComponents } from './descriptionComponents';
 import {
-    ICategory,
-    IContact,
-    ILicense,
-    IParameter,
-    IPathOperation,
-    IPreprocessedData,
-    IRequestBody,
-    IResponse,
-    ISecurityScheme,
-    IServer,
-    IZapiSpecification,
-} from './processedDataModels';
-import {
     processSchemasFromLinkedItemsElement,
     processSchemasFromRichTextElement,
 } from './schemas';
@@ -59,7 +59,6 @@ const getApiSpecificationData = (
     processCategories(item.categories, dataBlob, linkedItems);
     processContacts(item.contact, dataBlob, linkedItems);
     processLicenses(item.license, dataBlob, linkedItems);
-    processPathOperations(item.pathOperations, dataBlob, linkedItems);
     processSecuritySchemes(item.security, dataBlob, linkedItems);
     processServers(item.servers, dataBlob, linkedItems);
     processDescriptionComponents(item.description, dataBlob, linkedItems);
@@ -71,7 +70,6 @@ const getApiSpecificationData = (
         contact: processLinkedItemsElement(item.contact),
         description: item.description.getHtml(),
         license: processLinkedItemsElement(item.license),
-        pathOperations: processLinkedItemsElement(item.pathOperations),
         security: processLinkedItemsElement(item.security),
         servers: item.servers.getHtml(),
         termsOfService: item.termsOfService.value,
@@ -146,12 +144,14 @@ const getCategoryData = (
     linkedItems: ContentItem[],
 ): ICategory => {
     processDescriptionComponents(category.description, dataBlob, linkedItems);
+    processPathOperations(category.pathOperations, dataBlob, linkedItems);
 
     return {
         ...getSystemProperties(category),
         apiReference: processTaxonomyElement(category.apiReference),
         description: category.description.getHtml(),
         name: category.name.value,
+        pathOperations: processLinkedItemsElement(category.pathOperations),
         url: category.url.value,
     };
 };
@@ -169,7 +169,6 @@ const getPathOperationData = (
     dataBlob: IPreprocessedData,
     linkedItems: ContentItem[],
 ): IPathOperation => {
-    // Category items already processed within the zAPI Specification object
     processParameters(pathOperation.parameters, dataBlob, linkedItems);
     processRequestBodies(pathOperation.requestBody, dataBlob, linkedItems);
     processResponses(pathOperation.responses, dataBlob, linkedItems);
@@ -178,7 +177,6 @@ const getPathOperationData = (
     return {
         ...getSystemProperties(pathOperation),
         apiReference: processTaxonomyElement(pathOperation.apiReference),
-        category: processLinkedItemsElement(pathOperation.category),
         codeSamples: processLinkedItemsElement(pathOperation.codeSamples),
         deprecated: processMultipleChoiceElement(pathOperation.deprecated),
         description: pathOperation.description.getHtml(),

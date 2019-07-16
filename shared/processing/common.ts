@@ -1,14 +1,14 @@
 import {
+    IPreprocessedData,
+    ISystemAttributes,
+    IWrappedItem,
+} from 'cloud-docs-shared-code/reference/preprocessedModels';
+import {
     ContentItem,
     Fields,
 } from 'kentico-cloud-delivery';
 import { insertDataIntoBlob } from '../utils/insertDataIntoBlob';
 import { getFromLinkedItems } from '../utils/processElements';
-import {
-    IPreprocessedData,
-    ISystemAttributes,
-    IWrappedItem,
-} from './processedDataModels';
 import RichTextField = Fields.RichTextField;
 
 type ProcessableObject = ContentItem | ContentItem[] | RichTextField;

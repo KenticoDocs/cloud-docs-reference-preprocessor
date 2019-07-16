@@ -3,10 +3,10 @@ import {
     Context,
     HttpRequest,
 } from '@azure/functions';
-import { Operation } from '../shared/external/models';
+import { ReferenceOperation } from 'cloud-docs-shared-code/reference/preprocessedModels';
 import { processRequest } from '../shared/processRequest';
 
 const httpTriggerInitialize: AzureFunction = async (context: Context, req: HttpRequest): Promise<void> =>
-    processRequest(context, req, Operation.Initialize);
+    processRequest(context, req, ReferenceOperation.Initialize);
 
 export default httpTriggerInitialize;

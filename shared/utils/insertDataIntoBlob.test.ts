@@ -1,9 +1,9 @@
-import { Operation } from '../external/models';
+import { ReferenceOperation } from 'cloud-docs-shared-code/reference/preprocessedModels';
 import { insertDataIntoBlob } from './insertDataIntoBlob';
 
 const defaultBlob = {
     items: {},
-    operation: Operation.Initialize,
+    operation: ReferenceOperation.Initialize,
     zapiSpecificationCodename: 'some_api',
 };
 
@@ -38,7 +38,7 @@ describe('insertDataIntoBlob', () => {
                     name: 'delete items',
                 },
             },
-            operation: Operation.Initialize,
+            operation: ReferenceOperation.Initialize,
             zapiSpecificationCodename: 'some_api',
         };
 

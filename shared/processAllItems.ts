@@ -1,11 +1,13 @@
+import {
+    IPreprocessedData,
+    ReferenceOperation,
+} from 'cloud-docs-shared-code/reference/preprocessedModels';
 import { IDeliveryClient } from 'kentico-cloud-delivery';
 import { storeReferenceDataToBlobStorage } from './external/blobManager';
 import { getApiItems } from './external/kenticoCloudClient';
-import { Operation } from './external/models';
 import { getProcessedData } from './processing/getProcessedData';
-import { IPreprocessedData } from './processing/processedDataModels';
 
-export const processAllItems = async (deliveryClientGetter: () => IDeliveryClient, operation: Operation) => {
+export const processAllItems = async (deliveryClientGetter: () => IDeliveryClient, operation: ReferenceOperation) => {
     const responseItems = await getApiItems(deliveryClientGetter);
 
     const data = getProcessedData(
