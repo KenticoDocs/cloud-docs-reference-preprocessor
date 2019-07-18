@@ -12,4 +12,8 @@ import {
 export class ContentChunk extends ContentItem {
     public content: Fields.RichTextField;
     public platform: Fields.TaxonomyField;
+
+    constructor() {
+        super({ richTextResolver: (item: ContentChunk) => item.content.getHtml() });
+    }
 }

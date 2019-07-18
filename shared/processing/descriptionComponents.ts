@@ -2,7 +2,6 @@ import {
     ICallout,
     ICodeSample,
     ICodeSamples,
-    IContentChunk,
     IImage,
     IPreprocessedData,
 } from 'cloud-docs-shared-code/reference/preprocessedModels';
@@ -13,7 +12,6 @@ import {
 import { Callout } from '../models/callout';
 import { CodeSample } from '../models/code_sample';
 import { CodeSamples } from '../models/code_samples';
-import { ContentChunk } from '../models/content_chunk';
 import { Image } from '../models/image';
 import {
     processLinkedItemsElement,
@@ -21,14 +19,15 @@ import {
     processTaxonomyElement,
 } from '../utils/processElements';
 import {
+    getItemsDataFromLinkedItems,
     getItemsDataFromRichText,
     getSystemProperties,
     processItems,
 } from './common';
 import RichTextField = Fields.RichTextField;
 
-type ZapiDescriptionComponents = Image | Callout | CodeSample | CodeSamples | ContentChunk;
-type IDescriptionComponents = IImage | ICallout | ICodeSample | ICodeSamples | IContentChunk;
+type ZapiDescriptionComponents = Image | Callout | CodeSample | CodeSamples;
+type IDescriptionComponents = IImage | ICallout | ICodeSample | ICodeSamples;
 
 export const processDescriptionComponents = (
     field: RichTextField,
@@ -38,7 +37,11 @@ export const processDescriptionComponents = (
     getItemsDataFromRichText<ZapiDescriptionComponents, IDescriptionComponents>(getDescriptionComponentData),
 )(field, dataBlob, linkedItems);
 
-const getDescriptionComponentData = (component: ZapiDescriptionComponents): IDescriptionComponents => {
+const getDescriptionComponentData = (
+    component: ZapiDescriptionComponents,
+    dataBlob: IPreprocessedData,
+    linkedItems: ContentItem[],
+): IDescriptionComponents => {
     switch (component.system.type) {
         case 'image': {
             return getImageData(component as Image);
@@ -50,15 +53,23 @@ const getDescriptionComponentData = (component: ZapiDescriptionComponents): IDes
             return getCodeSampleData(component as CodeSample);
         }
         case 'code_samples': {
-            return getCodeSamplesData(component as CodeSamples);
-        }
-        case 'content_chunk': {
-            return getContentChunkData(component as ContentChunk);
+            return getCodeSamplesData(component as CodeSamples, dataBlob, linkedItems);
         }
         default:
-            throw Error(`Unsupported content type (${component.system.type}) in a description element`);
+            // Content chunk is directly resolved by its richTextResolver
+            if (component.system.type !== 'content_chunk') {
+                throw Error(`Unsupported content type (${component.system.type}) in a description element`);
+            }
     }
 };
+
+const processCodeSamples = (
+    items: ContentItem[],
+    dataBlob: IPreprocessedData,
+    linkedItems: ContentItem[],
+): void => processItems(
+    getItemsDataFromLinkedItems<CodeSample, ICodeSample>(getCodeSampleData),
+)(items, dataBlob, linkedItems);
 
 const getImageData = (image: Image): IImage => ({
     ...getSystemProperties(image),
@@ -83,13 +94,15 @@ const getCodeSampleData = (codeSample: CodeSample): ICodeSample => ({
     programmingLanguage: processTaxonomyElement(codeSample.programmingLanguage),
 });
 
-const getCodeSamplesData = (codeSamples: CodeSamples): ICodeSamples => ({
-    ...getSystemProperties(codeSamples),
-    codeSamples: processLinkedItemsElement(codeSamples.codeSamples),
-});
+const getCodeSamplesData = (
+    item: CodeSamples,
+    dataBlob: IPreprocessedData,
+    linkedItems: ContentItem[],
+): ICodeSamples => {
+    processCodeSamples(item.codeSamples, dataBlob, linkedItems);
 
-const getContentChunkData = (contentChunk: ContentChunk): IContentChunk => ({
-    ...getSystemProperties(contentChunk),
-    content: contentChunk.content.getHtml(),
-    platform: processTaxonomyElement(contentChunk.platform),
-});
+    return {
+        ...getSystemProperties(item),
+        codeSamples: processLinkedItemsElement(item.codeSamples),
+    };
+};
