@@ -29,6 +29,14 @@ import RichTextField = Fields.RichTextField;
 type ZapiDescriptionComponents = Image | Callout | CodeSample | CodeSamples;
 type IDescriptionComponents = IImage | ICallout | ICodeSample | ICodeSamples;
 
+export const processCodeSamplesInLinkedItems = (
+    items: ContentItem[],
+    dataBlob: IPreprocessedData,
+    linkedItems: ContentItem[],
+): void => processItems(
+    getItemsDataFromLinkedItems<CodeSamples, ICodeSamples>(getCodeSamplesData),
+)(items, dataBlob, linkedItems);
+
 export const processDescriptionComponents = (
     field: RichTextField,
     dataBlob: IPreprocessedData,

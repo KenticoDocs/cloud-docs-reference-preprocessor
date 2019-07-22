@@ -36,7 +36,10 @@ import {
     getSystemProperties,
     processItems,
 } from './common';
-import { processDescriptionComponents } from './descriptionComponents';
+import {
+    processCodeSamplesInLinkedItems,
+    processDescriptionComponents,
+} from './descriptionComponents';
 import {
     processSchemasFromLinkedItemsElement,
     processSchemasFromRichTextElement,
@@ -173,6 +176,7 @@ const getPathOperationData = (
     processRequestBodies(pathOperation.requestBody, dataBlob, linkedItems);
     processResponses(pathOperation.responses, dataBlob, linkedItems);
     processDescriptionComponents(pathOperation.description, dataBlob, linkedItems);
+    processCodeSamplesInLinkedItems(pathOperation.codeSamples, dataBlob, linkedItems);
 
     return {
         ...getSystemProperties(pathOperation),
