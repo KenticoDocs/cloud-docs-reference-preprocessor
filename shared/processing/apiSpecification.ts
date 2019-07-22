@@ -92,7 +92,7 @@ const processSecuritySchemes = (
 
 const getSecuritySchemeData = (securityScheme: ZapiSecurityScheme): ISecurityScheme => ({
     ...getSystemProperties(securityScheme),
-    apiKeyLocation: securityScheme.apiKeyLocation.value,
+    apiKeyLocation: processMultipleChoiceElement(securityScheme.apiKeyLocation),
     apiKeyName: securityScheme.apiKeyName.value,
     apiReference: processTaxonomyElement(securityScheme.apiReference),
     bearerFormat: securityScheme.bearerFormat.value,

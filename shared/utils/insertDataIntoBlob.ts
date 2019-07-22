@@ -20,6 +20,7 @@ const insertItemIntoBlob = <Data extends ISystemAttributes>(
     dataBlob: IPreprocessedData,
 ): void => {
     if (item && item.codename && item.data) {
+        // @ts-ignore
         dataBlob.items[item.codename] = item.data;
     }
 };

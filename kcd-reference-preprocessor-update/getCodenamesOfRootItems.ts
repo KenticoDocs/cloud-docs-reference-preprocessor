@@ -1,5 +1,7 @@
-import { IWebhookContentItem } from 'cloud-docs-shared-code';
-import { getRootCodenamesOfItem } from 'cloud-docs-shared-code/getRootCodenamesOfItem';
+import {
+    getRootCodenamesOfItem,
+    IWebhookContentItem,
+} from 'cloud-docs-shared-code';
 import { ContentItem } from 'kentico-cloud-delivery';
 import {
     getDeliveryClient,
