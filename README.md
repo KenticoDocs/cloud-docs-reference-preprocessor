@@ -10,7 +10,7 @@ The service is responsible for fetching all the content related to API Reference
 
 ## Overview
 1. This project is a TypeScript Azure Functions application.
-2. It reacts to either HTTP requests (`initialize` and `preview` endpoints) or [Event Grid](https://azure.microsoft.com/en-us/services/event-grid/) events (`update`).
+2. It reacts to [Event Grid](https://azure.microsoft.com/en-us/services/event-grid/) events (`update` and `preview` endpoints).
 3. The function fetches content related to API Reference pages using [JavaScript Delivery SDK](https://github.com/Kentico/kentico-cloud-js/tree/master/packages/delivery).
 4. The fetched content is then resolved and processed into a simplified JSON format.
 4. Finally, it saves the processed data to an Azure Blob Storage, where the following API Reference services can access it.

@@ -780,10 +780,10 @@ cliui@^4.0.0:
     strip-ansi "^4.0.0"
     wrap-ansi "^2.0.0"
 
-cloud-docs-shared-code@2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/cloud-docs-shared-code/-/cloud-docs-shared-code-2.0.0.tgz#500d4042514aa01f5b8f0ee277ef019b36cef2fb"
-  integrity sha512-DdMd60pXIorhmo/2V2Bpb8UOSpWVBBDqqTzAmwCWANN6IDM71zaBKSvzOBDNIM/utkZKOmMW/+eMe9TMyeuStA==
+cloud-docs-shared-code@2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/cloud-docs-shared-code/-/cloud-docs-shared-code-2.0.2.tgz#c5e417ba8564843e4eef0b6cc9925a5eab307c97"
+  integrity sha512-PnMck9YI9B4WmWSmB7QJR+6qj0s/MUoNyieemBrDhCNsOAgJyu71+jKTsiAINwwaeuwfieEJCGhbP3oQKQanBQ==
   dependencies:
     "@azure/storage-blob" "10.3.0"
     kentico-cloud-delivery "5.7.2"
