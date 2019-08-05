@@ -7,16 +7,15 @@ import { ZapiSpecification } from '../models/zapi_specification';
 import { processApiSpecification } from './apiSpecification';
 
 export const getProcessedData = (
-    specifications: ZapiSpecification[],
+    specification: ZapiSpecification,
     linkedItems: ContentItem[],
     operation: ReferenceOperation,
-): IPreprocessedData[] =>
-    specifications.map((item: ZapiSpecification) => {
-        const dataBlob = getDataObject(item, operation);
-        processApiSpecification([item], dataBlob, linkedItems);
+): IPreprocessedData => {
+    const dataBlob = getDataObject(specification, operation);
+    processApiSpecification([specification], dataBlob, linkedItems);
 
-        return dataBlob;
-    });
+    return dataBlob;
+};
 
 const getDataObject = (item: ZapiSpecification, operation: ReferenceOperation): IPreprocessedData => ({
     items: {},

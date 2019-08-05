@@ -36,24 +36,6 @@ import { Configuration } from './configuration';
 export const RootItemType = 'zapi_specification';
 export const DepthParameter = 20;
 
-interface IResponseItems {
-    readonly items: ZapiSpecification[];
-    readonly linkedItems: ContentItem[];
-}
-
-export const getApiItems = async (deliveryClientGetter: () => IDeliveryClient): Promise<IResponseItems> => {
-    const response = await deliveryClientGetter()
-        .items<ZapiSpecification>()
-        .type(RootItemType)
-        .depthParameter(DepthParameter)
-        .getPromise();
-
-    return {
-        items: response.items,
-        linkedItems: response.linkedItems,
-    };
-};
-
 export const getDeliveryClient = (): IDeliveryClient => new DeliveryClient({
     enableSecuredMode: true,
     globalHeaders,

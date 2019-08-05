@@ -3,36 +3,43 @@ import {
     IPreprocessedData,
     ReferenceOperation,
 } from 'cloud-docs-shared-code/reference/preprocessedModels';
+import { IDeliveryClient } from 'kentico-cloud-delivery';
 import { storeReferenceDataToBlobStorage } from './external/blobManager';
-import {
-    DepthParameter,
-    getDeliveryClient,
-} from './external/kenticoCloudClient';
+import { DepthParameter } from './external/kenticoCloudClient';
 import { ZapiSpecification } from './models/zapi_specification';
 import { getProcessedData } from './processing/getProcessedData';
 
-export const processRootItem = async (codename: string, operation: ReferenceOperation): Promise<void> => {
-    const response = await getDeliveryClient()
+export const processRootItem = async (
+    codename: string,
+    operation: ReferenceOperation,
+    deliveryClientGetter: () => IDeliveryClient,
+): Promise<void> => {
+    const response = await deliveryClientGetter()
         .item<ZapiSpecification>(codename)
         .depthParameter(DepthParameter)
         .getPromise()
-        .catch((error) => handleNotFoundItem(error, codename));
+        .catch((error) => handleNotFoundItem(error, codename, operation));
 
     if (response) {
         const data = getProcessedData(
-            [response.item],
+            response.item,
             response.linkedItems,
             operation,
         );
-        data.forEach((blob: IPreprocessedData) => storeReferenceDataToBlobStorage(blob, operation));
+
+        await storeReferenceDataToBlobStorage(data, operation);
     }
 };
 
-const handleNotFoundItem = async (error: IKenticoCloudError, codename: string): Promise<void> => {
+const handleNotFoundItem = async (
+    error: IKenticoCloudError,
+    codename: string,
+    operation: ReferenceOperation,
+): Promise<void> => {
     if (error.errorCode === 100) {
         const notFoundItem: IPreprocessedData = {
             items: [],
-            operation: ReferenceOperation.Update,
+            operation,
             zapiSpecificationCodename: codename,
         };
         await storeReferenceDataToBlobStorage(notFoundItem, ReferenceOperation.Update);

@@ -1,12 +1,44 @@
 import {
     AzureFunction,
     Context,
-    HttpRequest,
 } from '@azure/functions';
+import { IEventGridEvent } from 'cloud-docs-shared-code';
 import { ReferenceOperation } from 'cloud-docs-shared-code/reference/preprocessedModels';
-import { processRequest } from '../shared/processRequest';
+import { Configuration } from '../shared/external/configuration';
+import {
+    getDeliveryClient,
+    getPreviewDeliveryClient,
+} from '../shared/external/kenticoCloudClient';
+import { processRootItem } from '../shared/processRootItem';
 
-const httpTriggerPreview: AzureFunction = async (context: Context, req: HttpRequest): Promise<void> =>
-    processRequest(context, req, ReferenceOperation.Preview);
+export interface IProviderInput {
+    readonly apiReference: string;
+    readonly isTest: string;
+}
+
+const httpTriggerPreview: AzureFunction = async (
+    context: Context,
+    eventGridEvent: IEventGridEvent<IProviderInput>,
+): Promise<void> => {
+    try {
+        Configuration.set(eventGridEvent.data.isTest === 'enabled');
+
+        const getClient = eventGridEvent.eventType === ReferenceOperation.Preview
+            ? getPreviewDeliveryClient
+            : getDeliveryClient;
+        const data = await processRootItem(
+            eventGridEvent.data.apiReference,
+            eventGridEvent.eventType as ReferenceOperation,
+            getClient,
+        );
+
+        context.res = {
+            body: data,
+        };
+    } catch (error) {
+        /** This try-catch is required for correct logging of exceptions in Azure */
+        throw `Message: ${error.message} \nStack Trace: ${error.stack}`;
+    }
+};
 
 export default httpTriggerPreview;
