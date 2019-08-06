@@ -9,8 +9,7 @@ cd "$(dirname "${BASH_SOURCE[0]}")/.." \
 
 prepare_site_dir() {
     declare -r files=(
-        kcd-reference-preprocessor-initialize
-        kcd-reference-preprocessor-preview
+        kcd-reference-preprocessor-get
         kcd-reference-preprocessor-update
         dist
         extensions.csproj

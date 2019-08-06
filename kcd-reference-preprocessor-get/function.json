@@ -6,5 +6,5 @@
       "direction": "in"
     }
   ],
-  "scriptFile": "../dist/kcd-reference-preprocessor-preview/index.js"
+  "scriptFile": "../dist/kcd-reference-preprocessor-get/index.js"
 }

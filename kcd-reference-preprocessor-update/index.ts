@@ -9,7 +9,7 @@ import { getDeliveryClient } from '../shared/external/kenticoCloudClient';
 import { processRootItem } from '../shared/processRootItem';
 import { getCodenamesOfRootItems } from './getCodenamesOfRootItems';
 
-const eventGridTrigger: AzureFunction = async (
+const eventGridTriggerUpdate: AzureFunction = async (
     context: Context,
     eventGridEvent: IWebhookEventGridEvent,
 ): Promise<void> => {
@@ -27,4 +27,4 @@ const eventGridTrigger: AzureFunction = async (
     }
 };
 
-export default eventGridTrigger;
+export default eventGridTriggerUpdate;

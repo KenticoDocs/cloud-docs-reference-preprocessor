@@ -16,7 +16,7 @@ export interface IProviderInput {
     readonly isTest: string;
 }
 
-const httpTriggerPreview: AzureFunction = async (
+const eventGridTriggerGet: AzureFunction = async (
     context: Context,
     eventGridEvent: IEventGridEvent<IProviderInput>,
 ): Promise<void> => {
@@ -41,4 +41,4 @@ const httpTriggerPreview: AzureFunction = async (
     }
 };
 
-export default httpTriggerPreview;
+export default eventGridTriggerGet;
