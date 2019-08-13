@@ -18,7 +18,7 @@ import {
 } from 'cloud-docs-shared-code/reference/preprocessedModels';
 import {
     ContentItem,
-    Fields,
+    Elements,
 } from 'kentico-cloud-delivery';
 import { Callout } from '../models/callout';
 import { ZapiDiscriminator } from '../models/zapi_discriminator';
@@ -45,7 +45,7 @@ import {
     processItems,
 } from './common';
 import { getCalloutData } from './descriptionComponents';
-import RichTextField = Fields.RichTextField;
+import RichTextField = Elements.RichTextElement;
 
 type ZapiSchemas =
     ZapiSchemaAllof
@@ -140,7 +140,7 @@ const getSchemaArrayData = (
         ...getSystemProperties(schema),
         ...getSchemaElements(schema),
         apiReference: processTaxonomyElement(schema.apiReference),
-        items: schema.items.getHtml(),
+        items: schema.items.resolveHtml(),
         uniqueItems: processMultipleChoiceElement(schema.uniqueitems),
     };
 };
@@ -174,7 +174,7 @@ const getSchemaAllOfData = (
         ...getSystemProperties(schema),
         ...getSchemaElements(schema),
         apiReference: processTaxonomyElement(schema.apiReference),
-        schemas: schema.items.getHtml(),
+        schemas: schema.items.resolveHtml(),
     };
 };
 
@@ -245,9 +245,9 @@ const getSchemaObjectData = (
     return {
         ...getSystemProperties(schema),
         ...getSchemaElements(schema),
-        additionalProperties: schema.additionalProperties.getHtml(),
+        additionalProperties: schema.additionalProperties.resolveHtml(),
         apiReference: processTaxonomyElement(schema.apiReference),
-        properties: schema.properties.getHtml(),
+        properties: schema.properties.resolveHtml(),
         required: schema.required.value,
     };
 };
@@ -265,7 +265,7 @@ const getSchemaOneOfData = (
         ...getSystemProperties(schema),
         ...getSchemaElements(schema),
         apiReference: processTaxonomyElement(schema.apiReference),
-        discriminator: schema.discriminator.getHtml(),
+        discriminator: schema.discriminator.resolveHtml(),
         schemas: processLinkedItemsElement(schema.schemas),
     };
 };
@@ -285,8 +285,8 @@ const getSchemaStringData = (
         apiReference: processTaxonomyElement(schema.apiReference),
         defaultValue: schema.defaultValue.value,
         format: schema.format.value,
-        maxLength: schema.maxlength.number,
-        minLength: schema.minlength.number,
+        maxLength: schema.maxlength.value,
+        minLength: schema.minlength.value,
     };
 };
 
@@ -305,7 +305,7 @@ const getPropertyReferencingData = (
 };
 
 const getSchemaElements = (item: ContentItem): ISchemaElements => ({
-    description: item.commonSchemaElementsDescription.getHtml(),
+    description: item.commonSchemaElementsDescription.resolveHtml(),
     example: item.commonSchemaElementsExample.value,
     name: item.commonSchemaElementsName.value,
 });
@@ -342,7 +342,7 @@ const getDiscriminatorData = (
 
         return {
             ...getSystemProperties(item),
-            mapping: item.mapping.getHtml(),
+            mapping: item.mapping.resolveHtml(),
             propertyName: item.propertyName.value,
         };
     }

@@ -13,7 +13,7 @@ import {
 } from 'cloud-docs-shared-code/reference/preprocessedModels';
 import {
     ContentItem,
-    Fields,
+    Elements,
 } from 'kentico-cloud-delivery';
 import { ZapiCategory } from '../models/zapi__category';
 import { ZapiContact } from '../models/zapi_contact';
@@ -44,7 +44,7 @@ import {
     processSchemasFromLinkedItemsElement,
     processSchemasFromRichTextElement,
 } from './schemas';
-import RichTextField = Fields.RichTextField;
+import RichTextField = Elements.RichTextElement;
 
 export const processApiSpecification = (
     items: ZapiSpecification[],
@@ -71,10 +71,10 @@ const getApiSpecificationData = (
         apiReference: processTaxonomyElement(item.apiReference),
         categories: processLinkedItemsElement(item.categories),
         contact: processLinkedItemsElement(item.contact),
-        description: item.description.getHtml(),
+        description: item.description.resolveHtml(),
         license: processLinkedItemsElement(item.license),
         security: processLinkedItemsElement(item.security),
-        servers: item.servers.getHtml(),
+        servers: item.servers.resolveHtml(),
         termsOfService: item.termsOfService.value,
         title: item.title.value,
         url: item.url.value,
@@ -96,7 +96,7 @@ const getSecuritySchemeData = (securityScheme: ZapiSecurityScheme): ISecuritySch
     apiKeyName: securityScheme.apiKeyName.value,
     apiReference: processTaxonomyElement(securityScheme.apiReference),
     bearerFormat: securityScheme.bearerFormat.value,
-    description: securityScheme.description.getHtml(),
+    description: securityScheme.description.resolveHtml(),
     name: securityScheme.name.value,
     scheme: securityScheme.scheme.value,
     type: processMultipleChoiceElement(securityScheme.type),
@@ -152,7 +152,7 @@ const getCategoryData = (
     return {
         ...getSystemProperties(category),
         apiReference: processTaxonomyElement(category.apiReference),
-        description: category.description.getHtml(),
+        description: category.description.resolveHtml(),
         name: category.name.value,
         pathOperations: processLinkedItemsElement(category.pathOperations),
         url: category.url.value,
@@ -183,13 +183,13 @@ const getPathOperationData = (
         apiReference: processTaxonomyElement(pathOperation.apiReference),
         codeSamples: processLinkedItemsElement(pathOperation.codeSamples),
         deprecated: processMultipleChoiceElement(pathOperation.deprecated),
-        description: pathOperation.description.getHtml(),
+        description: pathOperation.description.resolveHtml(),
         name: pathOperation.name.value,
         parameters: processLinkedItemsElement(pathOperation.parameters),
         path: pathOperation.path.value,
         pathOperation: processTaxonomyElement(pathOperation.pathOperation),
-        requestBody: pathOperation.requestBody.getHtml(),
-        responses: pathOperation.responses.getHtml(),
+        requestBody: pathOperation.requestBody.resolveHtml(),
+        responses: pathOperation.responses.resolveHtml(),
         url: pathOperation.url.value,
     };
 };
@@ -228,7 +228,7 @@ const getParametersData = (
         ...getSystemProperties(parameter),
         apiReference: processTaxonomyElement(parameter.apiReference),
         deprecated: processMultipleChoiceElement(parameter.deprecated),
-        description: parameter.description.getHtml(),
+        description: parameter.description.resolveHtml(),
         example: parameter.example.value,
         explode: processMultipleChoiceElement(parameter.explode),
         location: processMultipleChoiceElement(parameter.location),
@@ -257,11 +257,11 @@ const getRequestBodiesData = (
 
     return {
         ...getSystemProperties(requestBody),
-        description: requestBody.description.getHtml(),
+        description: requestBody.description.resolveHtml(),
         example: requestBody.example.value,
         mediaType: processMultipleChoiceElement(requestBody.mediaType),
         required: processMultipleChoiceElement(requestBody.required),
-        schema: requestBody.schema.getHtml(),
+        schema: requestBody.schema.resolveHtml(),
     };
 };
 
@@ -285,11 +285,11 @@ const getResponseData = (
     return {
         ...getSystemProperties(response),
         apiReference: processTaxonomyElement(response.apiReference),
-        description: response.description.getHtml(),
+        description: response.description.resolveHtml(),
         example: response.example.value,
         headers: processLinkedItemsElement(response.headers),
         httpStatus: processMultipleChoiceElement(response.httpStatus),
         mediaType: processMultipleChoiceElement(response.mediaType),
-        schema: response.schema.getHtml(),
+        schema: response.schema.resolveHtml(),
     };
 };

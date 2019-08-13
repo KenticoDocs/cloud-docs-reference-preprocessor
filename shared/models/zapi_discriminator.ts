@@ -1,6 +1,6 @@
 import {
     ContentItem,
-    Fields,
+    Elements,
 } from 'kentico-cloud-delivery';
 
 /**
@@ -10,8 +10,8 @@ import {
  * Generator doesn't have this information available and so its up to you to define relationship between models.
  */
 export class ZapiDiscriminator extends ContentItem {
-    public mapping: Fields.RichTextField;
-    public propertyName: Fields.TextField;
+    public mapping: Elements.RichTextElement;
+    public propertyName: Elements.TextElement;
 
     constructor() {
         super({

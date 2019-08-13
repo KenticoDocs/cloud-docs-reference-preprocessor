@@ -1,10 +1,10 @@
 interface IKeys {
-    readonly azureContainerName: string,
-    readonly azureStorageAccountName: string,
-    readonly azureStorageKey: string,
-    readonly kenticoProjectId: string,
-    readonly previewApiKey: string,
-    readonly securedApiKey: string,
+    readonly azureContainerName: string;
+    readonly azureStorageAccountName: string;
+    readonly azureStorageKey: string;
+    readonly kenticoProjectId: string;
+    readonly previewApiKey: string;
+    readonly securedApiKey: string;
 }
 
 export class Configuration {
@@ -19,8 +19,8 @@ export class Configuration {
             previewApiKey: Configuration.getEnvironmentVariable('KC.PreviewApiKey', isTest),
             securedApiKey: Configuration.getEnvironmentVariable('KC.SecuredApiKey', isTest),
         };
-    };
+    }
 
     private static getEnvironmentVariable = (variableName: string, isTest?: boolean): string =>
-        process.env[`${variableName}${isTest ? '.Test' : ''}`] || '';
+        process.env[`${variableName}${isTest ? '.Test' : ''}`] || ''
 }

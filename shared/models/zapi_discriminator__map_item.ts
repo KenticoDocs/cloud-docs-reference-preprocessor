@@ -1,6 +1,6 @@
 import {
     ContentItem,
-    Fields,
+    Elements,
 } from 'kentico-cloud-delivery';
 
 /**
@@ -11,7 +11,7 @@ import {
  */
 export class ZapiDiscriminatorMapItem extends ContentItem {
     public schema: ContentItem[];
-    public discriminatorValue: Fields.TextField;
+    public discriminatorValue: Elements.TextElement;
 
     constructor() {
         super({

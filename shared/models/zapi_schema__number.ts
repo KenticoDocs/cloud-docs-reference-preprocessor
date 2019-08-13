@@ -1,6 +1,6 @@
 import {
     ContentItem,
-    Fields,
+    Elements,
 } from 'kentico-cloud-delivery';
 
 /**
@@ -10,17 +10,17 @@ import {
  * Generator doesn't have this information available and so its up to you to define relationship between models.
  */
 export class ZapiSchemaNumber extends ContentItem {
-    public minimum: Fields.NumberField;
-    public commonSchemaObjectPropertyElementsWriteonly: Fields.MultipleChoiceField;
-    public maximum: Fields.NumberField;
-    public acceptedValues: Fields.TextField;
-    public apiReference: Fields.TaxonomyField;
-    public commonSchemaObjectPropertyElementsReadonly: Fields.MultipleChoiceField;
-    public commonSchemaElementsExample: Fields.TextField;
-    public commonSchemaElementsDescription: Fields.RichTextField;
-    public format: Fields.MultipleChoiceField;
-    public commonSchemaElementsName: Fields.TextField;
-    public commonSchemaObjectPropertyElementsNullable: Fields.MultipleChoiceField;
+    public minimum: Elements.NumberElement;
+    public commonSchemaObjectPropertyElementsWriteonly: Elements.MultipleChoiceElement;
+    public maximum: Elements.NumberElement;
+    public acceptedValues: Elements.TextElement;
+    public apiReference: Elements.TaxonomyElement;
+    public commonSchemaObjectPropertyElementsReadonly: Elements.MultipleChoiceElement;
+    public commonSchemaElementsExample: Elements.TextElement;
+    public commonSchemaElementsDescription: Elements.RichTextElement;
+    public format: Elements.MultipleChoiceElement;
+    public commonSchemaElementsName: Elements.TextElement;
+    public commonSchemaObjectPropertyElementsNullable: Elements.MultipleChoiceElement;
 
     constructor() {
         super({
