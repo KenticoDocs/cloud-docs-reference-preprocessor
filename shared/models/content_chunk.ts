@@ -1,6 +1,6 @@
 import {
     ContentItem,
-    Fields,
+    Elements,
 } from 'kentico-cloud-delivery';
 
 /**
@@ -10,10 +10,10 @@ import {
  * Generator doesn't have this information available and so its up to you to define relationship between models.
  */
 export class ContentChunk extends ContentItem {
-    public content: Fields.RichTextField;
-    public platform: Fields.TaxonomyField;
+    public content: Elements.RichTextElement;
+    public platform: Elements.TaxonomyElement;
 
     constructor() {
-        super({ richTextResolver: (item: ContentChunk) => item.content.getHtml() });
+        super({ richTextResolver: (item: ContentChunk) => item.content.resolveHtml() });
     }
 }

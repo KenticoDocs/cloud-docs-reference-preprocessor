@@ -1,6 +1,6 @@
 import {
     ContentItem,
-    Fields,
+    Elements,
 } from 'kentico-cloud-delivery';
 
 /**
@@ -10,15 +10,15 @@ import {
  * Generator doesn't have this information available and so its up to you to define relationship between models.
  */
 export class ZapiSpecification extends ContentItem {
-    public description: Fields.RichTextField;
-    public url: Fields.UrlSlugField;
-    public apiReference: Fields.TaxonomyField;
-    public title: Fields.TextField;
+    public description: Elements.RichTextElement;
+    public url: Elements.UrlSlugElement;
+    public apiReference: Elements.TaxonomyElement;
+    public title: Elements.TextElement;
     public license: ContentItem[];
     public categories: ContentItem[];
-    public servers: Fields.RichTextField;
-    public termsOfService: Fields.TextField;
-    public version: Fields.TextField;
+    public servers: Elements.RichTextElement;
+    public termsOfService: Elements.TextElement;
+    public version: Elements.TextElement;
     public security: ContentItem[];
     public contact: ContentItem[];
 

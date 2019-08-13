@@ -37,27 +37,24 @@ export const RootItemType = 'zapi_specification';
 export const DepthParameter = 20;
 
 export const getDeliveryClient = (): IDeliveryClient => new DeliveryClient({
-    enableSecuredMode: true,
-    globalHeaders,
+    globalQueryConfig: {
+        useSecuredMode: true,
+        waitForLoadingNewContent: true,
+    },
     projectId: Configuration.keys.kenticoProjectId,
-    securedApiKey: Configuration.keys.securedApiKey,
+    secureApiKey: Configuration.keys.securedApiKey,
     typeResolvers,
 });
 
 export const getPreviewDeliveryClient = (): IDeliveryClient => new DeliveryClient({
-    enablePreviewMode: true,
-    globalHeaders,
+    globalQueryConfig: {
+        usePreviewMode: true,
+        waitForLoadingNewContent: true,
+    },
     previewApiKey: Configuration.keys.previewApiKey,
     projectId: Configuration.keys.kenticoProjectId,
     typeResolvers,
 });
-
-const globalHeaders = [
-    {
-        header: 'X-KC-Wait-For-Loading-New-Content',
-        value: 'true',
-    },
-];
 
 const typeResolvers = [
     new TypeResolver('callout', () => new Callout()),

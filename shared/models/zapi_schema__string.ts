@@ -1,6 +1,6 @@
 import {
     ContentItem,
-    Fields,
+    Elements,
 } from 'kentico-cloud-delivery';
 
 /**
@@ -10,18 +10,18 @@ import {
  * Generator doesn't have this information available and so its up to you to define relationship between models.
  */
 export class ZapiSchemaString extends ContentItem {
-    public format: Fields.TextField;
-    public acceptedValues: Fields.TextField;
-    public commonSchemaObjectPropertyElementsWriteonly: Fields.MultipleChoiceField;
-    public minlength: Fields.NumberField;
-    public defaultValue: Fields.TextField;
-    public apiReference: Fields.TaxonomyField;
-    public commonSchemaObjectPropertyElementsReadonly: Fields.MultipleChoiceField;
-    public commonSchemaElementsExample: Fields.TextField;
-    public commonSchemaElementsDescription: Fields.RichTextField;
-    public maxlength: Fields.NumberField;
-    public commonSchemaElementsName: Fields.TextField;
-    public commonSchemaObjectPropertyElementsNullable: Fields.MultipleChoiceField;
+    public format: Elements.TextElement;
+    public acceptedValues: Elements.TextElement;
+    public commonSchemaObjectPropertyElementsWriteonly: Elements.MultipleChoiceElement;
+    public minlength: Elements.NumberElement;
+    public defaultValue: Elements.TextElement;
+    public apiReference: Elements.TaxonomyElement;
+    public commonSchemaObjectPropertyElementsReadonly: Elements.MultipleChoiceElement;
+    public commonSchemaElementsExample: Elements.TextElement;
+    public commonSchemaElementsDescription: Elements.RichTextElement;
+    public maxlength: Elements.NumberElement;
+    public commonSchemaElementsName: Elements.TextElement;
+    public commonSchemaObjectPropertyElementsNullable: Elements.MultipleChoiceElement;
 
     constructor() {
         super({

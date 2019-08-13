@@ -1,6 +1,6 @@
 import {
     ContentItem,
-    Fields,
+    Elements,
 } from 'kentico-cloud-delivery';
 
 /**
@@ -10,9 +10,9 @@ import {
  * Generator doesn't have this information available and so its up to you to define relationship between models.
  */
 export class CodeSample extends ContentItem {
-    public code: Fields.TextField;
-    public programmingLanguage: Fields.TaxonomyField;
-    public platform: Fields.TaxonomyField;
+    public code: Elements.TextElement;
+    public programmingLanguage: Elements.TaxonomyElement;
+    public platform: Elements.TaxonomyElement;
 
     constructor() {
         super({

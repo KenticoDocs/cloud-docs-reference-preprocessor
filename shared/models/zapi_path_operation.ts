@@ -1,6 +1,6 @@
 import {
     ContentItem,
-    Fields,
+    Elements,
 } from 'kentico-cloud-delivery';
 
 /**
@@ -10,16 +10,16 @@ import {
  * Generator doesn't have this information available and so its up to you to define relationship between models.
  */
 export class ZapiPathOperation extends ContentItem {
-    public description: Fields.RichTextField;
+    public description: Elements.RichTextElement;
     public codeSamples: ContentItem[];
-    public path: Fields.TextField;
-    public requestBody: Fields.RichTextField;
-    public apiReference: Fields.TaxonomyField;
-    public responses: Fields.RichTextField;
-    public pathOperation: Fields.TaxonomyField;
-    public deprecated: Fields.MultipleChoiceField;
-    public url: Fields.UrlSlugField;
-    public name: Fields.TextField;
+    public path: Elements.TextElement;
+    public requestBody: Elements.RichTextElement;
+    public apiReference: Elements.TaxonomyElement;
+    public responses: Elements.RichTextElement;
+    public pathOperation: Elements.TaxonomyElement;
+    public deprecated: Elements.MultipleChoiceElement;
+    public url: Elements.UrlSlugElement;
+    public name: Elements.TextElement;
     public parameters: ContentItem[];
 
     constructor() {

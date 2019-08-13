@@ -5,7 +5,7 @@ import {
 } from 'cloud-docs-shared-code/reference/preprocessedModels';
 
 export const insertDataIntoBlob = <Data extends ISystemAttributes>(
-    item: Array<IWrappedItem<Data>>,
+    item: IWrappedItem<Data>[],
     dataBlob: IPreprocessedData,
 ): void => {
     if (item.length > 0) {

@@ -1,6 +1,6 @@
 import {
     ContentItem,
-    Fields,
+    Elements,
 } from 'kentico-cloud-delivery';
 
 /**
@@ -10,13 +10,13 @@ import {
  * Generator doesn't have this information available and so its up to you to define relationship between models.
  */
 export class ZapiSchemaObject extends ContentItem {
-    public required: Fields.TextField;
-    public apiReference: Fields.TaxonomyField;
-    public commonSchemaElementsExample: Fields.TextField;
-    public commonSchemaElementsDescription: Fields.RichTextField;
-    public commonSchemaElementsName: Fields.TextField;
-    public properties: Fields.RichTextField;
-    public additionalProperties: Fields.RichTextField;
+    public required: Elements.TextElement;
+    public apiReference: Elements.TaxonomyElement;
+    public commonSchemaElementsExample: Elements.TextElement;
+    public commonSchemaElementsDescription: Elements.RichTextElement;
+    public commonSchemaElementsName: Elements.TextElement;
+    public properties: Elements.RichTextElement;
+    public additionalProperties: Elements.RichTextElement;
 
     constructor() {
         super({

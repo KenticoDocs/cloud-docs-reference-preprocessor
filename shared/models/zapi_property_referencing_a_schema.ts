@@ -1,6 +1,6 @@
 import {
     ContentItem,
-    Fields,
+    Elements,
 } from 'kentico-cloud-delivery';
 
 /**
@@ -11,5 +11,5 @@ import {
  */
 export class ZapiPropertyReferencingASchema extends ContentItem {
     public schema: ContentItem[];
-    public name: Fields.TextField;
+    public name: Elements.TextElement;
 }
