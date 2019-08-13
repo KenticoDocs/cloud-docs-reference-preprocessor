@@ -3,11 +3,6 @@
 	"extends": [
 		"tslint:recommended"
 	],
-	"linterOptions": {
-		"include": [
-			"./kcd-notifier/*.ts"
-		]
-	},
 	"jsRules": {},
 	"rules": {
 		"no-var-requires": false,
@@ -17,8 +12,11 @@
 			"single"
 		],
 		"semicolon": [
-			false
-		]
+			true
+		],
+		"trailing-comma": false,
+		"arrow-parens": false,
+		"array-type": false
 	},
 	"rulesDirectory": []
 }
