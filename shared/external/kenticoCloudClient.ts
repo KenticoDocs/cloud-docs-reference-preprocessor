@@ -33,8 +33,8 @@ import { ZapiServer } from '../models/zapi_server';
 import { ZapiSpecification } from '../models/zapi_specification';
 import { Configuration } from './configuration';
 
-export const RootItemType = 'zapi_specification';
-export const DepthParameter = 20;
+export const RootItemType: string = 'zapi_specification';
+export const DepthParameter: number = 20;
 
 export const getDeliveryClient = (): IDeliveryClient => new DeliveryClient({
     globalQueryConfig: {

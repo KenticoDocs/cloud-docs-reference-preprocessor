@@ -10,7 +10,7 @@ import {
  * Generator doesn't have this information available and so its up to you to define relationship between models.
  */
 export class ZapiDiscriminatorMapItem extends ContentItem {
-    public schema: ContentItem[];
+    public schema: Elements.LinkedItemsElement<ContentItem>;
     public discriminatorValue: Elements.TextElement;
 
     constructor() {

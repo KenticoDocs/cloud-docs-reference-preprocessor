@@ -10,6 +10,6 @@ import {
  * Generator doesn't have this information available and so its up to you to define relationship between models.
  */
 export class ZapiPropertyReferencingASchema extends ContentItem {
-    public schema: ContentItem[];
+    public schema: Elements.LinkedItemsElement<ContentItem>;
     public name: Elements.TextElement;
 }

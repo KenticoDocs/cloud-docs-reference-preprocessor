@@ -8,7 +8,7 @@ interface IKeys {
 }
 
 export class Configuration {
-    public static keys = {} as IKeys;
+    public static keys: IKeys = {} as IKeys;
 
     public static set = (isTest: boolean): void => {
         Configuration.keys = {

@@ -11,7 +11,7 @@ import {
  */
 export class ZapiSchemaOneof extends ContentItem {
     public discriminator: Elements.RichTextElement;
-    public schemas: ContentItem[];
+    public schemas: Elements.LinkedItemsElement<ContentItem>;
     public apiReference: Elements.TaxonomyElement;
     public commonSchemaElementsExample: Elements.TextElement;
     public commonSchemaElementsDescription: Elements.RichTextElement;
