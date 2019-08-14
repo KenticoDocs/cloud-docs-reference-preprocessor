@@ -46,7 +46,7 @@ import {
 } from './common';
 import { getCalloutData } from './descriptionComponents';
 
-type ZapiSchemas =
+export type ZapiAllSchemas =
     ZapiSchemaAllof
     | ZapiSchemaAnyof
     | ZapiSchemaArray
@@ -58,7 +58,7 @@ type ZapiSchemas =
     | ZapiSchemaString
     | ZapiPropertyReferencingASchema;
 
-type ISchemas =
+type AllSchemas =
     ISchemaAllOf
     | ISchemaAnyOf
     | ISchemaArray
@@ -75,7 +75,7 @@ export const processSchemasFromLinkedItemsElement = (
     dataBlob: IPreprocessedData,
     linkedItems: ContentItem[],
 ): void => processItems(
-    getItemsDataFromLinkedItems<ZapiSchemas, ISchemas>(getSchemaData),
+    getItemsDataFromLinkedItems<ZapiAllSchemas, AllSchemas>(getSchemaData),
 )(items, dataBlob, linkedItems);
 
 export const processSchemasFromRichTextElement = (
@@ -83,14 +83,14 @@ export const processSchemasFromRichTextElement = (
     dataBlob: IPreprocessedData,
     linkedItems: ContentItem[],
 ): void => processItems(
-    getItemsDataFromRichText<ZapiSchemas, ISchemas>(getSchemaData),
+    getItemsDataFromRichText<ZapiAllSchemas, AllSchemas>(getSchemaData),
 )(field, dataBlob, linkedItems);
 
 const getSchemaData = (
-    schema: ZapiSchemas,
+    schema: ZapiAllSchemas,
     dataBlob: IPreprocessedData,
     linkedItems: ContentItem[],
-): ISchemas => {
+): AllSchemas => {
     switch (schema.system.type) {
         case 'zapi_schema__allof': {
             return getSchemaAllOfData(schema as ZapiSchemaAllof, dataBlob, linkedItems);

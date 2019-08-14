@@ -19,18 +19,14 @@ import {
 
 const date = new Date();
 
-function constructItemConfig(): IContentItemConfig {
-  return {};
-}
+const constructItemConfig = (): IContentItemConfig => ({});
 
-function constructRawData(): IContentItemRawData {
-  return {
+const constructRawData = (): IContentItemRawData => ({
     elements: {}
-  };
-}
+});
 
-function constructLinkedItemsElement(items: ContentItem[]): Elements.LinkedItemsElement {
-  return new Elements.LinkedItemsElement({
+const constructLinkedItemsElement = (items: ContentItem[]): Elements.LinkedItemsElement =>
+  new Elements.LinkedItemsElement({
     contentTypeSystem: null as any,
     propertyName: 'y',
     rawElement: {
@@ -39,10 +35,9 @@ function constructLinkedItemsElement(items: ContentItem[]): Elements.LinkedItems
       value: [items.map(m => m.system.codename)]
     }
   }, items);
-}
 
-function constructTextElement(name: string, value: string): Elements.TextElement {
-  return new Elements.TextElement({
+const constructTextElement = (name: string, value: string): Elements.TextElement =>
+  new Elements.TextElement({
     contentTypeSystem: null as any,
     propertyName: name,
     rawElement: {
@@ -51,14 +46,13 @@ function constructTextElement(name: string, value: string): Elements.TextElement
       value
     }
   });
-}
 
-function constructTaxonomyElement(
+const constructTaxonomyElement = (
   name: string,
   value: ElementContracts.ITaxonomyTerm[],
   taxonomyGroup: string
-): Elements.TaxonomyElement {
-  return new Elements.TaxonomyElement({
+): Elements.TaxonomyElement =>
+  new Elements.TaxonomyElement({
     contentTypeSystem: null as any,
     propertyName: name,
     rawElement: {
@@ -68,13 +62,12 @@ function constructTaxonomyElement(
       value
     }
   });
-}
 
-function constructMultipleChoiceElement(
+const constructMultipleChoiceElement = (
   name: string,
   value: ElementContracts.IMultipleChoiceOptionContract[]
-): Elements.MultipleChoiceElement {
-  return new Elements.MultipleChoiceElement({
+): Elements.MultipleChoiceElement =>
+  new Elements.MultipleChoiceElement({
     contentTypeSystem: null as any,
     propertyName: name,
     rawElement: {
@@ -83,12 +76,11 @@ function constructMultipleChoiceElement(
       value
     }
   });
-}
 
-function createContentItem(
+const createContentItem = (
   elements: { [key: string]: ElementModels.IElement<any> },
   system: IContentItemSystemAttributes
-): ContentItem {
+): ContentItem => {
   const item = new ContentItem();
   item.system = new ContentItemSystemAttributes({
     codename: system.codename,
@@ -105,7 +97,7 @@ function createContentItem(
   Object.assign(item, elements);
 
   return item;
-}
+};
 
 describe('processLinkedItemsElement', () => {
   it('returns codenames of all linked content items in an array', () => {
