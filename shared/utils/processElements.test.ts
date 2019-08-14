@@ -27,7 +27,7 @@ const constructRawData = (): IContentItemRawData => ({
 
 const constructLinkedItemsElement = (items: ContentItem[]): Elements.LinkedItemsElement =>
   new Elements.LinkedItemsElement({
-    contentTypeSystem: null as any,
+    contentItemSystem: null as any,
     propertyName: 'y',
     rawElement: {
       name: 'x',
@@ -38,7 +38,7 @@ const constructLinkedItemsElement = (items: ContentItem[]): Elements.LinkedItems
 
 const constructTextElement = (name: string, value: string): Elements.TextElement =>
   new Elements.TextElement({
-    contentTypeSystem: null as any,
+    contentItemSystem: null as any,
     propertyName: name,
     rawElement: {
       name,
@@ -53,7 +53,7 @@ const constructTaxonomyElement = (
   taxonomyGroup: string
 ): Elements.TaxonomyElement =>
   new Elements.TaxonomyElement({
-    contentTypeSystem: null as any,
+    contentItemSystem: null as any,
     propertyName: name,
     rawElement: {
       name,
@@ -68,7 +68,7 @@ const constructMultipleChoiceElement = (
   value: ElementContracts.IMultipleChoiceOptionContract[]
 ): Elements.MultipleChoiceElement =>
   new Elements.MultipleChoiceElement({
-    contentTypeSystem: null as any,
+    contentItemSystem: null as any,
     propertyName: name,
     rawElement: {
       name,
