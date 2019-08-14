@@ -4,8 +4,8 @@ import {
     Elements,
 } from 'kentico-cloud-delivery';
 
-export const processLinkedItemsElement = (linkedItems: ContentItem[]): string[] =>
-    linkedItems.map((contentItem: ContentItem) => contentItem.system.codename);
+export const processLinkedItemsElement = (linkedItemsElement: Elements.LinkedItemsElement): string[] =>
+    linkedItemsElement.value.map((contentItem: ContentItem) => contentItem.system.codename);
 
 export const processTaxonomyElement = (taxonomyElement: Elements.TaxonomyElement): string[] =>
     taxonomyElement.value.map((term: ElementModels.TaxonomyTerm) => term.name);

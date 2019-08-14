@@ -45,7 +45,6 @@ import {
     processItems,
 } from './common';
 import { getCalloutData } from './descriptionComponents';
-import RichTextField = Elements.RichTextElement;
 
 type ZapiSchemas =
     ZapiSchemaAllof
@@ -80,7 +79,7 @@ export const processSchemasFromLinkedItemsElement = (
 )(items, dataBlob, linkedItems);
 
 export const processSchemasFromRichTextElement = (
-    field: RichTextField,
+    field: Elements.RichTextElement,
     dataBlob: IPreprocessedData,
     linkedItems: ContentItem[],
 ): void => processItems(
@@ -150,7 +149,7 @@ const getSchemaAnyOfData = (
     dataBlob: IPreprocessedData,
     linkedItems: ContentItem[],
 ): ISchemaAnyOf => {
-    processSchemasFromLinkedItemsElement(schema.schemas, dataBlob, linkedItems);
+    processSchemasFromLinkedItemsElement(schema.schemas.value, dataBlob, linkedItems);
     processCallouts(schema.commonSchemaElementsDescription, dataBlob, linkedItems);
 
     return {
@@ -258,7 +257,7 @@ const getSchemaOneOfData = (
     linkedItems: ContentItem[],
 ): ISchemaOneOf => {
     processDiscriminators(schema.discriminator, dataBlob, linkedItems);
-    processSchemasFromLinkedItemsElement(schema.schemas, dataBlob, linkedItems);
+    processSchemasFromLinkedItemsElement(schema.schemas.value, dataBlob, linkedItems);
     processCallouts(schema.commonSchemaElementsDescription, dataBlob, linkedItems);
 
     return {
@@ -295,7 +294,7 @@ const getPropertyReferencingData = (
     dataBlob: IPreprocessedData,
     linkedItems: ContentItem[],
 ): IPropertyReferencingASchema => {
-    processSchemasFromLinkedItemsElement(item.schema, dataBlob, linkedItems);
+    processSchemasFromLinkedItemsElement(item.schema.value, dataBlob, linkedItems);
 
     return {
         ...getSystemProperties(item),
@@ -317,20 +316,20 @@ const getSchemaObjectPropertyElements = (item: ContentItem): ISchemaObjectProper
 });
 
 const processCallouts = (
-    field: RichTextField,
+    richTextElement: Elements.RichTextElement,
     dataBlob: IPreprocessedData,
     linkedItems: ContentItem[],
 ): void => processItems(
     getItemsDataFromRichText<Callout, ICallout>(getCalloutData),
-)(field, dataBlob, linkedItems);
+)(richTextElement, dataBlob, linkedItems);
 
 const processDiscriminators = (
-    field: RichTextField,
+    richTextElement: Elements.RichTextElement,
     dataBlob: IPreprocessedData,
     linkedItems: ContentItem[],
 ): void => processItems(
     getItemsDataFromRichText<ZapiDiscriminator, IDiscriminator>(getDiscriminatorData),
-)(field, dataBlob, linkedItems);
+)(richTextElement, dataBlob, linkedItems);
 
 const getDiscriminatorData = (
     item: ZapiDiscriminator,
@@ -349,12 +348,12 @@ const getDiscriminatorData = (
 };
 
 const processDiscriminatorMapItems = (
-    field: RichTextField,
+    richTextElement: Elements.RichTextElement,
     dataBlob: IPreprocessedData,
     linkedItems: ContentItem[],
 ): void => processItems(
     getItemsDataFromRichText<ZapiDiscriminatorMapItem, IDiscriminatorMapItem>(getDiscriminatorMapItemData),
-)(field, dataBlob, linkedItems);
+)(richTextElement, dataBlob, linkedItems);
 
 const getDiscriminatorMapItemData = (
     item: ZapiDiscriminatorMapItem,
@@ -362,7 +361,7 @@ const getDiscriminatorMapItemData = (
     linkedItems: ContentItem[],
 ): IDiscriminatorMapItem => {
     if (item.system.type === 'zapi_discriminator__map_item') {
-        processSchemasFromLinkedItemsElement(item.schema, dataBlob, linkedItems);
+        processSchemasFromLinkedItemsElement(item.schema.value, dataBlob, linkedItems);
 
         return {
             ...getSystemProperties(item),

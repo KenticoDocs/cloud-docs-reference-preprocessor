@@ -18,8 +18,6 @@ import {
 } from '../utils/processElements';
 import { getItemsDataFromLinkedItems, getItemsDataFromRichText, getSystemProperties, processItems } from './common';
 
-import RichTextField = Elements.RichTextElement;
-
 type ZapiDescriptionComponents = Image | Callout | CodeSample | CodeSamples;
 type IDescriptionComponents = IImage | ICallout | ICodeSample | ICodeSamples;
 
@@ -35,7 +33,7 @@ export const processCodeSamplesInLinkedItems = (
   );
 
 export const processDescriptionComponents = (
-  field: RichTextField,
+  field: Elements.RichTextElement,
   dataBlob: IPreprocessedData,
   linkedItems: ContentItem[]
 ): void =>
@@ -117,7 +115,7 @@ const getCodeSamplesData = (
   dataBlob: IPreprocessedData,
   linkedItems: ContentItem[]
 ): ICodeSamples => {
-  processCodeSamples(item.codeSamples, dataBlob, linkedItems);
+  processCodeSamples(item.codeSamples.value, dataBlob, linkedItems);
 
   return {
     ...getSystemProperties(item),

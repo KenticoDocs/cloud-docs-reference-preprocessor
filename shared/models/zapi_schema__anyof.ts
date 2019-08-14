@@ -12,7 +12,7 @@ import {
 export class ZapiSchemaAnyof extends ContentItem {
     public apiReference: Elements.TaxonomyElement;
     public commonSchemaObjectPropertyElementsWriteonly: Elements.MultipleChoiceElement;
-    public schemas: ContentItem[];
+    public schemas: Elements.LinkedItemsElement<ContentItem>;
     public commonSchemaObjectPropertyElementsReadonly: Elements.MultipleChoiceElement;
     public commonSchemaElementsExample: Elements.TextElement;
     public commonSchemaElementsDescription: Elements.RichTextElement;

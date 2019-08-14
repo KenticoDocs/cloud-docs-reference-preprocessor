@@ -59,10 +59,10 @@ const getApiSpecificationData = (
     dataBlob: IPreprocessedData,
     linkedItems: ContentItem[],
 ): IZapiSpecification => {
-    processCategories(item.categories, dataBlob, linkedItems);
-    processContacts(item.contact, dataBlob, linkedItems);
-    processLicenses(item.license, dataBlob, linkedItems);
-    processSecuritySchemes(item.security, dataBlob, linkedItems);
+    processCategories(item.categories.value, dataBlob, linkedItems);
+    processContacts(item.contact.value, dataBlob, linkedItems);
+    processLicenses(item.license.value, dataBlob, linkedItems);
+    processSecuritySchemes(item.security.value, dataBlob, linkedItems);
     processServers(item.servers, dataBlob, linkedItems);
     processDescriptionComponents(item.description, dataBlob, linkedItems);
 
@@ -147,7 +147,7 @@ const getCategoryData = (
     linkedItems: ContentItem[],
 ): ICategory => {
     processDescriptionComponents(category.description, dataBlob, linkedItems);
-    processPathOperations(category.pathOperations, dataBlob, linkedItems);
+    processPathOperations(category.pathOperations.value, dataBlob, linkedItems);
 
     return {
         ...getSystemProperties(category),
@@ -172,11 +172,11 @@ const getPathOperationData = (
     dataBlob: IPreprocessedData,
     linkedItems: ContentItem[],
 ): IPathOperation => {
-    processParameters(pathOperation.parameters, dataBlob, linkedItems);
+    processParameters(pathOperation.parameters.value, dataBlob, linkedItems);
     processRequestBodies(pathOperation.requestBody, dataBlob, linkedItems);
     processResponses(pathOperation.responses, dataBlob, linkedItems);
     processDescriptionComponents(pathOperation.description, dataBlob, linkedItems);
-    processCodeSamplesInLinkedItems(pathOperation.codeSamples, dataBlob, linkedItems);
+    processCodeSamplesInLinkedItems(pathOperation.codeSamples.value, dataBlob, linkedItems);
 
     return {
         ...getSystemProperties(pathOperation),
@@ -221,7 +221,7 @@ const getParametersData = (
     dataBlob: IPreprocessedData,
     linkedItems: ContentItem[],
 ): IParameter => {
-    processSchemasFromLinkedItemsElement(parameter.schema, dataBlob, linkedItems);
+    processSchemasFromLinkedItemsElement(parameter.schema.value, dataBlob, linkedItems);
     processDescriptionComponents(parameter.description, dataBlob, linkedItems);
 
     return {
@@ -278,7 +278,7 @@ const getResponseData = (
     dataBlob: IPreprocessedData,
     linkedItems: ContentItem[],
 ): IResponse => {
-    processParameters(response.headers, dataBlob, linkedItems);
+    processParameters(response.headers.value, dataBlob, linkedItems);
     processSchemasFromRichTextElement(response.schema, dataBlob, linkedItems);
     processDescriptionComponents(response.description, dataBlob, linkedItems);
 

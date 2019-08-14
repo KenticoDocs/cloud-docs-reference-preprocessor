@@ -29,6 +29,18 @@ function constructRawData(): IContentItemRawData {
   };
 }
 
+function constructLinkedItemsElement(items: ContentItem[]): Elements.LinkedItemsElement {
+  return new Elements.LinkedItemsElement({
+    contentTypeSystem: null as any,
+    propertyName: 'y',
+    rawElement: {
+      name: 'x',
+      type: ElementType.ModularContent,
+      value: [items.map(m => m.system.codename)]
+    }
+  }, items);
+}
+
 function constructTextElement(name: string, value: string): Elements.TextElement {
   return new Elements.TextElement({
     contentTypeSystem: null as any,
@@ -97,7 +109,7 @@ function createContentItem(
 
 describe('processLinkedItemsElement', () => {
   it('returns codenames of all linked content items in an array', () => {
-    const linkedItemsElement: ContentItem[] = [
+    const linkedItems: ContentItem[] = [
       createContentItem(
         {
           title: constructTextElement('Title', 'Content Management API')
@@ -127,6 +139,8 @@ describe('processLinkedItemsElement', () => {
         }
       )
     ];
+    const linkedItemsElement: Elements.LinkedItemsElement = constructLinkedItemsElement(linkedItems);
+
     const expectedResult: string[] = ['content_management_api', 'deliver_api'];
     const actualResult: string[] = processLinkedItemsElement(linkedItemsElement);
 
@@ -134,7 +148,8 @@ describe('processLinkedItemsElement', () => {
   });
 
   it('returns an empty array for empty linked items element', () => {
-    const linkedItemsElement: ContentItem[] = [];
+    const linkedItems: ContentItem[] = [];
+    const linkedItemsElement: Elements.LinkedItemsElement = constructLinkedItemsElement(linkedItems);
     const expectedResult: string[] = [];
 
     const actualResult: string[] = processLinkedItemsElement(linkedItemsElement);

@@ -8,9 +8,7 @@ import { ContentItem, Elements } from 'kentico-cloud-delivery';
 import { insertDataIntoBlob } from '../utils/insertDataIntoBlob';
 import { getFromLinkedItems } from '../utils/processElements';
 
-import RichTextField = Elements.RichTextElement;
-
-type ProcessableObject = ContentItem | ContentItem[] | RichTextField;
+type ProcessableObject = ContentItem | ContentItem[] | Elements.RichTextElement;
 
 type GetData<ProcessedDataModel extends ISystemAttributes> = (
   item: ProcessableObject,
@@ -36,11 +34,11 @@ export const processItems = <DataModelResult extends ISystemAttributes>(getData:
 export const getItemsDataFromRichText = <KCItem extends ContentItem, PreprocessedItem extends ISystemAttributes>(
   getDataObject: GetDataObject<PreprocessedItem>
 ) => (
-  field: RichTextField,
+  richTextElement: Elements.RichTextElement,
   dataBlob: IPreprocessedData,
   linkedItems: ContentItem[]
 ): IWrappedItem<PreprocessedItem>[] =>
-  field.linkedItemCodenames.map(codename => {
+  richTextElement.linkedItemCodenames.map(codename => {
     const item: KCItem = getFromLinkedItems<KCItem>(codename, linkedItems);
 
     return getWrappedData(getDataObject(item, dataBlob, linkedItems), item);
