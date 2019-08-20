@@ -173,7 +173,7 @@ const getSchemaAllOfData = (
         ...getSystemProperties(schema),
         ...getSchemaElements(schema),
         apiReference: processTaxonomyElement(schema.apiReference),
-        schemas: schema.items.resolveHtml(),
+        schemas: schema.schemas.resolveHtml(),
     };
 };
 
