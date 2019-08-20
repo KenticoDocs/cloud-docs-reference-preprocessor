@@ -86,44 +86,53 @@ export const processSchemasFromRichTextElement = (
     getItemsDataFromRichText<ZapiAllSchemas, AllSchemas>(getSchemaData),
 )(field, dataBlob, linkedItems);
 
+const processedCodenames = new Set();
+
 const getSchemaData = (
     schema: ZapiAllSchemas,
     dataBlob: IPreprocessedData,
     linkedItems: ContentItem[],
 ): AllSchemas => {
-    switch (schema.system.type) {
-        case 'zapi_schema__allof': {
-            return getSchemaAllOfData(schema as ZapiSchemaAllof, dataBlob, linkedItems);
+    const codename = schema.system.codename;
+
+    // Solves issue with infinite resolving of nested items in themselves
+    if (!processedCodenames.has(codename)) {
+        processedCodenames.add(codename);
+
+        switch (schema.system.type) {
+            case 'zapi_schema__allof': {
+                return getSchemaAllOfData(schema as ZapiSchemaAllof, dataBlob, linkedItems);
+            }
+            case 'zapi_schema__anyof': {
+                return getSchemaAnyOfData(schema as ZapiSchemaAnyof, dataBlob, linkedItems);
+            }
+            case 'zapi_schema__array': {
+                return getSchemaArrayData(schema as ZapiSchemaArray, dataBlob, linkedItems);
+            }
+            case 'zapi_schema__boolean': {
+                return getSchemaBooleanData(schema as ZapiSchemaBoolean, dataBlob, linkedItems);
+            }
+            case 'zapi_schema__integer': {
+                return getSchemaIntegerData(schema as ZapiSchemaInteger, dataBlob, linkedItems);
+            }
+            case 'zapi_schema__number': {
+                return getSchemaNumberData(schema as ZapiSchemaNumber, dataBlob, linkedItems);
+            }
+            case 'zapi_schema__object': {
+                return getSchemaObjectData(schema as ZapiSchemaObject, dataBlob, linkedItems);
+            }
+            case 'zapi_schema__oneof': {
+                return getSchemaOneOfData(schema as ZapiSchemaOneof, dataBlob, linkedItems);
+            }
+            case 'zapi_schema__string': {
+                return getSchemaStringData(schema as ZapiSchemaString, dataBlob, linkedItems);
+            }
+            case 'zapi_property_referencing_a_schema': {
+                return getPropertyReferencingData(schema as ZapiPropertyReferencingASchema, dataBlob, linkedItems);
+            }
+            default:
+                throw Error(`Unsupported content type (${schema.system.type}) in a schema-related element`);
         }
-        case 'zapi_schema__anyof': {
-            return getSchemaAnyOfData(schema as ZapiSchemaAnyof, dataBlob, linkedItems);
-        }
-        case 'zapi_schema__array': {
-            return getSchemaArrayData(schema as ZapiSchemaArray, dataBlob, linkedItems);
-        }
-        case 'zapi_schema__boolean': {
-            return getSchemaBooleanData(schema as ZapiSchemaBoolean, dataBlob, linkedItems);
-        }
-        case 'zapi_schema__integer': {
-            return getSchemaIntegerData(schema as ZapiSchemaInteger, dataBlob, linkedItems);
-        }
-        case 'zapi_schema__number': {
-            return getSchemaNumberData(schema as ZapiSchemaNumber, dataBlob, linkedItems);
-        }
-        case 'zapi_schema__object': {
-            return getSchemaObjectData(schema as ZapiSchemaObject, dataBlob, linkedItems);
-        }
-        case 'zapi_schema__oneof': {
-            return getSchemaOneOfData(schema as ZapiSchemaOneof, dataBlob, linkedItems);
-        }
-        case 'zapi_schema__string': {
-            return getSchemaStringData(schema as ZapiSchemaString, dataBlob, linkedItems);
-        }
-        case 'zapi_property_referencing_a_schema': {
-            return getPropertyReferencingData(schema as ZapiPropertyReferencingASchema, dataBlob, linkedItems);
-        }
-        default:
-            throw Error(`Unsupported content type (${schema.system.type}) in a schema-related element`);
     }
 };
 
