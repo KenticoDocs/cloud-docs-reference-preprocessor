@@ -1,7 +1,8 @@
 import {
-    ContentItem,
     DeliveryClient,
+    IContentItemConfig,
     IDeliveryClient,
+    Link,
     TypeResolver,
 } from 'kentico-cloud-delivery';
 import { Callout } from '../models/callout';
@@ -84,4 +85,23 @@ const typeResolvers = [
     new TypeResolver('zapi_security_scheme', () => new ZapiSecurityScheme()),
     new TypeResolver('zapi_server', () => new ZapiServer()),
     new TypeResolver('zapi_specification', () => new ZapiSpecification()),
+];
+
+export const getQueryConfig = (): IContentItemConfig => ({
+    urlSlugResolver: (link: Link) => {
+        if (typesToLink.includes(link.type)) {
+            return {
+                url: `${Configuration.keys.websiteUrl}/link-to/${link.codename}`,
+            };
+        }
+    },
+});
+
+const typesToLink = [
+    'article',
+    'scenario',
+    'multiplatform_article',
+    'zapi_specification',
+    'zapi_path_operation',
+    'zapi__category'
 ];
