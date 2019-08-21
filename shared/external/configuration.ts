@@ -5,6 +5,7 @@ interface IKeys {
     readonly kenticoProjectId: string;
     readonly previewApiKey: string;
     readonly securedApiKey: string;
+    readonly websiteUrl: string;
 }
 
 export class Configuration {
@@ -18,6 +19,7 @@ export class Configuration {
             kenticoProjectId: Configuration.getEnvironmentVariable('KC.ProjectId', isTest),
             previewApiKey: Configuration.getEnvironmentVariable('KC.PreviewApiKey', isTest),
             securedApiKey: Configuration.getEnvironmentVariable('KC.SecuredApiKey', isTest),
+            websiteUrl: Configuration.getEnvironmentVariable('Website.URL', isTest),
         };
     }
 

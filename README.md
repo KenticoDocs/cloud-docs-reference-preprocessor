@@ -37,6 +37,7 @@ The service is responsible for fetching all the content related to API Reference
 * `Azure.StorageKey` - Azure Storage key
 * `Azure.StorageAccountName` - Azure Storage account name
 * `Azure.ContainerName` - Azure Storage container name
+* `Website.URL` - Kentico Cloud documentation website URL
 
 ## Testing
 * Run `yarn run test` in the terminal.
