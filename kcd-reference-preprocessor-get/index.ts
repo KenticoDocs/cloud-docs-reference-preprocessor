@@ -5,6 +5,7 @@ import { IDeliveryClient } from 'kentico-cloud-delivery';
 
 import { Configuration } from '../shared/external/configuration';
 import { getDeliveryClient, getPreviewDeliveryClient } from '../shared/external/kenticoCloudClient';
+import { ProcessedSchemaCodenames } from '../shared/processing/ProcessedSchemaCodenames';
 import { processRootItem } from '../shared/processRootItem';
 
 export interface IProviderInput {
@@ -18,6 +19,8 @@ const eventGridTriggerGet: AzureFunction = async (
 ): Promise<void> => {
   try {
     Configuration.set(eventGridEvent.data.isTest === 'enabled');
+
+    ProcessedSchemaCodenames.initialize();
 
     const getClient: () => IDeliveryClient =
       eventGridEvent.eventType === ReferenceOperation.Preview ? getPreviewDeliveryClient : getDeliveryClient;

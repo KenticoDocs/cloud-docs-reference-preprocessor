@@ -4,6 +4,7 @@ import { IPreprocessedData, ReferenceOperation } from 'cloud-docs-shared-code/re
 
 import { Configuration } from '../shared/external/configuration';
 import { getDeliveryClient } from '../shared/external/kenticoCloudClient';
+import { ProcessedSchemaCodenames } from '../shared/processing/ProcessedSchemaCodenames';
 import { processRootItem } from '../shared/processRootItem';
 import { getCodenamesOfRootItems } from './getCodenamesOfRootItems';
 
@@ -13,6 +14,9 @@ const eventGridTriggerUpdate: AzureFunction = async (
 ): Promise<void> => {
   try {
     Configuration.set(eventGridEvent.data.test === 'enabled');
+
+    ProcessedSchemaCodenames.initialize();
+
     const rootItemsCodenames: Set<string> = await getCodenamesOfRootItems(eventGridEvent.data.webhook.items);
     const processRootItemFunctions: Promise<IPreprocessedData>[] = [...rootItemsCodenames].map(codename =>
       processRootItem(codename, ReferenceOperation.Update, getDeliveryClient)

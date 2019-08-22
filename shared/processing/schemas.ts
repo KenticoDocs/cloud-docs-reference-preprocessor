@@ -45,6 +45,7 @@ import {
     processItems,
 } from './common';
 import { getCalloutData } from './descriptionComponents';
+import { ProcessedSchemaCodenames } from './ProcessedSchemaCodenames';
 
 export type ZapiAllSchemas =
     ZapiSchemaAllof
@@ -86,8 +87,6 @@ export const processSchemasFromRichTextElement = (
     getItemsDataFromRichText<ZapiAllSchemas, AllSchemas>(getSchemaData),
 )(field, dataBlob, linkedItems);
 
-const processedCodenames = new Set();
-
 const getSchemaData = (
     schema: ZapiAllSchemas,
     dataBlob: IPreprocessedData,
@@ -96,8 +95,8 @@ const getSchemaData = (
     const codename = schema.system.codename;
 
     // Solves issue with infinite resolving of nested items in themselves
-    if (!processedCodenames.has(codename)) {
-        processedCodenames.add(codename);
+    if (!ProcessedSchemaCodenames.has(codename)) {
+        ProcessedSchemaCodenames.add(codename);
 
         switch (schema.system.type) {
             case 'zapi_schema__allof': {
