@@ -46,7 +46,7 @@ const handleNotFoundItem = async (
 ): Promise<void> => {
   if (error.errorCode === 100) {
     const notFoundItem: IPreprocessedData = {
-      items: [],
+      items: {},
       operation,
       zapiSpecificationCodename: codename
     };
