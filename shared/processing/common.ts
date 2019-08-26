@@ -1,7 +1,6 @@
 import {
   IPreprocessedData,
   ISystemAttributes,
-  IWrappedItem
 } from 'cloud-docs-shared-code/reference/preprocessedModels';
 import { ContentItem, Elements } from 'kentico-cloud-delivery';
 
@@ -14,7 +13,7 @@ type GetData<ProcessedDataModel extends ISystemAttributes> = (
   item: ProcessableObject,
   dataBlob: IPreprocessedData,
   linkedItems: ContentItem[]
-) => IWrappedItem<ProcessedDataModel>[];
+) => ProcessedDataModel[];
 
 type GetDataObject<ProcessedDataModel> = (
   item: ProcessableObject,
@@ -37,11 +36,11 @@ export const getItemsDataFromRichText = <KCItem extends ContentItem, Preprocesse
   richTextElement: Elements.RichTextElement,
   dataBlob: IPreprocessedData,
   linkedItems: ContentItem[]
-): IWrappedItem<PreprocessedItem>[] =>
+): PreprocessedItem[] =>
   richTextElement.linkedItemCodenames.map(codename => {
     const item: KCItem = getFromLinkedItems<KCItem>(codename, linkedItems);
 
-    return getWrappedData(getDataObject(item, dataBlob, linkedItems), item);
+    return getDataObject(item, dataBlob, linkedItems);
   });
 
 export const getItemsDataFromLinkedItems = <KCItem extends ContentItem, PreprocessedItem extends ISystemAttributes>(
@@ -50,15 +49,11 @@ export const getItemsDataFromLinkedItems = <KCItem extends ContentItem, Preproce
   items: ContentItem[],
   dataBlob: IPreprocessedData,
   linkedItems: ContentItem[]
-): IWrappedItem<PreprocessedItem>[] =>
-  items.map(item => getWrappedData(getDataObject(item, dataBlob, linkedItems), item));
+): PreprocessedItem[] =>
+  items.map(item => getDataObject(item, dataBlob, linkedItems));
 
-const getWrappedData = <Data extends ISystemAttributes>(dataObject: Data, item: ContentItem): IWrappedItem<Data> => ({
-  codename: item.system.codename,
-  data: dataObject
-});
-
-export const getSystemProperties = ({ system: { type, id } }: ContentItem): ISystemAttributes => ({
+export const getSystemProperties = ({ system: { type, id, codename } }: ContentItem): ISystemAttributes => ({
+  codename,
   contentType: type,
   id
 });
