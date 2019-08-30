@@ -37,11 +37,14 @@ export const getItemsDataFromRichText = <KCItem extends ContentItem, Preprocesse
   dataBlob: IPreprocessedData,
   linkedItems: ContentItem[]
 ): PreprocessedItem[] =>
-  richTextElement.linkedItemCodenames.map(codename => {
-    const item: KCItem = getFromLinkedItems<KCItem>(codename, linkedItems);
+  richTextElement.linkedItemCodenames
+    .map(codename => {
+      const item: KCItem = getFromLinkedItems<KCItem>(codename, linkedItems);
 
-    return getDataObject(item, dataBlob, linkedItems);
-  });
+      return getDataObject(item, dataBlob, linkedItems);
+    })
+    // Filters out undefined objects - repeating schemas and content chunks
+    .filter(dataObject => dataObject);
 
 export const getItemsDataFromLinkedItems = <KCItem extends ContentItem, PreprocessedItem extends ISystemAttributes>(
   getDataObject: GetDataObject<PreprocessedItem>

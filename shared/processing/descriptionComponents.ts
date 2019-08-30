@@ -97,11 +97,18 @@ const getImageData = (image: Image): IImage => {
   };
 };
 
-export const getCalloutData = (callout: Callout): ICallout => ({
-  ...getSystemProperties(callout),
-  content: callout.content.resolveHtml(),
-  type: processMultipleChoiceElement(callout.type)
-});
+export const getCalloutData = (callout: Callout): ICallout => {
+  // Necessary for filtering out content chunk items inside rich text elements of schemas
+  if (callout.system.type !== 'callout') {
+    return undefined;
+  }
+
+  return {
+    ...getSystemProperties(callout),
+    content: callout.content.resolveHtml(),
+    type: processMultipleChoiceElement(callout.type)
+  };
+};
 
 const getCodeSampleData = (codeSample: CodeSample): ICodeSample => ({
   ...getSystemProperties(codeSample),
