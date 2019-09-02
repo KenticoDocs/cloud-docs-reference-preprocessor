@@ -37,8 +37,9 @@ import {
     processItems,
 } from './common';
 import {
+    processCategoryDescriptionComponents,
     processCodeSamplesInLinkedItems,
-    processDescriptionComponents,
+    processDescriptionComponents
 } from './descriptionComponents';
 import {
     processSchemasFromLinkedItemsElement,
@@ -146,7 +147,7 @@ const getCategoryData = (
     dataBlob: IPreprocessedData,
     linkedItems: ContentItem[],
 ): ICategory => {
-    processDescriptionComponents(category.description, dataBlob, linkedItems);
+    processCategoryDescriptionComponents(category.description, dataBlob, linkedItems);
     processPathOperations(category.pathOperations.value, dataBlob, linkedItems);
 
     return {

@@ -59,7 +59,7 @@ export type ZapiAllSchemas =
     | ZapiSchemaString
     | ZapiPropertyReferencingASchema;
 
-type AllSchemas =
+export type AllSchemas =
     ISchemaAllOf
     | ISchemaAnyOf
     | ISchemaArray
@@ -87,7 +87,7 @@ export const processSchemasFromRichTextElement = (
     getItemsDataFromRichText<ZapiAllSchemas, AllSchemas>(getSchemaData),
 )(field, dataBlob, linkedItems);
 
-const getSchemaData = (
+export const getSchemaData = (
     schema: ZapiAllSchemas,
     dataBlob: IPreprocessedData,
     linkedItems: ContentItem[],
