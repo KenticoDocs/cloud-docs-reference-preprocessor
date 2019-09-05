@@ -1,8 +1,7 @@
 import { AzureFunction, Context } from '@azure/functions';
-import { IWebhookEventGridEvent } from 'cloud-docs-shared-code';
+import { Configuration, IWebhookEventGridEvent } from 'cloud-docs-shared-code';
 import { IPreprocessedData, ReferenceOperation } from 'cloud-docs-shared-code/reference/preprocessedModels';
 
-import { Configuration } from '../shared/external/configuration';
 import { getDeliveryClient } from '../shared/external/kenticoCloudClient';
 import { ProcessedSchemaCodenames } from '../shared/processing/ProcessedSchemaCodenames';
 import { processRootItem } from '../shared/processRootItem';

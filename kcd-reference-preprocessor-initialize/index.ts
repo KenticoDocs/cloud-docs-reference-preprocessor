@@ -3,8 +3,7 @@ import {
     Context,
     HttpRequest,
 } from '@azure/functions';
-import { ReferenceOperation } from 'cloud-docs-shared-code';
-import { Configuration } from '../shared/external/configuration';
+import { Configuration, ReferenceOperation } from 'cloud-docs-shared-code';
 import { getDeliveryClient } from '../shared/external/kenticoCloudClient';
 import { ProcessedSchemaCodenames } from '../shared/processing/ProcessedSchemaCodenames';
 import { processRootItem } from '../shared/processRootItem';

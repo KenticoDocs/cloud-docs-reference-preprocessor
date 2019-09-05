@@ -7,9 +7,9 @@ import {
     SharedKeyCredential,
     StorageURL,
 } from '@azure/storage-blob';
-import { IPreprocessedData, ReferenceOperation } from 'cloud-docs-shared-code/reference/preprocessedModels';
+import { Configuration } from 'cloud-docs-shared-code';
 
-import { Configuration } from './configuration';
+import { IPreprocessedData, ReferenceOperation } from 'cloud-docs-shared-code/reference/preprocessedModels';
 
 export const storeReferenceDataToBlobStorage = async (
   dataBlob: IPreprocessedData,
@@ -27,12 +27,12 @@ export const storeReferenceDataToBlobStorage = async (
 
 const getContainerUrl = (): ContainerURL => {
   const sharedKeyCredential = new SharedKeyCredential(
-    Configuration.keys.azureStorageAccountName,
+    Configuration.keys.azureAccountName,
     Configuration.keys.azureStorageKey
   );
   const pipeline: Pipeline = StorageURL.newPipeline(sharedKeyCredential);
   const serviceUrl: ServiceURL = new ServiceURL(
-    `https://${Configuration.keys.azureStorageAccountName}.blob.core.windows.net`,
+    `https://${Configuration.keys.azureAccountName}.blob.core.windows.net`,
     pipeline
   );
 

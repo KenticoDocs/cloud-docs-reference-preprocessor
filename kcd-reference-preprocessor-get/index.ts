@@ -1,9 +1,8 @@
 import { AzureFunction, Context } from '@azure/functions';
-import { IEventGridEvent } from 'cloud-docs-shared-code';
+import { Configuration, IEventGridEvent } from 'cloud-docs-shared-code';
 import { ReferenceOperation } from 'cloud-docs-shared-code/reference/preprocessedModels';
 import { IDeliveryClient } from 'kentico-cloud-delivery';
 
-import { Configuration } from '../shared/external/configuration';
 import { getDeliveryClient, getPreviewDeliveryClient } from '../shared/external/kenticoCloudClient';
 import { ProcessedSchemaCodenames } from '../shared/processing/ProcessedSchemaCodenames';
 import { processRootItem } from '../shared/processRootItem';
