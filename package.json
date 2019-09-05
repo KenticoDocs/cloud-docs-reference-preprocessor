@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@azure/storage-blob": "10.4.0",
-    "cloud-docs-shared-code": "3.2.1",
+    "cloud-docs-shared-code": "3.2.6",
     "kentico-cloud-delivery": "6.0.0-rc.5",
     "rxjs": "6.5.2"
   },

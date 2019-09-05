@@ -253,6 +253,7 @@ const getSchemaObjectData = (
         ...getSystemProperties(schema),
         ...getSchemaElements(schema),
         additionalProperties: schema.additionalProperties.resolveHtml(),
+        additionalPropertiesName: schema.additionalPropertiesName.value,
         apiReference: processTaxonomyElement(schema.apiReference),
         properties: schema.properties.resolveHtml(),
         required: schema.required.value,
@@ -265,7 +266,7 @@ const getSchemaOneOfData = (
     linkedItems: ContentItem[],
 ): ISchemaOneOf => {
     processDiscriminators(schema.discriminator, dataBlob, linkedItems);
-    processSchemasFromLinkedItemsElement(schema.schemas.value, dataBlob, linkedItems);
+    processSchemasFromRichTextElement(schema.schemas, dataBlob, linkedItems);
     processCallouts(schema.commonSchemaElementsDescription, dataBlob, linkedItems);
 
     return {
@@ -273,7 +274,7 @@ const getSchemaOneOfData = (
         ...getSchemaElements(schema),
         apiReference: processTaxonomyElement(schema.apiReference),
         discriminator: schema.discriminator.resolveHtml(),
-        schemas: processLinkedItemsElement(schema.schemas),
+        schemas: schema.schemas.resolveHtml(),
     };
 };
 

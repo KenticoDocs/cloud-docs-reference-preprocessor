@@ -70,6 +70,7 @@ const getApiSpecificationData = (
     return {
         ...getSystemProperties(item),
         apiReference: processTaxonomyElement(item.apiReference),
+        apiStatus: processMultipleChoiceElement(item.apiStatus),
         categories: processLinkedItemsElement(item.categories),
         contact: processLinkedItemsElement(item.contact),
         description: item.description.resolveHtml(),
