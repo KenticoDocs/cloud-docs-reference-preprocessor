@@ -12,7 +12,7 @@ export interface IProviderInput {
   readonly isTest: string;
 }
 
-const eventGridTriggerGet: AzureFunction = async (
+export const eventGridTriggerGet: AzureFunction = async (
   context: Context,
   eventGridEvent: IEventGridEvent<IProviderInput>
 ): Promise<void> => {
@@ -38,5 +38,3 @@ const eventGridTriggerGet: AzureFunction = async (
     throw `Message: ${error.message} \nStack Trace: ${error.stack}`;
   }
 };
-
-export default eventGridTriggerGet;
