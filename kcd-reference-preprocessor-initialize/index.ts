@@ -8,7 +8,7 @@ import { getDeliveryClient } from '../shared/external/kenticoCloudClient';
 import { ProcessedSchemaCodenames } from '../shared/processing/ProcessedSchemaCodenames';
 import { processRootItem } from '../shared/processRootItem';
 
-const httpTrigger: AzureFunction = async (context: Context, req: HttpRequest): Promise<void> => {
+export const httpTrigger: AzureFunction = async (context: Context, req: HttpRequest): Promise<void> => {
     try {
         Configuration.set(false);
 
@@ -28,5 +28,3 @@ const httpTrigger: AzureFunction = async (context: Context, req: HttpRequest): P
         throw `Message: ${error.message} \nStack Trace: ${error.stack}`;
     }
 };
-
-export default httpTrigger;

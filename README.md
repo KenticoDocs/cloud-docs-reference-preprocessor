@@ -38,6 +38,8 @@ The service is responsible for fetching all the content related to API Reference
 * `Azure.StorageAccountName` - Azure Storage account name
 * `Azure.ContainerName` - Azure Storage container name
 * `DocsWebsiteUrl` - Kentico Cloud documentation website URL
+* `EventGrid.TriggerReferenceUpdateStarter.Endpoint` - Event Grid endpoint for [Blob Provider](https://github.com/KenticoDocs/cloud-docs-open-api-provider)'s ReferenceUpdateStarter function
+* `EventGrid.TriggerReferenceUpdateStarter.Key` - Event Grid topic authentication key
 
 ## Testing
 * Run `yarn run test` in the terminal.
