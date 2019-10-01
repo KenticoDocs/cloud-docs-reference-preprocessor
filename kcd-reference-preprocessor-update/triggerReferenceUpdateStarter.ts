@@ -45,5 +45,5 @@ const eventComposer = (
   eventTime: new Date(),
   eventType: operation,
   id: getUuid(),
-  subject: ''
+  subject: 'kontent/apiReference'
 });
