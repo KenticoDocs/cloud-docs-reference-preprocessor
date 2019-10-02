@@ -37,9 +37,9 @@ import {
     processItems,
 } from './common';
 import {
-    processCategoryDescriptionComponents,
     processCodeSamplesInLinkedItems,
-    processDescriptionComponents
+    processDescriptionComponents,
+    processDescriptionWithSchemasComponents
 } from './descriptionComponents';
 import {
     processSchemasFromLinkedItemsElement,
@@ -65,7 +65,7 @@ const getApiSpecificationData = (
     processLicenses(item.license.value, dataBlob, linkedItems);
     processSecuritySchemes(item.security.value, dataBlob, linkedItems);
     processServers(item.servers, dataBlob, linkedItems);
-    processDescriptionComponents(item.description, dataBlob, linkedItems);
+    processDescriptionWithSchemasComponents(item.description, dataBlob, linkedItems);
 
     return {
         ...getSystemProperties(item),
@@ -148,7 +148,7 @@ const getCategoryData = (
     dataBlob: IPreprocessedData,
     linkedItems: ContentItem[],
 ): ICategory => {
-    processCategoryDescriptionComponents(category.description, dataBlob, linkedItems);
+    processDescriptionWithSchemasComponents(category.description, dataBlob, linkedItems);
     processPathOperations(category.pathOperations.value, dataBlob, linkedItems);
 
     return {

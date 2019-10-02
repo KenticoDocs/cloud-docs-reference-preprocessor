@@ -22,8 +22,8 @@ import { AllSchemas, getSchemaData, ZapiAllSchemas } from './schemas';
 type ZapiDescriptionComponents = Image | Callout | CodeSample | CodeSamples;
 type DescriptionComponents = IImage | ICallout | ICodeSample | ICodeSamples;
 
-type ZapiCategoryDescriptionComponents = ZapiDescriptionComponents | ZapiAllSchemas;
-type CategoryDescriptionComponents = DescriptionComponents | AllSchemas;
+type ZapiDescriptionWithSchemasComponents = ZapiDescriptionComponents | ZapiAllSchemas;
+type DescriptionWithSchemasComponents = DescriptionComponents | AllSchemas;
 
 export const processCodeSamplesInLinkedItems = (
   items: ContentItem[],
@@ -43,22 +43,22 @@ export const processDescriptionComponents = (
     getItemsDataFromRichText<ZapiDescriptionComponents, DescriptionComponents>(getDescriptionComponentData)
   )(field, dataBlob, linkedItems);
 
-export const processCategoryDescriptionComponents = (
+export const processDescriptionWithSchemasComponents = (
   field: Elements.RichTextElement,
   dataBlob: IPreprocessedData,
   linkedItems: ContentItem[]
 ): void =>
   processItems(
-    getItemsDataFromRichText<ZapiCategoryDescriptionComponents, CategoryDescriptionComponents>(
-      getCategoryDescriptionComponentData
+    getItemsDataFromRichText<ZapiDescriptionWithSchemasComponents, DescriptionWithSchemasComponents>(
+      getDescriptionWithSchemasComponentData
     )
   )(field, dataBlob, linkedItems);
 
-const getCategoryDescriptionComponentData = (
-  component: ZapiCategoryDescriptionComponents,
+const getDescriptionWithSchemasComponentData = (
+  component: ZapiDescriptionWithSchemasComponents,
   dataBlob: IPreprocessedData,
   linkedItems: ContentItem[]
-): CategoryDescriptionComponents => {
+): DescriptionWithSchemasComponents => {
   if (component.system.type.includes('schema')) {
     return getSchemaData(component as ZapiAllSchemas, dataBlob, linkedItems);
   } else {
