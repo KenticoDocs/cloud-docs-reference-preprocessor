@@ -16,6 +16,7 @@ import {
   processMultipleChoiceElement,
   processTaxonomyElement
 } from '../utils/processElements';
+import { sortCodeSamples } from '../utils/sortCodeSamples';
 import { getItemsDataFromLinkedItems, getItemsDataFromRichText, getSystemProperties, processItems } from './common';
 import { AllSchemas, getSchemaData, ZapiAllSchemas } from './schemas';
 
@@ -151,6 +152,6 @@ const getCodeSamplesData = (
 
   return {
     ...getSystemProperties(item),
-    codeSamples: processLinkedItemsElement(item.codeSamples)
+    codeSamples: sortCodeSamples(processLinkedItemsElement(item.codeSamples))
   };
 };

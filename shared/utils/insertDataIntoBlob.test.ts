@@ -9,6 +9,7 @@ const defaultBlob: IPreprocessedData = {
     items: {},
     operation: ReferenceOperation.Initialize,
     zapiSpecificationCodename: 'some_api',
+    zapiSpecificationId: 'some_id',
 };
 
 describe('insertDataIntoBlob', () => {
@@ -45,6 +46,7 @@ describe('insertDataIntoBlob', () => {
             },
             operation: ReferenceOperation.Initialize,
             zapiSpecificationCodename: 'some_api',
+            zapiSpecificationId: 'some_id',
         };
 
         insertDataIntoBlob(data, blob);

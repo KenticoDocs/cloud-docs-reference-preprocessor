@@ -7,9 +7,11 @@ import {
     SharedKeyCredential,
     StorageURL,
 } from '@azure/storage-blob';
-import { Configuration } from 'cloud-docs-shared-code';
-
-import { IPreprocessedData, ReferenceOperation } from 'cloud-docs-shared-code/reference/preprocessedModels';
+import {
+  Configuration,
+  IPreprocessedData,
+  ReferenceOperation
+} from 'cloud-docs-shared-code';
 
 export const storeReferenceDataToBlobStorage = async (
   dataBlob: IPreprocessedData,
@@ -42,6 +44,7 @@ const getContainerUrl = (): ContainerURL => {
 export const getBlobId = (codename: string, operation: ReferenceOperation): string => {
   switch (operation) {
     case ReferenceOperation.Update:
+    case ReferenceOperation.Delete:
     case ReferenceOperation.Initialize: {
       return codename;
     }

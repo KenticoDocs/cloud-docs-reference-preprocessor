@@ -4,7 +4,6 @@ import {
     HttpRequest,
 } from '@azure/functions';
 import { Configuration, ReferenceOperation } from 'cloud-docs-shared-code';
-import { getDeliveryClient } from '../shared/external/kenticoCloudClient';
 import { ProcessedSchemaCodenames } from '../shared/processing/ProcessedSchemaCodenames';
 import { processRootItem } from '../shared/processRootItem';
 
@@ -17,7 +16,6 @@ export const httpTrigger: AzureFunction = async (context: Context, req: HttpRequ
         const data = await processRootItem(
             req.query.codename,
             ReferenceOperation.Initialize,
-            getDeliveryClient,
         );
 
         context.res = {
