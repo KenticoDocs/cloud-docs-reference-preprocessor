@@ -1,12 +1,11 @@
-import { AzureFunction, Context } from '@azure/functions';
-import { Configuration, IWebhookEventGridEvent } from 'cloud-docs-shared-code';
-import { IPreprocessedData, ReferenceOperation } from 'cloud-docs-shared-code/reference/preprocessedModels';
-
-import { getDeliveryClient } from '../shared/external/kenticoCloudClient';
-import { ProcessedSchemaCodenames } from '../shared/processing/ProcessedSchemaCodenames';
-import { processRootItem } from '../shared/processRootItem';
-import { getCodenamesOfRootItems } from './getCodenamesOfRootItems';
-import { triggerReferenceUpdateStarter } from './triggerReferenceUpdateStarter';
+import {AzureFunction, Context} from '@azure/functions';
+import {Configuration, IWebhookEventGridEvent} from 'cloud-docs-shared-code';
+import {IPreprocessedData, ReferenceOperation} from 'cloud-docs-shared-code/reference/preprocessedModels';
+import {RootItemType} from '../shared/external/kenticoCloudClient';
+import {ProcessedSchemaCodenames} from '../shared/processing/ProcessedSchemaCodenames';
+import {processRootItem} from '../shared/processRootItem';
+import {getCodenamesOfRootItems} from './getCodenamesOfRootItems';
+import {triggerReferenceUpdateStarter} from './triggerReferenceUpdateStarter';
 
 export interface IEventGridCredentials {
   readonly host: string;
@@ -24,11 +23,18 @@ export const eventGridTriggerUpdate: AzureFunction = async (
     const rootItemsCodenames: Set<string> = await getCodenamesOfRootItems(eventGridEvent.data.webhook.items);
 
     const eventGridTopicCredentials = getEventGridTopicCredentials();
-    await triggerReferenceUpdateStarter(eventGridTopicCredentials, rootItemsCodenames);
 
-    const processRootItemFunctions: Promise<IPreprocessedData>[] = [...rootItemsCodenames].map(codename =>
-      processRootItem(codename, ReferenceOperation.Update, getDeliveryClient)
-    );
+    if (rootItemsCodenames.size > 0 && shouldProviderBeTriggered(eventGridEvent)) {
+      await triggerReferenceUpdateStarter(eventGridTopicCredentials, rootItemsCodenames);
+    }
+
+    const processRootItemFunctions: Promise<IPreprocessedData>[] =
+      [...rootItemsCodenames]
+        .map(codename => processRootItem(
+          codename,
+          ReferenceOperation.Update,
+          getZapiSpecificationId(eventGridEvent)
+        ));
 
     await Promise.all(processRootItemFunctions);
   } catch (error) {
@@ -36,6 +42,15 @@ export const eventGridTriggerUpdate: AzureFunction = async (
     throw `Message: ${error.message} \nStack Trace: ${error.stack}`;
   }
 };
+
+const shouldProviderBeTriggered = (eventGridEvent: IWebhookEventGridEvent): boolean =>
+  eventGridEvent.subject !== 'unpublish' &&
+  eventGridEvent.subject !== 'archive';
+
+const getZapiSpecificationId = (eventGridEvent: IWebhookEventGridEvent): string =>
+  eventGridEvent.data.webhook.items
+    .find(item => item.type === RootItemType)
+    .id;
 
 const getEventGridTopicCredentials = (): IEventGridCredentials => {
   const eventGridKey = process.env['EventGrid.TriggerReferenceUpdateStarter.Key'];

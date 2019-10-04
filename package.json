@@ -16,7 +16,7 @@
   "dependencies": {
     "@azure/storage-blob": "10.4.0",
     "azure-eventgrid": "1.6.0",
-    "cloud-docs-shared-code": "3.2.7",
+    "cloud-docs-shared-code": "3.2.10",
     "kentico-cloud-delivery": "6.0.0-rc.5",
     "rxjs": "6.5.2",
     "url": "0.11.0",

@@ -21,4 +21,5 @@ const getDataObject = (item: ZapiSpecification, operation: ReferenceOperation): 
     items: {},
     operation,
     zapiSpecificationCodename: item.system.codename,
+    zapiSpecificationId: item.system.id,
 });

@@ -1,9 +1,6 @@
 import { AzureFunction, Context } from '@azure/functions';
 import { Configuration, IEventGridEvent } from 'cloud-docs-shared-code';
 import { ReferenceOperation } from 'cloud-docs-shared-code/reference/preprocessedModels';
-import { IDeliveryClient } from 'kentico-cloud-delivery';
-
-import { getDeliveryClient, getPreviewDeliveryClient } from '../shared/external/kenticoCloudClient';
 import { ProcessedSchemaCodenames } from '../shared/processing/ProcessedSchemaCodenames';
 import { processRootItem } from '../shared/processRootItem';
 
@@ -21,13 +18,9 @@ export const eventGridTriggerGet: AzureFunction = async (
 
     ProcessedSchemaCodenames.initialize();
 
-    const getClient: () => IDeliveryClient =
-      eventGridEvent.eventType === ReferenceOperation.Preview ? getPreviewDeliveryClient : getDeliveryClient;
-
     const data = await processRootItem(
       eventGridEvent.data.apiReference,
       eventGridEvent.eventType as ReferenceOperation,
-      getClient
     );
 
     context.res = {

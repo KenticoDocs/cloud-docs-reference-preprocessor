@@ -1,57 +1,75 @@
-import { IKenticoCloudError } from 'cloud-docs-shared-code';
-import { IPreprocessedData, ReferenceOperation } from 'cloud-docs-shared-code/reference/preprocessedModels';
+import {
+  IKenticoCloudError,
+  IPreprocessedData,
+  ReferenceOperation
+} from 'cloud-docs-shared-code';
 import {
   ContentItem,
-  IDeliveryClient,
-  ItemResponses,
+  ItemResponses
 } from 'kentico-cloud-delivery';
+import {storeReferenceDataToBlobStorage} from './external/blobManager';
+import {
+    DepthParameter,
+    getDeliveryClient,
+    getPreviewDeliveryClient,
+    getQueryConfig
+} from './external/kenticoCloudClient';
+import {fetchOrderedPlatformNames} from './external/orderedPlatformNames';
+import {ZapiSpecification} from './models/zapi_specification';
+import {getProcessedData} from './processing/getProcessedData';
 
-import { storeReferenceDataToBlobStorage } from './external/blobManager';
-import { DepthParameter, getQueryConfig } from './external/kenticoCloudClient';
-import { ZapiSpecification } from './models/zapi_specification';
-import { getProcessedData } from './processing/getProcessedData';
+const getClient = (operation: ReferenceOperation) =>
+  operation === ReferenceOperation.Preview
+    ? getPreviewDeliveryClient()
+    : getDeliveryClient();
 
 export const processRootItem = async (
-  codename: string,
-  operation: ReferenceOperation,
-  deliveryClientGetter: () => IDeliveryClient
+    codename: string,
+    operation: ReferenceOperation,
+    id: string = '',
 ): Promise<IPreprocessedData> => {
-  const response = await deliveryClientGetter()
-    .item<ZapiSpecification>(codename)
-    .depthParameter(DepthParameter)
-    .queryConfig(getQueryConfig())
-    .toPromise()
-    .catch(error => handleNotFoundItem(error, codename, operation));
+    const response = await getClient(operation)
+        .item<ZapiSpecification>(codename)
+        .depthParameter(DepthParameter)
+        .queryConfig(getQueryConfig())
+        .toPromise()
+        .catch(error => handleNotFoundItem(error, codename, id));
 
-  if (response) {
-    return await handleResponse(response, operation);
-  }
+    await fetchOrderedPlatformNames();
+
+    if (response) {
+        return await handleResponse(response, operation);
+    }
 };
 
 const handleResponse = async (
     response: ItemResponses.ViewContentItemResponse<ZapiSpecification>,
     operation: ReferenceOperation
 ): Promise<IPreprocessedData> => {
-  const linkedItemsAsArray: ContentItem[] = Object.keys(response.linkedItems).map(key => response.linkedItems[key]);
-  const data = getProcessedData(response.item, linkedItemsAsArray, operation);
-  await storeReferenceDataToBlobStorage(data, operation);
+    const linkedItemsAsArray: ContentItem[] = Object
+        .keys(response.linkedItems)
+        .map(key => response.linkedItems[key]);
+    const data = getProcessedData(response.item, linkedItemsAsArray, operation);
+    await storeReferenceDataToBlobStorage(data, operation);
 
-  return data;
+    return data;
 };
 
-const handleNotFoundItem = async (
-  error: IKenticoCloudError,
-  codename: string,
-  operation: ReferenceOperation
+export const handleNotFoundItem = async (
+    error: IKenticoCloudError,
+    codename: string,
+    id: string,
 ): Promise<void> => {
-  if (error.errorCode === 100) {
+    if (error.errorCode !== 100) {
+        throw error;
+    }
+
     const notFoundItem: IPreprocessedData = {
-      items: {},
-      operation,
-      zapiSpecificationCodename: codename
+        items: {},
+        operation: ReferenceOperation.Delete,
+        zapiSpecificationCodename: codename,
+        zapiSpecificationId: id,
     };
-    await storeReferenceDataToBlobStorage(notFoundItem, ReferenceOperation.Update);
-  } else {
-    throw error;
-  }
+
+    await storeReferenceDataToBlobStorage(notFoundItem, ReferenceOperation.Delete);
 };
