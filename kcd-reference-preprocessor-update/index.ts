@@ -47,10 +47,14 @@ const shouldProviderBeTriggered = (eventGridEvent: IWebhookEventGridEvent): bool
   eventGridEvent.subject !== 'unpublish' &&
   eventGridEvent.subject !== 'archive';
 
-const getZapiSpecificationId = (eventGridEvent: IWebhookEventGridEvent): string =>
-  eventGridEvent.data.webhook.items
-    .find(item => item.type === RootItemType)
-    .id;
+const getZapiSpecificationId = (eventGridEvent: IWebhookEventGridEvent): string => {
+  const zapiSpecification = eventGridEvent.data.webhook.items
+    .find(item => item.type === RootItemType);
+
+  return zapiSpecification
+    ? zapiSpecification.id
+    : undefined;
+};
 
 const getEventGridTopicCredentials = (): IEventGridCredentials => {
   const eventGridKey = process.env['EventGrid.TriggerReferenceUpdateStarter.Key'];
