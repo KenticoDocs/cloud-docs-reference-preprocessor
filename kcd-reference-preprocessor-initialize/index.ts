@@ -3,7 +3,7 @@ import {
     Context,
     HttpRequest,
 } from '@azure/functions';
-import { Configuration, ReferenceOperation } from 'cloud-docs-shared-code';
+import { Configuration, Operation } from 'cloud-docs-shared-code';
 import { ProcessedSchemaCodenames } from '../shared/processing/ProcessedSchemaCodenames';
 import { processRootItem } from '../shared/processRootItem';
 
@@ -15,7 +15,7 @@ export const httpTrigger: AzureFunction = async (context: Context, req: HttpRequ
 
         const data = await processRootItem(
             req.query.codename,
-            ReferenceOperation.Initialize,
+            Operation.Initialize,
         );
 
         context.res = {

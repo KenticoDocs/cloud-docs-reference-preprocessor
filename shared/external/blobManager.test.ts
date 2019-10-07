@@ -1,11 +1,11 @@
-import { ReferenceOperation } from 'cloud-docs-shared-code/reference/preprocessedModels';
+import { Operation } from 'cloud-docs-shared-code/reference/preprocessedModels';
 
 import { getBlobId } from './blobManager';
 
 describe('getBlobId', () => {
   it('returns correct blob id for initialize operation', () => {
     const codename: string = 'content_management_api';
-    const operation: ReferenceOperation = ReferenceOperation.Initialize;
+    const operation: Operation = Operation.Initialize;
     const expectedResult: string = codename;
 
     const actualResult: string = getBlobId(codename, operation);
@@ -15,7 +15,7 @@ describe('getBlobId', () => {
 
   it('returns correct blob id for update operation', () => {
     const codename: string = 'content_management_api';
-    const operation: ReferenceOperation = ReferenceOperation.Update;
+    const operation: Operation = Operation.Update;
     const expectedResult: string = codename;
 
     const actualResult: string = getBlobId(codename, operation);
@@ -25,7 +25,7 @@ describe('getBlobId', () => {
 
   it('returns correct blob id for preview operation', () => {
     const codename: string = 'content_management_api';
-    const operation: ReferenceOperation = ReferenceOperation.Preview;
+    const operation: Operation = Operation.Preview;
     const expectedResult: string = `${codename}-preview`;
 
     const actualResult: string = getBlobId(codename, operation);

@@ -1,5 +1,5 @@
 import { EventGridClient, EventGridModels } from 'azure-eventgrid';
-import { ReferenceOperation } from 'cloud-docs-shared-code';
+import { Operation } from 'cloud-docs-shared-code';
 import { TopicCredentials } from 'ms-rest-azure';
 import * as url from 'url';
 import { v4 as getUuid } from 'uuid';
@@ -19,7 +19,7 @@ export const triggerReferenceUpdateStarter = async (
   const publishEvents = publishEventsCreator({ eventGridClient, host });
 
   for (const rootItemCodename of rootItemsCodenames) {
-    const event = eventComposer(rootItemCodename, ReferenceOperation.Update);
+    const event = eventComposer(rootItemCodename, Operation.Update);
     await publishEvents([event]);
   }
 };

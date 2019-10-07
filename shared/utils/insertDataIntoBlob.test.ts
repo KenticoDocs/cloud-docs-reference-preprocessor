@@ -1,13 +1,13 @@
 import {
     IPreprocessedData,
-    ReferenceOperation,
+    Operation,
 } from 'cloud-docs-shared-code/reference/preprocessedModels';
 
 import { insertDataIntoBlob } from './insertDataIntoBlob';
 
 const defaultBlob: IPreprocessedData = {
     items: {},
-    operation: ReferenceOperation.Initialize,
+    operation: Operation.Initialize,
     zapiSpecificationCodename: 'some_api',
     zapiSpecificationId: 'some_id',
 };
@@ -44,7 +44,7 @@ describe('insertDataIntoBlob', () => {
                     name: 'delete items',
                 },
             },
-            operation: ReferenceOperation.Initialize,
+            operation: Operation.Initialize,
             zapiSpecificationCodename: 'some_api',
             zapiSpecificationId: 'some_id',
         };

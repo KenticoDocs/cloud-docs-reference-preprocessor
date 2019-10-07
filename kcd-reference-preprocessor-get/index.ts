@@ -1,6 +1,6 @@
 import { AzureFunction, Context } from '@azure/functions';
 import { Configuration, IEventGridEvent } from 'cloud-docs-shared-code';
-import { ReferenceOperation } from 'cloud-docs-shared-code/reference/preprocessedModels';
+import { Operation } from 'cloud-docs-shared-code/reference/preprocessedModels';
 import { ProcessedSchemaCodenames } from '../shared/processing/ProcessedSchemaCodenames';
 import { processRootItem } from '../shared/processRootItem';
 
@@ -20,7 +20,7 @@ export const eventGridTriggerGet: AzureFunction = async (
 
     const data = await processRootItem(
       eventGridEvent.data.apiReference,
-      eventGridEvent.eventType as ReferenceOperation,
+      eventGridEvent.eventType as Operation,
     );
 
     context.res = {

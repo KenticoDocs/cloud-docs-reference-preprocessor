@@ -11,6 +11,7 @@ prepare_site_dir() {
     declare -r files=(
         kcd-reference-preprocessor-get
         kcd-reference-preprocessor-update
+        kcd-reference-preprocessor-initialize
         dist
         extensions.csproj
         host.json

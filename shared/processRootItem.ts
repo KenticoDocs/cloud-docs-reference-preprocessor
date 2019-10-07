@@ -1,7 +1,7 @@
 import {
   IKenticoCloudError,
   IPreprocessedData,
-  ReferenceOperation
+  Operation
 } from 'cloud-docs-shared-code';
 import {
   ContentItem,
@@ -18,14 +18,14 @@ import {fetchOrderedPlatformNames} from './external/orderedPlatformNames';
 import {ZapiSpecification} from './models/zapi_specification';
 import {getProcessedData} from './processing/getProcessedData';
 
-const getClient = (operation: ReferenceOperation) =>
-  operation === ReferenceOperation.Preview
+const getClient = (operation: Operation) =>
+  operation === Operation.Preview
     ? getPreviewDeliveryClient()
     : getDeliveryClient();
 
 export const processRootItem = async (
     codename: string,
-    operation: ReferenceOperation,
+    operation: Operation,
     id: string = '',
 ): Promise<IPreprocessedData> => {
     const response = await getClient(operation)
@@ -44,7 +44,7 @@ export const processRootItem = async (
 
 const handleResponse = async (
     response: ItemResponses.ViewContentItemResponse<ZapiSpecification>,
-    operation: ReferenceOperation
+    operation: Operation
 ): Promise<IPreprocessedData> => {
     const linkedItemsAsArray: ContentItem[] = Object
         .keys(response.linkedItems)
@@ -66,10 +66,10 @@ export const handleNotFoundItem = async (
 
     const notFoundItem: IPreprocessedData = {
         items: {},
-        operation: ReferenceOperation.Delete,
+        operation: Operation.Delete,
         zapiSpecificationCodename: codename,
         zapiSpecificationId: id,
     };
 
-    await storeReferenceDataToBlobStorage(notFoundItem, ReferenceOperation.Delete);
+    await storeReferenceDataToBlobStorage(notFoundItem, Operation.Delete);
 };

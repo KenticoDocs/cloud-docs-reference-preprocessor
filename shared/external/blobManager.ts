@@ -10,12 +10,12 @@ import {
 import {
   Configuration,
   IPreprocessedData,
-  ReferenceOperation
+  Operation
 } from 'cloud-docs-shared-code';
 
 export const storeReferenceDataToBlobStorage = async (
   dataBlob: IPreprocessedData,
-  operation: ReferenceOperation
+  operation: Operation
 ): Promise<void> => {
   const containerUrl: ContainerURL = getContainerUrl();
   const blobId: string = getBlobId(dataBlob.zapiSpecificationCodename, operation);
@@ -41,14 +41,14 @@ const getContainerUrl = (): ContainerURL => {
   return ContainerURL.fromServiceURL(serviceUrl, Configuration.keys.azureContainerName);
 };
 
-export const getBlobId = (codename: string, operation: ReferenceOperation): string => {
+export const getBlobId = (codename: string, operation: Operation): string => {
   switch (operation) {
-    case ReferenceOperation.Update:
-    case ReferenceOperation.Delete:
-    case ReferenceOperation.Initialize: {
+    case Operation.Update:
+    case Operation.Delete:
+    case Operation.Initialize: {
       return codename;
     }
-    case ReferenceOperation.Preview: {
+    case Operation.Preview: {
       return `${codename}-preview`;
     }
     default: {

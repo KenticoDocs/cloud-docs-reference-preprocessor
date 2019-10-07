@@ -1,6 +1,6 @@
 import {AzureFunction, Context} from '@azure/functions';
 import {Configuration, IWebhookEventGridEvent} from 'cloud-docs-shared-code';
-import {IPreprocessedData, ReferenceOperation} from 'cloud-docs-shared-code/reference/preprocessedModels';
+import {IPreprocessedData, Operation} from 'cloud-docs-shared-code/reference/preprocessedModels';
 import {RootItemType} from '../shared/external/kenticoCloudClient';
 import {ProcessedSchemaCodenames} from '../shared/processing/ProcessedSchemaCodenames';
 import {processRootItem} from '../shared/processRootItem';
@@ -32,7 +32,7 @@ export const eventGridTriggerUpdate: AzureFunction = async (
       [...rootItemsCodenames]
         .map(codename => processRootItem(
           codename,
-          ReferenceOperation.Update,
+          Operation.Update,
           getZapiSpecificationId(eventGridEvent)
         ));
 
