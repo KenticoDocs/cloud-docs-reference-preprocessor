@@ -1,65 +1,62 @@
 import {
-    ContentItem,
-    Fields,
-} from 'kentico-cloud-delivery';
+  IPreprocessedData,
+  ISystemAttributes,
+} from 'cloud-docs-shared-code/reference/preprocessedModels';
+import { ContentItem, Elements } from 'kentico-cloud-delivery';
+
 import { insertDataIntoBlob } from '../utils/insertDataIntoBlob';
 import { getFromLinkedItems } from '../utils/processElements';
-import {
-    IPreprocessedData,
-    ISystemAttributes,
-    IWrappedItem,
-} from './processedDataModels';
-import RichTextField = Fields.RichTextField;
 
-type ProcessableObject = ContentItem | ContentItem[] | RichTextField;
+type ProcessableObject = ContentItem | ContentItem[] | Elements.RichTextElement;
 
 type GetData<ProcessedDataModel extends ISystemAttributes> = (
-    item: ProcessableObject,
-    dataBlob: IPreprocessedData,
-    linkedItems: ContentItem[],
-) => Array<IWrappedItem<ProcessedDataModel>>;
+  item: ProcessableObject,
+  dataBlob: IPreprocessedData,
+  linkedItems: ContentItem[]
+) => ProcessedDataModel[];
 
 type GetDataObject<ProcessedDataModel> = (
-    item: ProcessableObject,
-    dataBlob: IPreprocessedData,
-    linkedItems: ContentItem[],
+  item: ProcessableObject,
+  dataBlob: IPreprocessedData,
+  linkedItems: ContentItem[]
 ) => ProcessedDataModel;
 
-export const processItems = <DataModelResult extends ISystemAttributes>(getData: GetData<DataModelResult>) =>
-    (item: ProcessableObject, dataBlob: IPreprocessedData, linkedItems: ContentItem[]): void => {
-        const data = getData(item, dataBlob, linkedItems);
-        insertDataIntoBlob(data, dataBlob);
-    };
+export const processItems = <DataModelResult extends ISystemAttributes>(getData: GetData<DataModelResult>) => (
+  item: ProcessableObject,
+  dataBlob: IPreprocessedData,
+  linkedItems: ContentItem[]
+): void => {
+  const data = getData(item, dataBlob, linkedItems);
+  insertDataIntoBlob(data, dataBlob);
+};
 
-export const getItemsDataFromRichText = <KCItem extends ContentItem, PreprocessedItem extends ISystemAttributes>
-(getDataObject: GetDataObject<PreprocessedItem>) => (
-    field: RichTextField,
-    dataBlob: IPreprocessedData,
-    linkedItems: ContentItem[],
-): Array<IWrappedItem<PreprocessedItem>> =>
-    field.linkedItemCodenames.map((codename) => {
-        const item = getFromLinkedItems<KCItem>(codename, linkedItems);
+export const getItemsDataFromRichText = <KCItem extends ContentItem, PreprocessedItem extends ISystemAttributes>(
+  getDataObject: GetDataObject<PreprocessedItem>
+) => (
+  richTextElement: Elements.RichTextElement,
+  dataBlob: IPreprocessedData,
+  linkedItems: ContentItem[]
+): PreprocessedItem[] =>
+  richTextElement.linkedItemCodenames
+    .map(codename => {
+      const item: KCItem = getFromLinkedItems<KCItem>(codename, linkedItems);
 
-        return getWrappedData(getDataObject(item, dataBlob, linkedItems), item);
-    });
+      return getDataObject(item, dataBlob, linkedItems);
+    })
+    // Filters out undefined objects - repeating schemas and content chunks
+    .filter(dataObject => dataObject);
 
-export const getItemsDataFromLinkedItems = <KCItem extends ContentItem, PreprocessedItem extends ISystemAttributes>
-(getDataObject: GetDataObject<PreprocessedItem>) => (
-    items: ContentItem[],
-    dataBlob: IPreprocessedData,
-    linkedItems: ContentItem[],
-): Array<IWrappedItem<PreprocessedItem>> =>
-    items.map((item) => getWrappedData(getDataObject(item, dataBlob, linkedItems), item));
+export const getItemsDataFromLinkedItems = <KCItem extends ContentItem, PreprocessedItem extends ISystemAttributes>(
+  getDataObject: GetDataObject<PreprocessedItem>
+) => (
+  items: ContentItem[],
+  dataBlob: IPreprocessedData,
+  linkedItems: ContentItem[]
+): PreprocessedItem[] =>
+  items.map(item => getDataObject(item, dataBlob, linkedItems));
 
-const getWrappedData = <Data extends ISystemAttributes>(
-    dataObject: Data,
-    item: ContentItem,
-): IWrappedItem<Data> => ({
-    codename: item.system.codename,
-    data: dataObject,
-});
-
-export const getSystemProperties = ({ system: { type, id } }: ContentItem): ISystemAttributes => ({
-    contentType: type,
-    id,
+export const getSystemProperties = ({ system: { type, id, codename } }: ContentItem): ISystemAttributes => ({
+  codename,
+  contentType: type,
+  id
 });

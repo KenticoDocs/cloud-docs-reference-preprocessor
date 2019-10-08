@@ -1,38 +1,44 @@
-import { Operation } from '../external/models';
+import {
+    IPreprocessedData,
+    Operation,
+} from 'cloud-docs-shared-code/reference/preprocessedModels';
+
 import { insertDataIntoBlob } from './insertDataIntoBlob';
 
-const defaultBlob = {
+const defaultBlob: IPreprocessedData = {
     items: {},
     operation: Operation.Initialize,
     zapiSpecificationCodename: 'some_api',
+    zapiSpecificationId: 'some_id',
 };
 
 describe('insertDataIntoBlob', () => {
     it('inserts an array of items correctly into blob', () => {
-        const blob = defaultBlob;
-        const data = [{
-            codename: 'item_codename',
-            data: {
+        const blob: IPreprocessedData = defaultBlob;
+        const data: any[] = [
+            {
+                codename: 'item_codename',
                 contentType: 'zapi_category',
                 id: '123456789',
                 name: 'delete items',
             },
-        }, {
-            codename: 'another_codename',
-            data: {
+            {
+                codename: 'another_codename',
                 contentType: 'zapi_category',
                 id: '987654321',
                 name: 'add items',
             },
-        }];
-        const expectedResult = {
+        ];
+        const expectedResult: IPreprocessedData = {
             items: {
                 another_codename: {
+                    codename: 'another_codename',
                     contentType: 'zapi_category',
                     id: '987654321',
                     name: 'add items',
                 },
                 item_codename: {
+                    codename: 'item_codename',
                     contentType: 'zapi_category',
                     id: '123456789',
                     name: 'delete items',
@@ -40,6 +46,7 @@ describe('insertDataIntoBlob', () => {
             },
             operation: Operation.Initialize,
             zapiSpecificationCodename: 'some_api',
+            zapiSpecificationId: 'some_id',
         };
 
         insertDataIntoBlob(data, blob);
@@ -48,9 +55,9 @@ describe('insertDataIntoBlob', () => {
     });
 
     it('handles an empty items array', () => {
-        const blob = defaultBlob;
-        const data = [];
-        const expectedResult = blob;
+        const blob: IPreprocessedData = defaultBlob;
+        const data: any[] = [];
+        const expectedResult: IPreprocessedData = blob;
 
         insertDataIntoBlob(data, blob);
 

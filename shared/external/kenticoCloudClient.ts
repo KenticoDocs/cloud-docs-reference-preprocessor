@@ -1,9 +1,6 @@
-import {
-    ContentItem,
-    DeliveryClient,
-    IDeliveryClient,
-    TypeResolver,
-} from 'kentico-cloud-delivery';
+import { Configuration } from 'cloud-docs-shared-code';
+import { DeliveryClient, IContentItemConfig, IDeliveryClient, Link, TypeResolver } from 'kentico-cloud-delivery';
+
 import { Callout } from '../models/callout';
 import { CodeSample } from '../models/code_sample';
 import { CodeSamples } from '../models/code_samples';
@@ -31,78 +28,75 @@ import { ZapiSchemaString } from '../models/zapi_schema__string';
 import { ZapiSecurityScheme } from '../models/zapi_security_scheme';
 import { ZapiServer } from '../models/zapi_server';
 import { ZapiSpecification } from '../models/zapi_specification';
-import { Configuration } from './configuration';
 
-export const RootItemType = 'zapi_specification';
-export const DepthParameter = 20;
-
-interface IResponseItems {
-    readonly items: ZapiSpecification[];
-    readonly linkedItems: ContentItem[];
-}
-
-export const getApiItems = async (deliveryClientGetter: () => IDeliveryClient): Promise<IResponseItems> => {
-    const response = await deliveryClientGetter()
-        .items<ZapiSpecification>()
-        .type(RootItemType)
-        .depthParameter(DepthParameter)
-        .getPromise();
-
-    return {
-        items: response.items,
-        linkedItems: response.linkedItems,
-    };
-};
+export const RootItemType: string = 'zapi_specification';
+export const DepthParameter: number = 20;
 
 export const getDeliveryClient = (): IDeliveryClient => new DeliveryClient({
-    enableSecuredMode: true,
-    globalHeaders,
-    projectId: Configuration.keys.kenticoProjectId,
-    securedApiKey: Configuration.keys.securedApiKey,
-    typeResolvers,
+  globalQueryConfig: {
+    useSecuredMode: true,
+    waitForLoadingNewContent: true
+  },
+  projectId: Configuration.keys.kenticoProjectId,
+  secureApiKey: Configuration.keys.securedApiKey,
+  typeResolvers
 });
 
 export const getPreviewDeliveryClient = (): IDeliveryClient => new DeliveryClient({
-    enablePreviewMode: true,
-    globalHeaders,
-    previewApiKey: Configuration.keys.previewApiKey,
-    projectId: Configuration.keys.kenticoProjectId,
-    typeResolvers,
+  globalQueryConfig: {
+    usePreviewMode: true,
+    waitForLoadingNewContent: true
+  },
+  previewApiKey: Configuration.keys.previewApiKey,
+  projectId: Configuration.keys.kenticoProjectId,
+  typeResolvers
 });
 
-const globalHeaders = [
-    {
-        header: 'X-KC-Wait-For-Loading-New-Content',
-        value: 'true',
-    },
+const typeResolvers = [
+  new TypeResolver('callout', () => new Callout()),
+  new TypeResolver('code_sample', () => new CodeSample()),
+  new TypeResolver('code_samples', () => new CodeSamples()),
+  new TypeResolver('content_chunk', () => new ContentChunk()),
+  new TypeResolver('image', () => new Image()),
+  new TypeResolver('zapi__category', () => new ZapiCategory()),
+  new TypeResolver('zapi_contact', () => new ZapiContact()),
+  new TypeResolver('zapi_discriminator', () => new ZapiDiscriminator()),
+  new TypeResolver('zapi_discriminator__map_item', () => new ZapiDiscriminatorMapItem()),
+  new TypeResolver('zapi_license', () => new ZapiLicense()),
+  new TypeResolver('zapi_parameter', () => new ZapiParameter()),
+  new TypeResolver('zapi_path_operation', () => new ZapiPathOperation()),
+  new TypeResolver('zapi_property_referencing_a_schema', () => new ZapiPropertyReferencingASchema()),
+  new TypeResolver('zapi_request_body', () => new ZapiRequestBody()),
+  new TypeResolver('zapi_response', () => new ZapiResponse()),
+  new TypeResolver('zapi_schema__allof', () => new ZapiSchemaAllof()),
+  new TypeResolver('zapi_schema__anyof', () => new ZapiSchemaAnyof()),
+  new TypeResolver('zapi_schema__array', () => new ZapiSchemaArray()),
+  new TypeResolver('zapi_schema__boolean', () => new ZapiSchemaBoolean()),
+  new TypeResolver('zapi_schema__integer', () => new ZapiSchemaInteger()),
+  new TypeResolver('zapi_schema__number', () => new ZapiSchemaNumber()),
+  new TypeResolver('zapi_schema__object', () => new ZapiSchemaObject()),
+  new TypeResolver('zapi_schema__oneof', () => new ZapiSchemaOneof()),
+  new TypeResolver('zapi_schema__string', () => new ZapiSchemaString()),
+  new TypeResolver('zapi_security_scheme', () => new ZapiSecurityScheme()),
+  new TypeResolver('zapi_server', () => new ZapiServer()),
+  new TypeResolver('zapi_specification', () => new ZapiSpecification())
 ];
 
-const typeResolvers = [
-    new TypeResolver('callout', () => new Callout()),
-    new TypeResolver('code_sample', () => new CodeSample()),
-    new TypeResolver('code_samples', () => new CodeSamples()),
-    new TypeResolver('content_chunk', () => new ContentChunk()),
-    new TypeResolver('image', () => new Image()),
-    new TypeResolver('zapi__category', () => new ZapiCategory()),
-    new TypeResolver('zapi_contact', () => new ZapiContact()),
-    new TypeResolver('zapi_discriminator', () => new ZapiDiscriminator()),
-    new TypeResolver('zapi_discriminator__map_item', () => new ZapiDiscriminatorMapItem()),
-    new TypeResolver('zapi_license', () => new ZapiLicense()),
-    new TypeResolver('zapi_parameter', () => new ZapiParameter()),
-    new TypeResolver('zapi_path_operation', () => new ZapiPathOperation()),
-    new TypeResolver('zapi_property_referencing_a_schema', () => new ZapiPropertyReferencingASchema()),
-    new TypeResolver('zapi_request_body', () => new ZapiRequestBody()),
-    new TypeResolver('zapi_response', () => new ZapiResponse()),
-    new TypeResolver('zapi_schema__allof', () => new ZapiSchemaAllof()),
-    new TypeResolver('zapi_schema__anyof', () => new ZapiSchemaAnyof()),
-    new TypeResolver('zapi_schema__array', () => new ZapiSchemaArray()),
-    new TypeResolver('zapi_schema__boolean', () => new ZapiSchemaBoolean()),
-    new TypeResolver('zapi_schema__integer', () => new ZapiSchemaInteger()),
-    new TypeResolver('zapi_schema__number', () => new ZapiSchemaNumber()),
-    new TypeResolver('zapi_schema__object', () => new ZapiSchemaObject()),
-    new TypeResolver('zapi_schema__oneof', () => new ZapiSchemaOneof()),
-    new TypeResolver('zapi_schema__string', () => new ZapiSchemaString()),
-    new TypeResolver('zapi_security_scheme', () => new ZapiSecurityScheme()),
-    new TypeResolver('zapi_server', () => new ZapiServer()),
-    new TypeResolver('zapi_specification', () => new ZapiSpecification()),
+export const getQueryConfig = (): IContentItemConfig => ({
+  urlSlugResolver: (link: Link) => {
+    if (typesToLink.includes(link.type)) {
+      return {
+        url: `${Configuration.keys.docsWebsiteUrl}/link-to/${link.codename}`
+      };
+    }
+  }
+});
+
+const typesToLink = [
+  'article',
+  'scenario',
+  'multiplatform_article',
+  'zapi_specification',
+  'zapi_path_operation',
+  'zapi__category'
 ];

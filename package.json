@@ -3,27 +3,33 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "build": "tsc",
+    "build": "npm run tslint && npm run clean && tsc",
     "watch": "tsc -w",
     "prestart": "npm run build && func extensions install",
     "start:host": "func start",
     "start": "npm run start:host & npm run watch",
     "build:production": "npm run prestart && npm prune --production",
     "test": "jest",
-    "tslint": "tslint --project tsconfig.json"
+    "tslint": "tslint --project tsconfig.json",
+    "clean": "node clean.js"
   },
   "dependencies": {
-    "@azure/storage-blob": "^10.3.0",
-    "kentico-cloud-delivery": "5.7.2",
-    "rxjs": "^6.5.2"
+    "@azure/storage-blob": "10.4.0",
+    "azure-eventgrid": "1.6.0",
+    "cloud-docs-shared-code": "3.3.3",
+    "kentico-cloud-delivery": "6.0.0-rc.5",
+    "rxjs": "6.5.2",
+    "url": "0.11.0",
+    "uuid": "3.3.3"
   },
   "devDependencies": {
-    "@azure/functions": "^1.0.2-beta2",
-    "@types/jest": "^24.0.15",
-    "@types/node": "^12.0.8",
-    "jest": "^24.8.0",
-    "ts-jest": "^24.0.2",
-    "tslint": "^5.17.0",
-    "typescript": "^3.3.3"
+    "@azure/functions": "1.0.3",
+    "@types/jest": "24.0.17",
+    "@types/node": "12.7.2",
+    "@types/uuid": "3.4.5",
+    "jest": "24.8.0",
+    "ts-jest": "24.0.2",
+    "tslint": "5.18.0",
+    "typescript": "3.5.3"
   }
 }

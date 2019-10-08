@@ -1,53 +1,58 @@
-import { ContainerURL } from '@azure/storage-blob';
-import { IPreprocessedData } from '../processing/processedDataModels';
-import { Configuration } from './configuration';
-import { Operation } from './models';
-
-const BlobStorage = require('@azure/storage-blob');
+import {
+    Aborter,
+    BlockBlobURL,
+    ContainerURL,
+    Pipeline,
+    ServiceURL,
+    SharedKeyCredential,
+    StorageURL,
+} from '@azure/storage-blob';
+import {
+  Configuration,
+  IPreprocessedData,
+  Operation
+} from 'cloud-docs-shared-code';
 
 export const storeReferenceDataToBlobStorage = async (
-    dataBlob: IPreprocessedData,
-    operation: Operation,
+  dataBlob: IPreprocessedData,
+  operation: Operation
 ): Promise<void> => {
-    const containerUrl = getContainerUrl();
-    const blobId = getBlobId(dataBlob.zapiSpecificationCodename, operation);
-    const blobURL = BlobStorage.BlobURL.fromContainerURL(containerUrl, blobId);
-    const blockBlobURL = BlobStorage.BlockBlobURL.fromBlobURL(blobURL);
+  const containerUrl: ContainerURL = getContainerUrl();
+  const blobId: string = getBlobId(dataBlob.zapiSpecificationCodename, operation);
+  const blobURL: BlockBlobURL = BlockBlobURL.fromContainerURL(containerUrl, blobId);
+  const blockBlobURL: BlockBlobURL = BlockBlobURL.fromBlobURL(blobURL);
 
-    const blob = JSON.stringify(dataBlob);
+  const blob: string = JSON.stringify(dataBlob);
 
-    await blockBlobURL.upload(
-        BlobStorage.Aborter.none,
-        blob,
-        blob.length,
-    );
+  await blockBlobURL.upload(Aborter.none, blob, blob.length);
 };
 
 const getContainerUrl = (): ContainerURL => {
-    const sharedKeyCredential = new BlobStorage.SharedKeyCredential(
-        Configuration.keys.azureStorageAccountName,
-        Configuration.keys.azureStorageKey,
-    );
-    const pipeline = BlobStorage.StorageURL.newPipeline(sharedKeyCredential);
-    const serviceUrl = new BlobStorage.ServiceURL(
-        `https://${Configuration.keys.azureStorageAccountName}.blob.core.windows.net`,
-        pipeline,
-    );
+  const sharedKeyCredential = new SharedKeyCredential(
+    Configuration.keys.azureAccountName,
+    Configuration.keys.azureStorageKey
+  );
+  const pipeline: Pipeline = StorageURL.newPipeline(sharedKeyCredential);
+  const serviceUrl: ServiceURL = new ServiceURL(
+    `https://${Configuration.keys.azureAccountName}.blob.core.windows.net`,
+    pipeline
+  );
 
-    return BlobStorage.ContainerURL.fromServiceURL(serviceUrl, Configuration.keys.azureContainerName);
+  return ContainerURL.fromServiceURL(serviceUrl, Configuration.keys.azureContainerName);
 };
 
 export const getBlobId = (codename: string, operation: Operation): string => {
-    switch (operation) {
-        case Operation.Update:
-        case Operation.Initialize: {
-            return codename;
-        }
-        case Operation.Preview: {
-            return `${codename}-preview`;
-        }
-        default: {
-            throw Error('Invalid operation');
-        }
+  switch (operation) {
+    case Operation.Update:
+    case Operation.Delete:
+    case Operation.Initialize: {
+      return codename;
     }
+    case Operation.Preview: {
+      return `${codename}-preview`;
+    }
+    default: {
+      throw Error(`Invalid operation '${operation}'`);
+    }
+  }
 };

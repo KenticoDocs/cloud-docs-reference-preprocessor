@@ -1,41 +1,42 @@
+import { Operation } from 'cloud-docs-shared-code/reference/preprocessedModels';
+
 import { getBlobId } from './blobManager';
-import { Operation } from './models';
 
 describe('getBlobId', () => {
-    it('returns correct blob id for initialize operation', () => {
-        const codename = 'content_management_api';
-        const operation = Operation.Initialize;
-        const expectedResult = codename;
+  it('returns correct blob id for initialize operation', () => {
+    const codename: string = 'content_management_api';
+    const operation: Operation = Operation.Initialize;
+    const expectedResult: string = codename;
 
-        const actualResult = getBlobId(codename, operation);
+    const actualResult: string = getBlobId(codename, operation);
 
-        expect(actualResult).toEqual(expectedResult);
-    });
+    expect(actualResult).toEqual(expectedResult);
+  });
 
-    it('returns correct blob id for update operation', () => {
-        const codename = 'content_management_api';
-        const operation = Operation.Update;
-        const expectedResult = codename;
+  it('returns correct blob id for update operation', () => {
+    const codename: string = 'content_management_api';
+    const operation: Operation = Operation.Update;
+    const expectedResult: string = codename;
 
-        const actualResult = getBlobId(codename, operation);
+    const actualResult: string = getBlobId(codename, operation);
 
-        expect(actualResult).toEqual(expectedResult);
-    });
+    expect(actualResult).toEqual(expectedResult);
+  });
 
-    it('returns correct blob id for preview operation', () => {
-        const codename = 'content_management_api';
-        const operation = Operation.Preview;
-        const expectedResult = `${codename}-preview`;
+  it('returns correct blob id for preview operation', () => {
+    const codename: string = 'content_management_api';
+    const operation: Operation = Operation.Preview;
+    const expectedResult: string = `${codename}-preview`;
 
-        const actualResult = getBlobId(codename, operation);
+    const actualResult: string = getBlobId(codename, operation);
 
-        expect(actualResult).toEqual(expectedResult);
-    });
+    expect(actualResult).toEqual(expectedResult);
+  });
 
-    it('throws for unknown operation', () => {
-        const codename = 'content_management_api';
-        const operation = 'Unknown';
+  it('throws for unknown operation', () => {
+    const codename: string = 'content_management_api';
+    const operation: any = 'Unknown';
 
-        expect(() => getBlobId(codename, operation as Operation)).toThrow();
-    });
+    expect(() => getBlobId(codename, operation)).toThrow();
+  });
 });

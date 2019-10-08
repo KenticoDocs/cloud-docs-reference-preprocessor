@@ -1,7 +1,26 @@
 import {
+    ICallout,
+    IDiscriminator,
+    IDiscriminatorMapItem,
+    IPreprocessedData,
+    IPropertyReferencingASchema,
+    ISchemaAllOf,
+    ISchemaAnyOf,
+    ISchemaArray,
+    ISchemaBoolean,
+    ISchemaElements,
+    ISchemaInteger,
+    ISchemaNumber,
+    ISchemaObject,
+    ISchemaObjectPropertyElements,
+    ISchemaOneOf,
+    ISchemaString,
+} from 'cloud-docs-shared-code/reference/preprocessedModels';
+import {
     ContentItem,
-    Fields,
+    Elements,
 } from 'kentico-cloud-delivery';
+import { Callout } from '../models/callout';
 import { ZapiDiscriminator } from '../models/zapi_discriminator';
 import { ZapiDiscriminatorMapItem } from '../models/zapi_discriminator__map_item';
 import { ZapiPropertyReferencingASchema } from '../models/zapi_property_referencing_a_schema';
@@ -25,189 +44,276 @@ import {
     getSystemProperties,
     processItems,
 } from './common';
-import {
-    IDiscriminator,
-    IDiscriminatorMapItem,
-    IPreprocessedData,
-    IPropertyReferencingASchema,
-    ISchemaAllOf,
-    ISchemaAnyOf,
-    ISchemaArray,
-    ISchemaBoolean,
-    ISchemaElements,
-    ISchemaInteger,
-    ISchemaNumber,
-    ISchemaObject,
-    ISchemaObjectPropertyElements,
-    ISchemaOneOf,
-    ISchemas,
-    ISchemaString,
-    ZapiSchemas,
-} from './processedDataModels';
-import RichTextField = Fields.RichTextField;
+import { getCalloutData } from './descriptionComponents';
+import { ProcessedSchemaCodenames } from './ProcessedSchemaCodenames';
+
+export type ZapiAllSchemas =
+    ZapiSchemaAllof
+    | ZapiSchemaAnyof
+    | ZapiSchemaArray
+    | ZapiSchemaBoolean
+    | ZapiSchemaInteger
+    | ZapiSchemaNumber
+    | ZapiSchemaObject
+    | ZapiSchemaOneof
+    | ZapiSchemaString
+    | ZapiPropertyReferencingASchema;
+
+export type AllSchemas =
+    ISchemaAllOf
+    | ISchemaAnyOf
+    | ISchemaArray
+    | ISchemaBoolean
+    | ISchemaInteger
+    | ISchemaNumber
+    | ISchemaObject
+    | ISchemaOneOf
+    | ISchemaString
+    | IPropertyReferencingASchema;
 
 export const processSchemasFromLinkedItemsElement = (
     items: ContentItem[],
     dataBlob: IPreprocessedData,
     linkedItems: ContentItem[],
 ): void => processItems(
-    getItemsDataFromLinkedItems<ZapiSchemas, ISchemas>(getSchemaData),
+    getItemsDataFromLinkedItems<ZapiAllSchemas, AllSchemas>(getSchemaData),
 )(items, dataBlob, linkedItems);
 
 export const processSchemasFromRichTextElement = (
-    field: RichTextField,
+    field: Elements.RichTextElement,
     dataBlob: IPreprocessedData,
     linkedItems: ContentItem[],
 ): void => processItems(
-    getItemsDataFromRichText<ZapiSchemas, ISchemas>(getSchemaData),
+    getItemsDataFromRichText<ZapiAllSchemas, AllSchemas>(getSchemaData),
 )(field, dataBlob, linkedItems);
 
-const getSchemaData = (
-    schema: ZapiSchemas,
+export const getSchemaData = (
+    schema: ZapiAllSchemas,
     dataBlob: IPreprocessedData,
     linkedItems: ContentItem[],
-): ISchemas => {
-    switch (schema.system.type) {
-        case 'zapi_schema__array': {
-            processSchemasFromRichTextElement(schema.items, dataBlob, linkedItems);
+): AllSchemas => {
+    const codename = schema.system.codename;
 
-            return getSchemaArrayData(schema as ZapiSchemaArray);
-        }
-        case 'zapi_schema__anyof': {
-            processSchemasFromLinkedItemsElement(schema.schemas, dataBlob, linkedItems);
+    // Solves issue with infinite resolving of nested items in themselves
+    if (!ProcessedSchemaCodenames.has(codename)) {
+        ProcessedSchemaCodenames.add(codename);
 
-            return getSchemaAnyOfData(schema as ZapiSchemaAnyof);
+        switch (schema.system.type) {
+            case 'zapi_schema__allof': {
+                return getSchemaAllOfData(schema as ZapiSchemaAllof, dataBlob, linkedItems);
+            }
+            case 'zapi_schema__anyof': {
+                return getSchemaAnyOfData(schema as ZapiSchemaAnyof, dataBlob, linkedItems);
+            }
+            case 'zapi_schema__array': {
+                return getSchemaArrayData(schema as ZapiSchemaArray, dataBlob, linkedItems);
+            }
+            case 'zapi_schema__boolean': {
+                return getSchemaBooleanData(schema as ZapiSchemaBoolean, dataBlob, linkedItems);
+            }
+            case 'zapi_schema__integer': {
+                return getSchemaIntegerData(schema as ZapiSchemaInteger, dataBlob, linkedItems);
+            }
+            case 'zapi_schema__number': {
+                return getSchemaNumberData(schema as ZapiSchemaNumber, dataBlob, linkedItems);
+            }
+            case 'zapi_schema__object': {
+                return getSchemaObjectData(schema as ZapiSchemaObject, dataBlob, linkedItems);
+            }
+            case 'zapi_schema__oneof': {
+                return getSchemaOneOfData(schema as ZapiSchemaOneof, dataBlob, linkedItems);
+            }
+            case 'zapi_schema__string': {
+                return getSchemaStringData(schema as ZapiSchemaString, dataBlob, linkedItems);
+            }
+            case 'zapi_property_referencing_a_schema': {
+                return getPropertyReferencingData(schema as ZapiPropertyReferencingASchema, dataBlob, linkedItems);
+            }
+            default:
+                throw Error(`Unsupported content type (${schema.system.type}) in a schema-related element`);
         }
-        case 'zapi_schema__allof': {
-            processSchemasFromRichTextElement(schema.schemas, dataBlob, linkedItems);
-
-            return getSchemaAllOfData(schema as ZapiSchemaAllof);
-        }
-        case 'zapi_schema__boolean': {
-            return getSchemaBooleanData(schema as ZapiSchemaBoolean);
-        }
-        case 'zapi_schema__integer': {
-            return getSchemaIntegerData(schema as ZapiSchemaInteger);
-        }
-        case 'zapi_schema__number': {
-            return getSchemaNumberData(schema as ZapiSchemaNumber);
-        }
-        case 'zapi_schema__object': {
-            processSchemasFromRichTextElement(schema.properties, dataBlob, linkedItems);
-            processSchemasFromLinkedItemsElement(schema.additionalProperties, dataBlob, linkedItems);
-
-            return getSchemaObjectData(schema as ZapiSchemaObject);
-        }
-        case 'zapi_schema__oneof': {
-            processDiscriminators(schema.discriminator, dataBlob, linkedItems);
-            processSchemasFromLinkedItemsElement(schema.schemaas, dataBlob, linkedItems);
-
-            return getSchemaOneOfData(schema as ZapiSchemaOneof);
-        }
-        case 'zapi_schema__string': {
-            return getSchemaStringData(schema as ZapiSchemaString);
-        }
-        case 'zapi_property_referencing_a_schema': {
-            processSchemasFromLinkedItemsElement(schema.schema, dataBlob, linkedItems);
-
-            return getPropertyReferencingData(schema as ZapiPropertyReferencingASchema);
-        }
-        default:
-            throw Error(`Unsupported content type (${schema.system.type}) in a schema-related element`);
     }
 };
 
-const getSchemaArrayData = (schema: ZapiSchemaArray): ISchemaArray => ({
-    ...getSystemProperties(schema),
-    ...getSchemaElements(schema),
-    apiReference: processTaxonomyElement(schema.apiReference),
-    items: schema.items.getHtml(),
-    uniqueItems: processMultipleChoiceElement(schema.uniqueitems),
-});
+const getSchemaArrayData = (
+    schema: ZapiSchemaArray,
+    dataBlob: IPreprocessedData,
+    linkedItems: ContentItem[],
+): ISchemaArray => {
+    processSchemasFromRichTextElement(schema.items, dataBlob, linkedItems);
+    processCallouts(schema.commonSchemaElementsDescription, dataBlob, linkedItems);
 
-const getSchemaAnyOfData = (schema: ZapiSchemaAnyof): ISchemaAnyOf => ({
-    ...getSystemProperties(schema),
-    ...getSchemaObjectPropertyElements(schema),
-    ...getSchemaElements(schema),
-    apiReference: processTaxonomyElement(schema.apiReference),
-    schemas: processLinkedItemsElement(schema.schemas),
-});
+    return {
+        ...getSystemProperties(schema),
+        ...getSchemaElements(schema),
+        apiReference: processTaxonomyElement(schema.apiReference),
+        items: schema.items.resolveHtml(),
+        uniqueItems: processMultipleChoiceElement(schema.uniqueitems),
+    };
+};
 
-const getSchemaAllOfData = (schema: ZapiSchemaAllof): ISchemaAllOf => ({
-    ...getSystemProperties(schema),
-    ...getSchemaElements(schema),
-    apiReference: processTaxonomyElement(schema.apiReference),
-    schemas: schema.items.getHtml(),
-});
+const getSchemaAnyOfData = (
+    schema: ZapiSchemaAnyof,
+    dataBlob: IPreprocessedData,
+    linkedItems: ContentItem[],
+): ISchemaAnyOf => {
+    processSchemasFromLinkedItemsElement(schema.schemas.value, dataBlob, linkedItems);
+    processCallouts(schema.commonSchemaElementsDescription, dataBlob, linkedItems);
 
-const getSchemaBooleanData = (schema: ZapiSchemaBoolean): ISchemaBoolean => ({
-    ...getSystemProperties(schema),
-    ...getSchemaObjectPropertyElements(schema),
-    ...getSchemaElements(schema),
-    apiReference: processTaxonomyElement(schema.apiReference),
-});
+    return {
+        ...getSystemProperties(schema),
+        ...getSchemaObjectPropertyElements(schema),
+        ...getSchemaElements(schema),
+        apiReference: processTaxonomyElement(schema.apiReference),
+        schemas: processLinkedItemsElement(schema.schemas),
+    };
+};
 
-const getSchemaIntegerData = (schema: ZapiSchemaInteger): ISchemaInteger => ({
-    ...getSystemProperties(schema),
-    ...getSchemaObjectPropertyElements(schema),
-    ...getSchemaElements(schema),
-    acceptedValues: schema.acceptedValues.value,
-    apiReference: processTaxonomyElement(schema.apiReference),
-    defaultValue: schema.defaultValue.value,
-    format: processMultipleChoiceElement(schema.format),
-    maximum: schema.maximum.value,
-    minimum: schema.minimum.value,
+const getSchemaAllOfData = (
+    schema: ZapiSchemaAllof,
+    dataBlob: IPreprocessedData,
+    linkedItems: ContentItem[],
+): ISchemaAllOf => {
+    processSchemasFromRichTextElement(schema.schemas, dataBlob, linkedItems);
+    processCallouts(schema.commonSchemaElementsDescription, dataBlob, linkedItems);
 
-});
+    return {
+        ...getSystemProperties(schema),
+        ...getSchemaElements(schema),
+        apiReference: processTaxonomyElement(schema.apiReference),
+        schemas: schema.schemas.resolveHtml(),
+    };
+};
 
-const getSchemaNumberData = (schema: ZapiSchemaNumber): ISchemaNumber => ({
-    ...getSystemProperties(schema),
-    ...getSchemaObjectPropertyElements(schema),
-    ...getSchemaElements(schema),
-    acceptedValues: schema.acceptedValues.value,
-    apiReference: processTaxonomyElement(schema.apiReference),
-    format: processMultipleChoiceElement(schema.format),
-    maximum: schema.maximum.value,
-    minimum: schema.minimum.value,
-});
+const getSchemaBooleanData = (
+    schema: ZapiSchemaBoolean,
+    dataBlob: IPreprocessedData,
+    linkedItems: ContentItem[],
+): ISchemaBoolean => {
+    processCallouts(schema.commonSchemaElementsDescription, dataBlob, linkedItems);
 
-const getSchemaObjectData = (schema: ZapiSchemaObject): ISchemaObject => ({
-    ...getSystemProperties(schema),
-    ...getSchemaElements(schema),
-    additionalProperties: processLinkedItemsElement(schema.additionalProperties),
-    apiReference: processTaxonomyElement(schema.apiReference),
-    properties: schema.properties.getHtml(),
-    required: schema.required.value,
-});
+    return {
+        ...getSystemProperties(schema),
+        ...getSchemaObjectPropertyElements(schema),
+        ...getSchemaElements(schema),
+        apiReference: processTaxonomyElement(schema.apiReference),
+    };
+};
 
-const getSchemaOneOfData = (schema: ZapiSchemaOneof): ISchemaOneOf => ({
-    ...getSystemProperties(schema),
-    ...getSchemaElements(schema),
-    apiReference: processTaxonomyElement(schema.apiReference),
-    discriminator: schema.discriminator.getHtml(),
-    schemas: processLinkedItemsElement(schema.schemas),
-});
+const getSchemaIntegerData = (
+    schema: ZapiSchemaInteger,
+    dataBlob: IPreprocessedData,
+    linkedItems: ContentItem[],
+): ISchemaInteger => {
+    processCallouts(schema.commonSchemaElementsDescription, dataBlob, linkedItems);
 
-const getSchemaStringData = (schema: ZapiSchemaString): ISchemaString => ({
-    ...getSystemProperties(schema),
-    ...getSchemaObjectPropertyElements(schema),
-    ...getSchemaElements(schema),
-    acceptedValues: schema.acceptedValues.value,
-    apiReference: processTaxonomyElement(schema.apiReference),
-    defaultValue: schema.defaultValue.value,
-    format: schema.format.value,
-    maxLength: schema.maxlength.number,
-    minLength: schema.minlength.number,
-});
+    return {
+        ...getSystemProperties(schema),
+        ...getSchemaObjectPropertyElements(schema),
+        ...getSchemaElements(schema),
+        acceptedValues: schema.acceptedValues.value,
+        apiReference: processTaxonomyElement(schema.apiReference),
+        defaultValue: schema.defaultValue.value,
+        format: processMultipleChoiceElement(schema.format),
+        maximum: schema.maximum.value,
+        minimum: schema.minimum.value,
 
-const getPropertyReferencingData = (item: ZapiPropertyReferencingASchema): IPropertyReferencingASchema => ({
-    ...getSystemProperties(item),
-    name: item.name.value,
-    schema: processLinkedItemsElement(item.schema),
-});
+    };
+};
+
+const getSchemaNumberData = (
+    schema: ZapiSchemaNumber,
+    dataBlob: IPreprocessedData,
+    linkedItems: ContentItem[],
+): ISchemaNumber => {
+    processCallouts(schema.commonSchemaElementsDescription, dataBlob, linkedItems);
+
+    return {
+        ...getSystemProperties(schema),
+        ...getSchemaObjectPropertyElements(schema),
+        ...getSchemaElements(schema),
+        acceptedValues: schema.acceptedValues.value,
+        apiReference: processTaxonomyElement(schema.apiReference),
+        format: processMultipleChoiceElement(schema.format),
+        maximum: schema.maximum.value,
+        minimum: schema.minimum.value,
+    };
+};
+
+const getSchemaObjectData = (
+    schema: ZapiSchemaObject,
+    dataBlob: IPreprocessedData,
+    linkedItems: ContentItem[],
+): ISchemaObject => {
+    processSchemasFromRichTextElement(schema.properties, dataBlob, linkedItems);
+    processSchemasFromRichTextElement(schema.additionalProperties, dataBlob, linkedItems);
+    processCallouts(schema.commonSchemaElementsDescription, dataBlob, linkedItems);
+
+    return {
+        ...getSystemProperties(schema),
+        ...getSchemaElements(schema),
+        additionalProperties: schema.additionalProperties.resolveHtml(),
+        additionalPropertiesName: schema.additionalPropertiesName.value,
+        apiReference: processTaxonomyElement(schema.apiReference),
+        properties: schema.properties.resolveHtml(),
+        required: schema.required.value,
+    };
+};
+
+const getSchemaOneOfData = (
+    schema: ZapiSchemaOneof,
+    dataBlob: IPreprocessedData,
+    linkedItems: ContentItem[],
+): ISchemaOneOf => {
+    processDiscriminators(schema.discriminator, dataBlob, linkedItems);
+    processSchemasFromRichTextElement(schema.schemas, dataBlob, linkedItems);
+    processCallouts(schema.commonSchemaElementsDescription, dataBlob, linkedItems);
+
+    return {
+        ...getSystemProperties(schema),
+        ...getSchemaElements(schema),
+        apiReference: processTaxonomyElement(schema.apiReference),
+        discriminator: schema.discriminator.resolveHtml(),
+        schemas: schema.schemas.resolveHtml(),
+    };
+};
+
+const getSchemaStringData = (
+    schema: ZapiSchemaString,
+    dataBlob: IPreprocessedData,
+    linkedItems: ContentItem[],
+): ISchemaString => {
+    processCallouts(schema.commonSchemaElementsDescription, dataBlob, linkedItems);
+
+    return {
+        ...getSystemProperties(schema),
+        ...getSchemaObjectPropertyElements(schema),
+        ...getSchemaElements(schema),
+        acceptedValues: schema.acceptedValues.value,
+        apiReference: processTaxonomyElement(schema.apiReference),
+        defaultValue: schema.defaultValue.value,
+        format: schema.format.value,
+        maxLength: schema.maxlength.value,
+        minLength: schema.minlength.value,
+    };
+};
+
+const getPropertyReferencingData = (
+    item: ZapiPropertyReferencingASchema,
+    dataBlob: IPreprocessedData,
+    linkedItems: ContentItem[],
+): IPropertyReferencingASchema => {
+    processSchemasFromLinkedItemsElement(item.schema.value, dataBlob, linkedItems);
+
+    return {
+        ...getSystemProperties(item),
+        name: item.name.value,
+        schema: processLinkedItemsElement(item.schema),
+    };
+};
 
 const getSchemaElements = (item: ContentItem): ISchemaElements => ({
-    description: item.commonSchemaElementsDescription.getHtml(),
+    description: item.commonSchemaElementsDescription.resolveHtml(),
     example: item.commonSchemaElementsExample.value,
     name: item.commonSchemaElementsName.value,
 });
@@ -218,13 +324,21 @@ const getSchemaObjectPropertyElements = (item: ContentItem): ISchemaObjectProper
     writeonly: processMultipleChoiceElement(item.commonSchemaObjectPropertyElementsWriteonly),
 });
 
+const processCallouts = (
+    richTextElement: Elements.RichTextElement,
+    dataBlob: IPreprocessedData,
+    linkedItems: ContentItem[],
+): void => processItems(
+    getItemsDataFromRichText<Callout, ICallout>(getCalloutData),
+)(richTextElement, dataBlob, linkedItems);
+
 const processDiscriminators = (
-    field: RichTextField,
+    richTextElement: Elements.RichTextElement,
     dataBlob: IPreprocessedData,
     linkedItems: ContentItem[],
 ): void => processItems(
     getItemsDataFromRichText<ZapiDiscriminator, IDiscriminator>(getDiscriminatorData),
-)(field, dataBlob, linkedItems);
+)(richTextElement, dataBlob, linkedItems);
 
 const getDiscriminatorData = (
     item: ZapiDiscriminator,
@@ -236,19 +350,19 @@ const getDiscriminatorData = (
 
         return {
             ...getSystemProperties(item),
-            mapping: item.mapping.getHtml(),
+            mapping: item.mapping.resolveHtml(),
             propertyName: item.propertyName.value,
         };
     }
 };
 
 const processDiscriminatorMapItems = (
-    field: RichTextField,
+    richTextElement: Elements.RichTextElement,
     dataBlob: IPreprocessedData,
     linkedItems: ContentItem[],
 ): void => processItems(
     getItemsDataFromRichText<ZapiDiscriminatorMapItem, IDiscriminatorMapItem>(getDiscriminatorMapItemData),
-)(field, dataBlob, linkedItems);
+)(richTextElement, dataBlob, linkedItems);
 
 const getDiscriminatorMapItemData = (
     item: ZapiDiscriminatorMapItem,
@@ -256,7 +370,7 @@ const getDiscriminatorMapItemData = (
     linkedItems: ContentItem[],
 ): IDiscriminatorMapItem => {
     if (item.system.type === 'zapi_discriminator__map_item') {
-        processSchemasFromLinkedItemsElement(item.schema, dataBlob, linkedItems);
+        processSchemasFromLinkedItemsElement(item.schema.value, dataBlob, linkedItems);
 
         return {
             ...getSystemProperties(item),

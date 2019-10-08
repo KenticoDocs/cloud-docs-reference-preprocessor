@@ -1,6 +1,19 @@
 import {
+    ICategory,
+    IContact,
+    ILicense,
+    IParameter,
+    IPathOperation,
+    IPreprocessedData,
+    IRequestBody,
+    IResponse,
+    ISecurityScheme,
+    IServer,
+    IZapiSpecification,
+} from 'cloud-docs-shared-code/reference/preprocessedModels';
+import {
     ContentItem,
-    Fields,
+    Elements,
 } from 'kentico-cloud-delivery';
 import { ZapiCategory } from '../models/zapi__category';
 import { ZapiContact } from '../models/zapi_contact';
@@ -23,25 +36,16 @@ import {
     getSystemProperties,
     processItems,
 } from './common';
-import { processDescriptionComponents } from './descriptionComponents';
 import {
-    ICategory,
-    IContact,
-    ILicense,
-    IParameter,
-    IPathOperation,
-    IPreprocessedData,
-    IRequestBody,
-    IResponse,
-    ISecurityScheme,
-    IServer,
-    IZapiSpecification,
-} from './processedDataModels';
+    processCodeSamplesInLinkedItems,
+    processDescriptionComponents,
+    processDescriptionWithSchemasComponents
+} from './descriptionComponents';
 import {
     processSchemasFromLinkedItemsElement,
     processSchemasFromRichTextElement,
 } from './schemas';
-import RichTextField = Fields.RichTextField;
+import RichTextField = Elements.RichTextElement;
 
 export const processApiSpecification = (
     items: ZapiSpecification[],
@@ -56,24 +60,23 @@ const getApiSpecificationData = (
     dataBlob: IPreprocessedData,
     linkedItems: ContentItem[],
 ): IZapiSpecification => {
-    processCategories(item.categories, dataBlob, linkedItems);
-    processContacts(item.contact, dataBlob, linkedItems);
-    processLicenses(item.license, dataBlob, linkedItems);
-    processPathOperations(item.pathOperations, dataBlob, linkedItems);
-    processSecuritySchemes(item.security, dataBlob, linkedItems);
+    processCategories(item.categories.value, dataBlob, linkedItems);
+    processContacts(item.contact.value, dataBlob, linkedItems);
+    processLicenses(item.license.value, dataBlob, linkedItems);
+    processSecuritySchemes(item.security.value, dataBlob, linkedItems);
     processServers(item.servers, dataBlob, linkedItems);
-    processDescriptionComponents(item.description, dataBlob, linkedItems);
+    processDescriptionWithSchemasComponents(item.description, dataBlob, linkedItems);
 
     return {
         ...getSystemProperties(item),
         apiReference: processTaxonomyElement(item.apiReference),
+        apiStatus: processMultipleChoiceElement(item.apiStatus),
         categories: processLinkedItemsElement(item.categories),
         contact: processLinkedItemsElement(item.contact),
-        description: item.description.getHtml(),
+        description: item.description.resolveHtml(),
         license: processLinkedItemsElement(item.license),
-        pathOperations: processLinkedItemsElement(item.pathOperations),
         security: processLinkedItemsElement(item.security),
-        servers: item.servers.getHtml(),
+        servers: item.servers.resolveHtml(),
         termsOfService: item.termsOfService.value,
         title: item.title.value,
         url: item.url.value,
@@ -91,11 +94,11 @@ const processSecuritySchemes = (
 
 const getSecuritySchemeData = (securityScheme: ZapiSecurityScheme): ISecurityScheme => ({
     ...getSystemProperties(securityScheme),
-    apiKeyLocation: securityScheme.apiKeyLocation.value,
+    apiKeyLocation: processMultipleChoiceElement(securityScheme.apiKeyLocation),
     apiKeyName: securityScheme.apiKeyName.value,
     apiReference: processTaxonomyElement(securityScheme.apiReference),
     bearerFormat: securityScheme.bearerFormat.value,
-    description: securityScheme.description.getHtml(),
+    description: securityScheme.description.resolveHtml(),
     name: securityScheme.name.value,
     scheme: securityScheme.scheme.value,
     type: processMultipleChoiceElement(securityScheme.type),
@@ -145,13 +148,15 @@ const getCategoryData = (
     dataBlob: IPreprocessedData,
     linkedItems: ContentItem[],
 ): ICategory => {
-    processDescriptionComponents(category.description, dataBlob, linkedItems);
+    processDescriptionWithSchemasComponents(category.description, dataBlob, linkedItems);
+    processPathOperations(category.pathOperations.value, dataBlob, linkedItems);
 
     return {
         ...getSystemProperties(category),
         apiReference: processTaxonomyElement(category.apiReference),
-        description: category.description.getHtml(),
+        description: category.description.resolveHtml(),
         name: category.name.value,
+        pathOperations: processLinkedItemsElement(category.pathOperations),
         url: category.url.value,
     };
 };
@@ -169,25 +174,24 @@ const getPathOperationData = (
     dataBlob: IPreprocessedData,
     linkedItems: ContentItem[],
 ): IPathOperation => {
-    // Category items already processed within the zAPI Specification object
-    processParameters(pathOperation.parameters, dataBlob, linkedItems);
+    processParameters(pathOperation.parameters.value, dataBlob, linkedItems);
     processRequestBodies(pathOperation.requestBody, dataBlob, linkedItems);
     processResponses(pathOperation.responses, dataBlob, linkedItems);
     processDescriptionComponents(pathOperation.description, dataBlob, linkedItems);
+    processCodeSamplesInLinkedItems(pathOperation.codeSamples.value, dataBlob, linkedItems);
 
     return {
         ...getSystemProperties(pathOperation),
         apiReference: processTaxonomyElement(pathOperation.apiReference),
-        category: processLinkedItemsElement(pathOperation.category),
         codeSamples: processLinkedItemsElement(pathOperation.codeSamples),
         deprecated: processMultipleChoiceElement(pathOperation.deprecated),
-        description: pathOperation.description.getHtml(),
+        description: pathOperation.description.resolveHtml(),
         name: pathOperation.name.value,
         parameters: processLinkedItemsElement(pathOperation.parameters),
         path: pathOperation.path.value,
         pathOperation: processTaxonomyElement(pathOperation.pathOperation),
-        requestBody: pathOperation.requestBody.getHtml(),
-        responses: pathOperation.responses.getHtml(),
+        requestBody: pathOperation.requestBody.resolveHtml(),
+        responses: pathOperation.responses.resolveHtml(),
         url: pathOperation.url.value,
     };
 };
@@ -219,14 +223,14 @@ const getParametersData = (
     dataBlob: IPreprocessedData,
     linkedItems: ContentItem[],
 ): IParameter => {
-    processSchemasFromLinkedItemsElement(parameter.schema, dataBlob, linkedItems);
+    processSchemasFromLinkedItemsElement(parameter.schema.value, dataBlob, linkedItems);
     processDescriptionComponents(parameter.description, dataBlob, linkedItems);
 
     return {
         ...getSystemProperties(parameter),
         apiReference: processTaxonomyElement(parameter.apiReference),
         deprecated: processMultipleChoiceElement(parameter.deprecated),
-        description: parameter.description.getHtml(),
+        description: parameter.description.resolveHtml(),
         example: parameter.example.value,
         explode: processMultipleChoiceElement(parameter.explode),
         location: processMultipleChoiceElement(parameter.location),
@@ -255,11 +259,11 @@ const getRequestBodiesData = (
 
     return {
         ...getSystemProperties(requestBody),
-        description: requestBody.description.getHtml(),
+        description: requestBody.description.resolveHtml(),
         example: requestBody.example.value,
         mediaType: processMultipleChoiceElement(requestBody.mediaType),
         required: processMultipleChoiceElement(requestBody.required),
-        schema: requestBody.schema.getHtml(),
+        schema: requestBody.schema.resolveHtml(),
     };
 };
 
@@ -276,18 +280,18 @@ const getResponseData = (
     dataBlob: IPreprocessedData,
     linkedItems: ContentItem[],
 ): IResponse => {
-    processParameters(response.headers, dataBlob, linkedItems);
+    processParameters(response.headers.value, dataBlob, linkedItems);
     processSchemasFromRichTextElement(response.schema, dataBlob, linkedItems);
     processDescriptionComponents(response.description, dataBlob, linkedItems);
 
     return {
         ...getSystemProperties(response),
         apiReference: processTaxonomyElement(response.apiReference),
-        description: response.description.getHtml(),
+        description: response.description.resolveHtml(),
         example: response.example.value,
         headers: processLinkedItemsElement(response.headers),
         httpStatus: processMultipleChoiceElement(response.httpStatus),
         mediaType: processMultipleChoiceElement(response.mediaType),
-        schema: response.schema.getHtml(),
+        schema: response.schema.resolveHtml(),
     };
 };

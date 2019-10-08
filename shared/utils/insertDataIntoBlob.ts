@@ -1,11 +1,10 @@
 import {
     IPreprocessedData,
     ISystemAttributes,
-    IWrappedItem,
-} from '../processing/processedDataModels';
+} from 'cloud-docs-shared-code/reference/preprocessedModels';
 
 export const insertDataIntoBlob = <Data extends ISystemAttributes>(
-    item: Array<IWrappedItem<Data>>,
+    item: Data[],
     dataBlob: IPreprocessedData,
 ): void => {
     if (item.length > 0) {
@@ -16,10 +15,11 @@ export const insertDataIntoBlob = <Data extends ISystemAttributes>(
 };
 
 const insertItemIntoBlob = <Data extends ISystemAttributes>(
-    item: IWrappedItem<Data>,
+    item: Data,
     dataBlob: IPreprocessedData,
 ): void => {
-    if (item && item.codename && item.data) {
-        dataBlob.items[item.codename] = item.data;
+    if (item && item.codename && item) {
+        // @ts-ignore
+        dataBlob.items[item.codename] = item;
     }
 };

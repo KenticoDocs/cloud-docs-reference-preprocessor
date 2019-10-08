@@ -10,7 +10,7 @@ The service is responsible for fetching all the content related to API Reference
 
 ## Overview
 1. This project is a TypeScript Azure Functions application.
-2. It reacts to either HTTP requests (`initialize` and `preview` endpoints) or [Event Grid](https://azure.microsoft.com/en-us/services/event-grid/) events (`update`).
+2. It reacts to [Event Grid](https://azure.microsoft.com/en-us/services/event-grid/) events (`update` and `get` endpoints).
 3. The function fetches content related to API Reference pages using [JavaScript Delivery SDK](https://github.com/Kentico/kentico-cloud-js/tree/master/packages/delivery).
 4. The fetched content is then resolved and processed into a simplified JSON format.
 4. Finally, it saves the processed data to an Azure Blob Storage, where the following API Reference services can access it.
@@ -37,6 +37,9 @@ The service is responsible for fetching all the content related to API Reference
 * `Azure.StorageKey` - Azure Storage key
 * `Azure.StorageAccountName` - Azure Storage account name
 * `Azure.ContainerName` - Azure Storage container name
+* `DocsWebsiteUrl` - Kentico Cloud documentation website URL
+* `EventGrid.TriggerReferenceUpdateStarter.Endpoint` - Event Grid endpoint for [Blob Provider](https://github.com/KenticoDocs/cloud-docs-open-api-provider)'s ReferenceUpdateStarter function
+* `EventGrid.TriggerReferenceUpdateStarter.Key` - Event Grid topic authentication key
 
 ## Testing
 * Run `yarn run test` in the terminal.

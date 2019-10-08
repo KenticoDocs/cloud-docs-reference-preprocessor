@@ -1,95 +1,157 @@
 import {
-    ContentItem,
-    Fields,
-} from 'kentico-cloud-delivery';
+  ICallout,
+  ICodeSample,
+  ICodeSamples,
+  IImage,
+  IPreprocessedData
+} from 'cloud-docs-shared-code/reference/preprocessedModels';
+import { ContentItem, Elements } from 'kentico-cloud-delivery';
+
 import { Callout } from '../models/callout';
 import { CodeSample } from '../models/code_sample';
 import { CodeSamples } from '../models/code_samples';
-import { ContentChunk } from '../models/content_chunk';
 import { Image } from '../models/image';
 import {
-    processLinkedItemsElement,
-    processMultipleChoiceElement,
-    processTaxonomyElement,
+  processLinkedItemsElement,
+  processMultipleChoiceElement,
+  processTaxonomyElement
 } from '../utils/processElements';
-import {
-    getItemsDataFromRichText,
-    getSystemProperties,
-    processItems,
-} from './common';
-import {
-    ICallout,
-    ICodeSample,
-    ICodeSamples,
-    IContentChunk,
-    IImage,
-    IPreprocessedData,
-} from './processedDataModels';
-import RichTextField = Fields.RichTextField;
+import { sortCodeSamples } from '../utils/sortCodeSamples';
+import { getItemsDataFromLinkedItems, getItemsDataFromRichText, getSystemProperties, processItems } from './common';
+import { AllSchemas, getSchemaData, ZapiAllSchemas } from './schemas';
 
-type ZapiDescriptionComponents = Image | Callout | CodeSample | CodeSamples | ContentChunk;
-type IDescriptionComponents = IImage | ICallout | ICodeSample | ICodeSamples | IContentChunk;
+type ZapiDescriptionComponents = Image | Callout | CodeSample | CodeSamples;
+type DescriptionComponents = IImage | ICallout | ICodeSample | ICodeSamples;
+
+type ZapiDescriptionWithSchemasComponents = ZapiDescriptionComponents | ZapiAllSchemas;
+type DescriptionWithSchemasComponents = DescriptionComponents | AllSchemas;
+
+export const processCodeSamplesInLinkedItems = (
+  items: ContentItem[],
+  dataBlob: IPreprocessedData,
+  linkedItems: ContentItem[]
+): void =>
+  processItems(
+    getItemsDataFromLinkedItems<CodeSamples, ICodeSamples>(getCodeSamplesData)
+  )(items, dataBlob, linkedItems);
 
 export const processDescriptionComponents = (
-    field: RichTextField,
-    dataBlob: IPreprocessedData,
-    linkedItems: ContentItem[],
-): void => processItems(
-    getItemsDataFromRichText<ZapiDescriptionComponents, IDescriptionComponents>(getDescriptionComponentData),
-)(field, dataBlob, linkedItems);
+  field: Elements.RichTextElement,
+  dataBlob: IPreprocessedData,
+  linkedItems: ContentItem[]
+): void =>
+  processItems(
+    getItemsDataFromRichText<ZapiDescriptionComponents, DescriptionComponents>(getDescriptionComponentData)
+  )(field, dataBlob, linkedItems);
 
-const getDescriptionComponentData = (component: ZapiDescriptionComponents): IDescriptionComponents => {
-    switch (component.system.type) {
-        case 'image': {
-            return getImageData(component as Image);
-        }
-        case 'callout': {
-            return getCalloutData(component as Callout);
-        }
-        case 'code_sample': {
-            return getCodeSampleData(component as CodeSample);
-        }
-        case 'code_samples': {
-            return getCodeSamplesData(component as CodeSamples);
-        }
-        case 'content_chunk': {
-            return getContentChunkData(component as ContentChunk);
-        }
-        default:
-            throw Error(`Unsupported content type (${component.system.type}) in a description element`);
-    }
+export const processDescriptionWithSchemasComponents = (
+  field: Elements.RichTextElement,
+  dataBlob: IPreprocessedData,
+  linkedItems: ContentItem[]
+): void =>
+  processItems(
+    getItemsDataFromRichText<ZapiDescriptionWithSchemasComponents, DescriptionWithSchemasComponents>(
+      getDescriptionWithSchemasComponentData
+    )
+  )(field, dataBlob, linkedItems);
+
+const getDescriptionWithSchemasComponentData = (
+  component: ZapiDescriptionWithSchemasComponents,
+  dataBlob: IPreprocessedData,
+  linkedItems: ContentItem[]
+): DescriptionWithSchemasComponents => {
+  if (component.system.type.includes('schema')) {
+    return getSchemaData(component as ZapiAllSchemas, dataBlob, linkedItems);
+  } else {
+    return getDescriptionComponentData(component as ZapiDescriptionComponents, dataBlob, linkedItems);
+  }
 };
 
-const getImageData = (image: Image): IImage => ({
+const getDescriptionComponentData = (
+  component: ZapiDescriptionComponents,
+  dataBlob: IPreprocessedData,
+  linkedItems: ContentItem[]
+): DescriptionComponents => {
+  switch (component.system.type) {
+    case 'image': {
+      return getImageData(component as Image);
+    }
+    case 'callout': {
+      return getCalloutData(component as Callout);
+    }
+    case 'code_sample': {
+      return getCodeSampleData(component as CodeSample);
+    }
+    case 'code_samples': {
+      return getCodeSamplesData(component as CodeSamples, dataBlob, linkedItems);
+    }
+    default:
+      // Content chunk is directly resolved by its richTextResolver
+      if (component.system.type !== 'content_chunk') {
+        throw Error(`Unsupported content type (${component.system.type}) in a description element`);
+      }
+  }
+};
+
+const processCodeSamples = (items: ContentItem[], dataBlob: IPreprocessedData, linkedItems: ContentItem[]): void =>
+  processItems(getItemsDataFromLinkedItems<CodeSample, ICodeSample>(getCodeSampleData))(items, dataBlob, linkedItems);
+
+const getImageData = (image: Image): IImage => {
+  if (!image.image || image.image.value.length !== 1) {
+    throw Error(`Content type '${image.system.type}' with codename '${image.system.id}'
+            needs to have exactly 1 asset as image`);
+  }
+
+  const asset = image.image.value[0];
+
+  return {
     ...getSystemProperties(image),
+    asset: {
+      description: asset.description,
+      height: asset.height,
+      name: asset.name,
+      size: asset.size,
+      type: asset.type,
+      url: asset.url,
+      width: asset.width
+    },
     border: processMultipleChoiceElement(image.border),
-    description: image.description.getHtml(),
-    image: image.image.value,
+    description: image.description.resolveHtml(),
     imageWidth: processMultipleChoiceElement(image.imageWidth),
     url: image.url.value,
-    zoomable: processMultipleChoiceElement(image.zoomable),
-});
+    zoomable: processMultipleChoiceElement(image.zoomable)
+  };
+};
 
-const getCalloutData = (callout: Callout): ICallout => ({
+export const getCalloutData = (callout: Callout): ICallout => {
+  // Necessary for filtering out content chunk items inside rich text elements of schemas
+  if (callout.system.type !== 'callout') {
+    return undefined;
+  }
+
+  return {
     ...getSystemProperties(callout),
-    content: callout.content.getHtml(),
-    type: processMultipleChoiceElement(callout.type),
-});
+    content: callout.content.resolveHtml(),
+    type: processMultipleChoiceElement(callout.type)
+  };
+};
 
 const getCodeSampleData = (codeSample: CodeSample): ICodeSample => ({
-    ...getSystemProperties(codeSample),
-    code: codeSample.code.value,
-    platform: processTaxonomyElement(codeSample.platform),
-    programmingLanguage: processTaxonomyElement(codeSample.programmingLanguage),
+  ...getSystemProperties(codeSample),
+  code: codeSample.code.value,
+  platform: processTaxonomyElement(codeSample.platform),
+  programmingLanguage: processTaxonomyElement(codeSample.programmingLanguage)
 });
 
-const getCodeSamplesData = (codeSamples: CodeSamples): ICodeSamples => ({
-    ...getSystemProperties(codeSamples),
-    codeSamples: processLinkedItemsElement(codeSamples.codeSamples),
-});
+const getCodeSamplesData = (
+  item: CodeSamples,
+  dataBlob: IPreprocessedData,
+  linkedItems: ContentItem[]
+): ICodeSamples => {
+  processCodeSamples(item.codeSamples.value, dataBlob, linkedItems);
 
-const getContentChunkData = (contentChunk: ContentChunk): IContentChunk => ({
-    ...getSystemProperties(contentChunk),
-    content: contentChunk.content.getHtml(),
-    platform: processTaxonomyElement(contentChunk.platform),
-});
+  return {
+    ...getSystemProperties(item),
+    codeSamples: sortCodeSamples(processLinkedItemsElement(item.codeSamples))
+  };
+};
