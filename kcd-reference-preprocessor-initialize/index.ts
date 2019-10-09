@@ -4,14 +4,14 @@ import {
     HttpRequest,
 } from '@azure/functions';
 import { Configuration, Operation } from 'cloud-docs-shared-code';
-import { ProcessedSchemaCodenames } from '../shared/processing/ProcessedSchemaCodenames';
+import { initializeProcessedSchemaCodenames } from '../shared/processing/ProcessedSchemaCodenames';
 import { processRootItem } from '../shared/processRootItem';
 
 export const httpTrigger: AzureFunction = async (context: Context, req: HttpRequest): Promise<void> => {
     try {
         Configuration.set(false);
 
-        ProcessedSchemaCodenames.initialize();
+        initializeProcessedSchemaCodenames();
 
         const data = await processRootItem(
             req.query.codename,

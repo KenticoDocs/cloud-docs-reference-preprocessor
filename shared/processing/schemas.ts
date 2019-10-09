@@ -45,7 +45,7 @@ import {
     processItems,
 } from './common';
 import { getCalloutData } from './descriptionComponents';
-import { ProcessedSchemaCodenames } from './ProcessedSchemaCodenames';
+import { getProcessedSchemaCodenames } from './ProcessedSchemaCodenames';
 
 export type ZapiAllSchemas =
     ZapiSchemaAllof
@@ -95,8 +95,8 @@ export const getSchemaData = (
     const codename = schema.system.codename;
 
     // Solves issue with infinite resolving of nested items in themselves
-    if (!ProcessedSchemaCodenames.has(codename)) {
-        ProcessedSchemaCodenames.add(codename);
+    if (!getProcessedSchemaCodenames().has(codename)) {
+        getProcessedSchemaCodenames().add(codename);
 
         switch (schema.system.type) {
             case 'zapi_schema__allof': {

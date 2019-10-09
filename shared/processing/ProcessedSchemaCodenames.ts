@@ -1,15 +1,28 @@
-export class ProcessedSchemaCodenames {
-    public static initialize() {
-        this.processedCodenames = new Set();
-    }
+import Process = NodeJS.Process;
 
-    public static has(codename: string) {
-        return this.processedCodenames.has(codename);
-    }
+let processedSchemaCodenames: ProcessedSchemaCodenames;
 
-    public static add(codename: string) {
-        this.processedCodenames.add(codename);
-    }
+class ProcessedSchemaCodenames {
+  private processedCodenames: Set<string>;
 
-    private static processedCodenames: Set<string>;
+  public constructor() {
+    this.processedCodenames = new Set();
+  }
+
+  public has(codename: string) {
+    return this.processedCodenames.has(codename);
+  }
+
+  public add(codename: string) {
+    this.processedCodenames.add(codename);
+  }
 }
+
+export const getProcessedSchemaCodenames = (): ProcessedSchemaCodenames =>
+  processedSchemaCodenames;
+
+export const initializeProcessedSchemaCodenames = (): ProcessedSchemaCodenames => {
+  processedSchemaCodenames = new ProcessedSchemaCodenames();
+
+  return processedSchemaCodenames;
+};

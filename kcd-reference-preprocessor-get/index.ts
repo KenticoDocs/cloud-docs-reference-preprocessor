@@ -1,7 +1,7 @@
 import { AzureFunction, Context } from '@azure/functions';
 import { Configuration, IEventGridEvent } from 'cloud-docs-shared-code';
 import { Operation } from 'cloud-docs-shared-code/reference/preprocessedModels';
-import { ProcessedSchemaCodenames } from '../shared/processing/ProcessedSchemaCodenames';
+import { initializeProcessedSchemaCodenames } from '../shared/processing/ProcessedSchemaCodenames';
 import { processRootItem } from '../shared/processRootItem';
 
 export interface IProviderInput {
@@ -16,11 +16,11 @@ export const eventGridTriggerGet: AzureFunction = async (
   try {
     Configuration.set(eventGridEvent.data.isTest === 'enabled');
 
-    ProcessedSchemaCodenames.initialize();
+    initializeProcessedSchemaCodenames();
 
     const data = await processRootItem(
       eventGridEvent.data.apiReference,
-      eventGridEvent.eventType as Operation,
+      eventGridEvent.eventType as Operation
     );
 
     context.res = {

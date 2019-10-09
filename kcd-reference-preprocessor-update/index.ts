@@ -2,7 +2,7 @@ import {AzureFunction, Context} from '@azure/functions';
 import {Configuration, IWebhookEventGridEvent} from 'cloud-docs-shared-code';
 import {IPreprocessedData, Operation} from 'cloud-docs-shared-code/reference/preprocessedModels';
 import {RootItemType} from '../shared/external/kenticoCloudClient';
-import {ProcessedSchemaCodenames} from '../shared/processing/ProcessedSchemaCodenames';
+import { initializeProcessedSchemaCodenames } from '../shared/processing/ProcessedSchemaCodenames';
 import {processRootItem} from '../shared/processRootItem';
 import {getCodenamesOfRootItems} from './getCodenamesOfRootItems';
 import {triggerReferenceUpdateStarter} from './triggerReferenceUpdateStarter';
@@ -18,7 +18,7 @@ export const eventGridTriggerUpdate: AzureFunction = async (
 ): Promise<void> => {
   try {
     Configuration.set(eventGridEvent.data.test === 'enabled');
-    ProcessedSchemaCodenames.initialize();
+    initializeProcessedSchemaCodenames();
 
     const rootItemsCodenames: Set<string> = await getCodenamesOfRootItems(eventGridEvent.data.webhook.items);
 
