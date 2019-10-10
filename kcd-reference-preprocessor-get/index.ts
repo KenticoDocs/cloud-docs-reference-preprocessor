@@ -16,7 +16,7 @@ export const eventGridTriggerGet: AzureFunction = async (
   try {
     Configuration.set(eventGridEvent.data.isTest === 'enabled');
 
-    initializeProcessedSchemaCodenames();
+    initializeProcessedSchemaCodenames(eventGridEvent.data.apiReference);
 
     const data = await processRootItem(
       eventGridEvent.data.apiReference,

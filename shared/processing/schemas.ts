@@ -95,8 +95,8 @@ export const getSchemaData = (
     const codename = schema.system.codename;
 
     // Solves issue with infinite resolving of nested items in themselves
-    if (!getProcessedSchemaCodenames().has(codename)) {
-        getProcessedSchemaCodenames().add(codename);
+    if (!getProcessedSchemaCodenames(dataBlob.zapiSpecificationCodename).has(codename)) {
+        getProcessedSchemaCodenames(dataBlob.zapiSpecificationCodename).add(codename);
 
         switch (schema.system.type) {
             case 'zapi_schema__allof': {

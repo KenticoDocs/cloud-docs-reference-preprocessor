@@ -1,7 +1,3 @@
-import Process = NodeJS.Process;
-
-let processedSchemaCodenames: ProcessedSchemaCodenames;
-
 class ProcessedSchemaCodenames {
   private processedCodenames: Set<string>;
 
@@ -18,11 +14,11 @@ class ProcessedSchemaCodenames {
   }
 }
 
-export const getProcessedSchemaCodenames = (): ProcessedSchemaCodenames =>
-  processedSchemaCodenames;
+const codenamesMap: Map<string, ProcessedSchemaCodenames> = new Map();
 
-export const initializeProcessedSchemaCodenames = (): ProcessedSchemaCodenames => {
-  processedSchemaCodenames = new ProcessedSchemaCodenames();
+export const getProcessedSchemaCodenames = (codename: string): ProcessedSchemaCodenames =>
+  codenamesMap.get(codename);
 
-  return processedSchemaCodenames;
+export const initializeProcessedSchemaCodenames = (codename: string): void => {
+  codenamesMap.set(codename, new ProcessedSchemaCodenames());
 };

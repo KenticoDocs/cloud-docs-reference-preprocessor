@@ -28,7 +28,7 @@ export const eventGridTriggerUpdate: AzureFunction = async (
     }
 
     for (const codename of rootItemsCodenames) {
-      initializeProcessedSchemaCodenames();
+      initializeProcessedSchemaCodenames(codename);
 
       await processRootItem(
         codename,
