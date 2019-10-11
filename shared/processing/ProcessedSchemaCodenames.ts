@@ -1,15 +1,24 @@
-export class ProcessedSchemaCodenames {
-    public static initialize() {
-        this.processedCodenames = new Set();
-    }
+class ProcessedSchemaCodenames {
+  private processedCodenames: Set<string>;
 
-    public static has(codename: string) {
-        return this.processedCodenames.has(codename);
-    }
+  public constructor() {
+    this.processedCodenames = new Set();
+  }
 
-    public static add(codename: string) {
-        this.processedCodenames.add(codename);
-    }
+  public has(codename: string) {
+    return this.processedCodenames.has(codename);
+  }
 
-    private static processedCodenames: Set<string>;
+  public add(codename: string) {
+    this.processedCodenames.add(codename);
+  }
 }
+
+const codenamesMap: Map<string, ProcessedSchemaCodenames> = new Map();
+
+export const getProcessedSchemaCodenames = (codename: string): ProcessedSchemaCodenames =>
+  codenamesMap.get(codename);
+
+export const initializeProcessedSchemaCodenames = (codename: string): void => {
+  codenamesMap.set(codename, new ProcessedSchemaCodenames());
+};

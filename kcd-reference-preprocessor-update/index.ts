@@ -2,7 +2,7 @@ import {AzureFunction, Context} from '@azure/functions';
 import {Configuration, IWebhookEventGridEvent} from 'cloud-docs-shared-code';
 import {IPreprocessedData, Operation} from 'cloud-docs-shared-code/reference/preprocessedModels';
 import {RootItemType} from '../shared/external/kenticoCloudClient';
-import {ProcessedSchemaCodenames} from '../shared/processing/ProcessedSchemaCodenames';
+import {initializeProcessedSchemaCodenames} from '../shared/processing/ProcessedSchemaCodenames';
 import {processRootItem} from '../shared/processRootItem';
 import {getCodenamesOfRootItems} from './getCodenamesOfRootItems';
 import {triggerReferenceUpdateStarter} from './triggerReferenceUpdateStarter';
@@ -18,7 +18,6 @@ export const eventGridTriggerUpdate: AzureFunction = async (
 ): Promise<void> => {
   try {
     Configuration.set(eventGridEvent.data.test === 'enabled');
-    ProcessedSchemaCodenames.initialize();
 
     const rootItemsCodenames: Set<string> = await getCodenamesOfRootItems(eventGridEvent.data.webhook.items);
 
@@ -28,15 +27,15 @@ export const eventGridTriggerUpdate: AzureFunction = async (
       await triggerReferenceUpdateStarter(eventGridTopicCredentials, rootItemsCodenames);
     }
 
-    const processRootItemFunctions: Promise<IPreprocessedData>[] =
-      [...rootItemsCodenames]
-        .map(codename => processRootItem(
-          codename,
-          Operation.Update,
-          getZapiSpecificationId(eventGridEvent)
-        ));
+    for (const codename of rootItemsCodenames) {
+      initializeProcessedSchemaCodenames(codename);
 
-    await Promise.all(processRootItemFunctions);
+      await processRootItem(
+        codename,
+        Operation.Update,
+        getZapiSpecificationId(eventGridEvent)
+      );
+    }
   } catch (error) {
     /** This try-catch is required for correct logging of exceptions in Azure */
     throw `Message: ${error.message} \nStack Trace: ${error.stack}`;
