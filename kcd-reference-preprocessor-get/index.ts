@@ -1,6 +1,6 @@
 import { AzureFunction, Context } from '@azure/functions';
-import { Configuration, IEventGridEvent } from 'cloud-docs-shared-code';
-import { Operation } from 'cloud-docs-shared-code/reference/preprocessedModels';
+import { Configuration, IEventGridEvent } from 'kontent-docs-shared-code';
+import { Operation } from 'kontent-docs-shared-code/reference/preprocessedModels';
 import { initializeProcessedSchemaCodenames } from '../shared/processing/ProcessedSchemaCodenames';
 import { processRootItem } from '../shared/processRootItem';
 

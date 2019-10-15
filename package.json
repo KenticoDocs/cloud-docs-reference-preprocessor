@@ -1,5 +1,5 @@
 {
-  "name": "cloud-docs-reference-preprocessor",
+  "name": "kontent-docs-reference-preprocessor",
   "version": "1.0.0",
   "description": "",
   "scripts": {
@@ -16,7 +16,7 @@
   "dependencies": {
     "@azure/storage-blob": "10.4.0",
     "azure-eventgrid": "1.6.0",
-    "cloud-docs-shared-code": "3.3.3",
+    "kontent-docs-shared-code": "4.0.0",
     "kentico-cloud-delivery": "6.0.0-rc.5",
     "rxjs": "6.5.2",
     "url": "0.11.0",

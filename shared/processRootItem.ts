@@ -1,12 +1,12 @@
 import {
-  IKenticoCloudError,
-  IPreprocessedData,
-  Operation
-} from 'cloud-docs-shared-code';
-import {
   ContentItem,
   ItemResponses
 } from 'kentico-cloud-delivery';
+import {
+  IKenticoKontentError,
+  IPreprocessedData,
+  Operation
+} from 'kontent-docs-shared-code';
 import {triggerReferenceUpdateStarter} from '../kcd-reference-preprocessor-update/triggerReferenceUpdateStarter';
 import {storeReferenceDataToBlobStorage} from './external/blobManager';
 import {getEventGridTopicCredentials} from './external/getEventGridTopicCredentials';
@@ -58,7 +58,7 @@ const handleResponse = async (
 };
 
 export const handleNotFoundItem = async (
-    error: IKenticoCloudError,
+    error: IKenticoKontentError,
     codename: string,
     id: string,
 ): Promise<void> => {

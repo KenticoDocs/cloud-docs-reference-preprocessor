@@ -1,4 +1,4 @@
-import { Operation } from 'cloud-docs-shared-code/reference/preprocessedModels';
+import { Operation } from 'kontent-docs-shared-code/reference/preprocessedModels';
 
 import { getBlobId } from './blobManager';
 

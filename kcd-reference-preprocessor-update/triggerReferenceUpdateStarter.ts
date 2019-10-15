@@ -1,5 +1,5 @@
 import { EventGridClient, EventGridModels } from 'azure-eventgrid';
-import { Operation } from 'cloud-docs-shared-code';
+import { Operation } from 'kontent-docs-shared-code';
 import { TopicCredentials } from 'ms-rest-azure';
 import * as url from 'url';
 import { v4 as getUuid } from 'uuid';

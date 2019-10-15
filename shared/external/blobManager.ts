@@ -11,7 +11,7 @@ import {
   Configuration,
   IPreprocessedData,
   Operation
-} from 'cloud-docs-shared-code';
+} from 'kontent-docs-shared-code';
 
 export const storeReferenceDataToBlobStorage = async (
   dataBlob: IPreprocessedData,

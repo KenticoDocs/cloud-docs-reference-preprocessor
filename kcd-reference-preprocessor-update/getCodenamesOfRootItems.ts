@@ -1,5 +1,5 @@
-import { getRootCodenamesOfItem, IWebhookContentItem } from 'cloud-docs-shared-code';
 import { ContentItem, ItemResponses } from 'kentico-cloud-delivery';
+import { getRootCodenamesOfItem, IWebhookContentItem } from 'kontent-docs-shared-code';
 import { getDeliveryClient, RootItemType } from '../shared/external/kenticoCloudClient';
 
 export const getCodenamesOfRootItems = async (items: IWebhookContentItem[]): Promise<Set<string>> => {

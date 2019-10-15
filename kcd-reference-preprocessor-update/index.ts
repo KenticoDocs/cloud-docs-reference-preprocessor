@@ -3,7 +3,7 @@ import {
   Configuration,
   IWebhookEventGridEvent,
   Operation
-} from 'cloud-docs-shared-code';
+} from 'kontent-docs-shared-code';
 import {getEventGridTopicCredentials} from '../shared/external/getEventGridTopicCredentials';
 import {RootItemType} from '../shared/external/kenticoCloudClient';
 import {initializeProcessedSchemaCodenames} from '../shared/processing/ProcessedSchemaCodenames';

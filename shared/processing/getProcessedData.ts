@@ -1,8 +1,8 @@
+import { ContentItem } from 'kentico-cloud-delivery';
 import {
     IPreprocessedData,
     Operation,
-} from 'cloud-docs-shared-code/reference/preprocessedModels';
-import { ContentItem } from 'kentico-cloud-delivery';
+} from 'kontent-docs-shared-code/reference/preprocessedModels';
 import { ZapiSpecification } from '../models/zapi_specification';
 import { processApiSpecification } from './apiSpecification';
 

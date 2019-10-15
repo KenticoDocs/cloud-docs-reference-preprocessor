@@ -1,4 +1,8 @@
 import {
+    ContentItem,
+    Elements,
+} from 'kentico-cloud-delivery';
+import {
     ICallout,
     IDiscriminator,
     IDiscriminatorMapItem,
@@ -15,11 +19,7 @@ import {
     ISchemaObjectPropertyElements,
     ISchemaOneOf,
     ISchemaString,
-} from 'cloud-docs-shared-code/reference/preprocessedModels';
-import {
-    ContentItem,
-    Elements,
-} from 'kentico-cloud-delivery';
+} from 'kontent-docs-shared-code/reference/preprocessedModels';
 import { Callout } from '../models/callout';
 import { ZapiDiscriminator } from '../models/zapi_discriminator';
 import { ZapiDiscriminatorMapItem } from '../models/zapi_discriminator__map_item';

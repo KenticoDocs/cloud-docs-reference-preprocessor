@@ -1,4 +1,8 @@
 import {
+    ContentItem,
+    Elements,
+} from 'kentico-cloud-delivery';
+import {
     ICategory,
     IContact,
     ILicense,
@@ -10,11 +14,7 @@ import {
     ISecurityScheme,
     IServer,
     IZapiSpecification,
-} from 'cloud-docs-shared-code/reference/preprocessedModels';
-import {
-    ContentItem,
-    Elements,
-} from 'kentico-cloud-delivery';
+} from 'kontent-docs-shared-code/reference/preprocessedModels';
 import { ZapiCategory } from '../models/zapi__category';
 import { ZapiContact } from '../models/zapi_contact';
 import { ZapiLicense } from '../models/zapi_license';

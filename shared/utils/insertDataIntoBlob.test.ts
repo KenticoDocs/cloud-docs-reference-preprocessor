@@ -1,7 +1,7 @@
 import {
     IPreprocessedData,
     Operation,
-} from 'cloud-docs-shared-code/reference/preprocessedModels';
+} from 'kontent-docs-shared-code/reference/preprocessedModels';
 
 import { insertDataIntoBlob } from './insertDataIntoBlob';
 

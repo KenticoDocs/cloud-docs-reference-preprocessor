@@ -1,7 +1,7 @@
 import {
     IPreprocessedData,
     ISystemAttributes,
-} from 'cloud-docs-shared-code/reference/preprocessedModels';
+} from 'kontent-docs-shared-code/reference/preprocessedModels';
 
 export const insertDataIntoBlob = <Data extends ISystemAttributes>(
     item: Data[],
