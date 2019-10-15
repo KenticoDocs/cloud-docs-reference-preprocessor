@@ -7,7 +7,9 @@ import {
   ContentItem,
   ItemResponses
 } from 'kentico-cloud-delivery';
+import {triggerReferenceUpdateStarter} from '../kcd-reference-preprocessor-update/triggerReferenceUpdateStarter';
 import {storeReferenceDataToBlobStorage} from './external/blobManager';
+import {getEventGridTopicCredentials} from './external/getEventGridTopicCredentials';
 import {
     DepthParameter,
     getDeliveryClient,
@@ -70,6 +72,12 @@ export const handleNotFoundItem = async (
         zapiSpecificationCodename: codename,
         zapiSpecificationId: id,
     };
+    const eventGridCredentials = getEventGridTopicCredentials();
 
     await storeReferenceDataToBlobStorage(notFoundItem, Operation.Delete);
+    await triggerReferenceUpdateStarter(
+      eventGridCredentials,
+      new Set(codename),
+      Operation.Delete
+    );
 };

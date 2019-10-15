@@ -3,7 +3,7 @@ import { Operation } from 'cloud-docs-shared-code';
 import { TopicCredentials } from 'ms-rest-azure';
 import * as url from 'url';
 import { v4 as getUuid } from 'uuid';
-import {IEventGridCredentials} from './index';
+import {IEventGridCredentials} from '../shared/external/getEventGridTopicCredentials';
 
 interface IPublishEventsCreatorDeps {
   readonly host: string;
@@ -12,14 +12,15 @@ interface IPublishEventsCreatorDeps {
 
 export const triggerReferenceUpdateStarter = async (
   {eventGridKey, host}: IEventGridCredentials,
-  rootItemsCodenames: Set<string>
+  rootItemsCodenames: Set<string>,
+  operation: Operation
 ) => {
   const topicCredentials = new TopicCredentials(eventGridKey);
   const eventGridClient = new EventGridClient(topicCredentials);
   const publishEvents = publishEventsCreator({ eventGridClient, host });
 
   for (const rootItemCodename of rootItemsCodenames) {
-    const event = eventComposer(rootItemCodename, Operation.Update);
+    const event = eventComposer(rootItemCodename, operation);
     await publishEvents([event]);
   }
 };
@@ -36,7 +37,7 @@ export const publishEventsCreator = (dependencies: IPublishEventsCreatorDeps) =>
 
 const eventComposer = (
   apiReferenceCodename: string,
-  operation: string
+  operation: Operation
 ): EventGridModels.EventGridEvent => ({
   data: {
     apiReference: apiReferenceCodename

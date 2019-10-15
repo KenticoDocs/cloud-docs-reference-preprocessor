@@ -1,16 +1,15 @@
 import {AzureFunction, Context} from '@azure/functions';
-import {Configuration, IWebhookEventGridEvent} from 'cloud-docs-shared-code';
-import {IPreprocessedData, Operation} from 'cloud-docs-shared-code/reference/preprocessedModels';
+import {
+  Configuration,
+  IWebhookEventGridEvent,
+  Operation
+} from 'cloud-docs-shared-code';
+import {getEventGridTopicCredentials} from '../shared/external/getEventGridTopicCredentials';
 import {RootItemType} from '../shared/external/kenticoCloudClient';
 import {initializeProcessedSchemaCodenames} from '../shared/processing/ProcessedSchemaCodenames';
 import {processRootItem} from '../shared/processRootItem';
 import {getCodenamesOfRootItems} from './getCodenamesOfRootItems';
 import {triggerReferenceUpdateStarter} from './triggerReferenceUpdateStarter';
-
-export interface IEventGridCredentials {
-  readonly host: string;
-  readonly eventGridKey: string;
-}
 
 export const eventGridTriggerUpdate: AzureFunction = async (
   context: Context,
@@ -24,7 +23,7 @@ export const eventGridTriggerUpdate: AzureFunction = async (
     const eventGridTopicCredentials = getEventGridTopicCredentials();
 
     if (rootItemsCodenames.size > 0 && shouldProviderBeTriggered(eventGridEvent)) {
-      await triggerReferenceUpdateStarter(eventGridTopicCredentials, rootItemsCodenames);
+      await triggerReferenceUpdateStarter(eventGridTopicCredentials, rootItemsCodenames, Operation.Update);
     }
 
     for (const codename of rootItemsCodenames) {
@@ -53,17 +52,4 @@ const getZapiSpecificationId = (eventGridEvent: IWebhookEventGridEvent): string 
   return zapiSpecification
     ? zapiSpecification.id
     : undefined;
-};
-
-const getEventGridTopicCredentials = (): IEventGridCredentials => {
-  const eventGridKey = process.env['EventGrid.TriggerReferenceUpdateStarter.Key'];
-  const host = process.env['EventGrid.TriggerReferenceUpdateStarter.Endpoint'];
-  if (!eventGridKey || !host) {
-    throw new Error('EventGrid env properties not provided.');
-  }
-
-  return {
-    eventGridKey,
-    host
-  };
 };
