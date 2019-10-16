@@ -1,13 +1,15 @@
 import {
-  IKenticoCloudError,
-  IPreprocessedData,
-  Operation
-} from 'cloud-docs-shared-code';
-import {
   ContentItem,
   ItemResponses
 } from 'kentico-cloud-delivery';
+import {
+  IKenticoKontentError,
+  IPreprocessedData,
+  Operation
+} from 'kontent-docs-shared-code';
+import {triggerReferenceUpdateStarter} from '../kcd-reference-preprocessor-update/triggerReferenceUpdateStarter';
 import {storeReferenceDataToBlobStorage} from './external/blobManager';
+import {getEventGridTopicCredentials} from './external/getEventGridTopicCredentials';
 import {
     DepthParameter,
     getDeliveryClient,
@@ -56,7 +58,7 @@ const handleResponse = async (
 };
 
 export const handleNotFoundItem = async (
-    error: IKenticoCloudError,
+    error: IKenticoKontentError,
     codename: string,
     id: string,
 ): Promise<void> => {
@@ -70,6 +72,12 @@ export const handleNotFoundItem = async (
         zapiSpecificationCodename: codename,
         zapiSpecificationId: id,
     };
+    const eventGridCredentials = getEventGridTopicCredentials();
 
     await storeReferenceDataToBlobStorage(notFoundItem, Operation.Delete);
+    await triggerReferenceUpdateStarter(
+      eventGridCredentials,
+      new Set(codename),
+      Operation.Delete
+    );
 };

@@ -1,5 +1,5 @@
-import { Configuration } from 'cloud-docs-shared-code';
 import { DeliveryClient, IContentItemConfig, IDeliveryClient, Link, TypeResolver } from 'kentico-cloud-delivery';
+import { Configuration } from 'kontent-docs-shared-code';
 
 import { Callout } from '../models/callout';
 import { CodeSample } from '../models/code_sample';

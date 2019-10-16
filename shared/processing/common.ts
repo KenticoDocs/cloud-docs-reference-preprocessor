@@ -1,11 +1,8 @@
-import {
-  IPreprocessedData,
-  ISystemAttributes,
-} from 'cloud-docs-shared-code/reference/preprocessedModels';
-import { ContentItem, Elements } from 'kentico-cloud-delivery';
+import {ContentItem, Elements} from 'kentico-cloud-delivery';
+import {IPreprocessedData, ISystemAttributes} from 'kontent-docs-shared-code/reference/preprocessedModels';
 
-import { insertDataIntoBlob } from '../utils/insertDataIntoBlob';
-import { getFromLinkedItems } from '../utils/processElements';
+import {insertDataIntoBlob} from '../utils/insertDataIntoBlob';
+import {getFromLinkedItems} from '../utils/processElements';
 
 type ProcessableObject = ContentItem | ContentItem[] | Elements.RichTextElement;
 
@@ -55,7 +52,7 @@ export const getItemsDataFromLinkedItems = <KCItem extends ContentItem, Preproce
 ): PreprocessedItem[] =>
   items.map(item => getDataObject(item, dataBlob, linkedItems));
 
-export const getSystemProperties = ({ system: { type, id, codename } }: ContentItem): ISystemAttributes => ({
+export const getSystemProperties = ({system: {type, id, codename}}: ContentItem): ISystemAttributes => ({
   codename,
   contentType: type,
   id

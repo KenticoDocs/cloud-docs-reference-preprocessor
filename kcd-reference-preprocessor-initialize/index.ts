@@ -3,7 +3,7 @@ import {
     Context,
     HttpRequest,
 } from '@azure/functions';
-import { Configuration, Operation } from 'cloud-docs-shared-code';
+import { Configuration, Operation } from 'kontent-docs-shared-code';
 import { initializeProcessedSchemaCodenames } from '../shared/processing/ProcessedSchemaCodenames';
 import { processRootItem } from '../shared/processRootItem';
 

@@ -1,11 +1,11 @@
+import { ContentItem, Elements } from 'kentico-cloud-delivery';
 import {
   ICallout,
   ICodeSample,
   ICodeSamples,
   IImage,
   IPreprocessedData
-} from 'cloud-docs-shared-code/reference/preprocessedModels';
-import { ContentItem, Elements } from 'kentico-cloud-delivery';
+} from 'kontent-docs-shared-code/reference/preprocessedModels';
 
 import { Callout } from '../models/callout';
 import { CodeSample } from '../models/code_sample';
