@@ -319,6 +319,7 @@ const getSchemaElements = (item: ContentItem): ISchemaElements => ({
 });
 
 const getSchemaObjectPropertyElements = (item: ContentItem): ISchemaObjectPropertyElements => ({
+    deprecated: processMultipleChoiceElement(item.commonSchemaObjectPropertyElementsDeprecated),
     nullable: processMultipleChoiceElement(item.commonSchemaObjectPropertyElementsNullable),
     readonly: processMultipleChoiceElement(item.commonSchemaObjectPropertyElementsReadonly),
     writeonly: processMultipleChoiceElement(item.commonSchemaObjectPropertyElementsWriteonly),
