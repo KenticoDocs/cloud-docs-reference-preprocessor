@@ -10,8 +10,14 @@ export const processLinkedItemsElement = (linkedItemsElement: Elements.LinkedIte
 export const processTaxonomyElement = (taxonomyElement: Elements.TaxonomyElement): string[] =>
     taxonomyElement.value.map((term: ElementModels.TaxonomyTerm) => term.name);
 
-export const processMultipleChoiceElement = (multipleChoiceElement: Elements.MultipleChoiceElement): string[] =>
-    multipleChoiceElement.value.map((option: ElementModels.MultipleChoiceOption) => option.name);
+export const processMultipleChoiceElement =
+    (multipleChoiceElement: Elements.MultipleChoiceElement): string[] | undefined => {
+        if (multipleChoiceElement) {
+            return multipleChoiceElement.value.map((option: ElementModels.MultipleChoiceOption) => option.name);
+        } else {
+            return [''];
+        }
+    };
 
 export const getFromLinkedItems = <ItemToFind extends ContentItem>(
     codename: string,
