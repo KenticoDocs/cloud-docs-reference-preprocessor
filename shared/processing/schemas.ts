@@ -145,6 +145,7 @@ const getSchemaArrayData = (
 
     return {
         ...getSystemProperties(schema),
+        ...getSchemaObjectPropertyElements(schema),
         ...getSchemaElements(schema),
         apiReference: processTaxonomyElement(schema.apiReference),
         items: schema.items.resolveHtml(),
@@ -179,6 +180,7 @@ const getSchemaAllOfData = (
 
     return {
         ...getSystemProperties(schema),
+        ...getSchemaObjectPropertyElements(schema),
         ...getSchemaElements(schema),
         apiReference: processTaxonomyElement(schema.apiReference),
         schemas: schema.schemas.resolveHtml(),
@@ -251,6 +253,7 @@ const getSchemaObjectData = (
 
     return {
         ...getSystemProperties(schema),
+        ...getSchemaObjectPropertyElements(schema),
         ...getSchemaElements(schema),
         additionalProperties: schema.additionalProperties.resolveHtml(),
         additionalPropertiesName: schema.additionalPropertiesName.value,
@@ -271,6 +274,7 @@ const getSchemaOneOfData = (
 
     return {
         ...getSystemProperties(schema),
+        ...getSchemaObjectPropertyElements(schema),
         ...getSchemaElements(schema),
         apiReference: processTaxonomyElement(schema.apiReference),
         discriminator: schema.discriminator.resolveHtml(),
