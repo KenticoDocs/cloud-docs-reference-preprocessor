@@ -15,7 +15,7 @@ export const httpTrigger: AzureFunction = async (context: Context, req: HttpRequ
 
         const data = await processRootItem(
             req.query.codename,
-            Operation.Initialize,
+            req.query.preview ? Operation.Preview : Operation.Initialize,
         );
 
         context.res = {
