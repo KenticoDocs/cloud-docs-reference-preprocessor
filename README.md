@@ -1,6 +1,5 @@
-| [master](https://github.com/KenticoDocs/kontent-docs-reference-preprocessor/tree/master) | [develop](https://github.com/KenticoDocs/kontent-docs-reference-preprocessor/tree/develop) |
-|:---:|:---:|
-| [![Build Status](https://travis-ci.com/KenticoDocs/kontent-docs-reference-preprocessor.svg?branch=master)](https://travis-ci.com/KenticoDocs/kontent-docs-reference-preprocessor/branches) [![codebeat badge](https://codebeat.co/badges/cb02fdad-6c6b-4ce1-97e6-921612d6d3c5)](https://codebeat.co/projects/github-com-kenticodocs-kontent-docs-reference-preprocessor-master) | [![Build Status](https://travis-ci.com/KenticoDocs/kontent-docs-reference-preprocessor.svg?branch=develop)](https://travis-ci.com/KenticoDocs/kontent-docs-reference-preprocessor/branches) [![codebeat badge](https://codebeat.co/badges/51789e42-c267-4c49-8735-f6fbc0f4a174)](https://codebeat.co/projects/github-com-kenticodocs-kontent-docs-reference-preprocessor-develop) |
+![master](https://github.com/KenticoDocs/kontent-docs-reference-preprocessor/actions/workflows/master_kcd-reference-preprocessor-live-master.yml/badge.svg)
+![develop](https://github.com/KenticoDocs/kontent-docs-reference-preprocessor/actions/workflows/develop_kcd-reference-preprocessor-live-dev.yml/badge.svg)
 
 # Kentico Kontent Documentation - Reference Preprocessor
 
